@@ -1,0 +1,48 @@
+#tableauCommande, #tableauDetailCommande
+{
+    margin-top: 3%;
+}
+
+#ligneOptions, #parametreLivraison 
+{
+    margin-top:7%;
+}
+
+.note
+{
+    margin-top: 10%;
+}
+
+h1, h2, h3
+{
+    text-align:center;
+}
+
+.enteteTableauCommande, .enteteTableauDetailCommande
+{
+    background-color: rgb(117, 164, 41);
+    width:20%;
+}
+
+.formBtn
+{
+    margin-top: 10%;
+    margin-bottom: 10%;
+    text-align: center;
+}
+
+.btnInForm
+{
+    margin-right:3%;
+}
+
+label
+{
+    margin-bottom: 1%;
+    margin-right: 3%;
+}
+
+.sectionFormulaire
+{
+    margin-top: 5%;
+}
