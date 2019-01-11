@@ -1,9 +1,9 @@
-#tableauCommande, #tableauDetailCommande
+#tableauCommande, #tableauDetailCommande, .adresseLivraison
 {
     margin-top: 3%;
 }
 
-#ligneOptions, #parametreLivraison 
+#ligneOptions, #parametreLivraison
 {
     margin-top:7%;
 }
@@ -18,10 +18,16 @@ h1, h2, h3
     text-align:center;
 }
 
-.enteteTableauCommande, .enteteTableauDetailCommande
+.enteteTableauCommande
 {
     background-color: rgb(117, 164, 41);
-    width:20%;
+    width:12.5%;
+}
+
+.enteteTableauDetailCommande
+{
+    width:12.5%;
+    background-color: rgb(117, 164, 41);
 }
 
 .formBtn
@@ -45,4 +51,34 @@ label
 .sectionFormulaire
 {
     margin-top: 5%;
+}
+
+#inputAddress
+{
+    margin-top: 5%;
+}
+
+#totalCommande
+{
+    margin-right: 10%;
+    font-size: 5%;
+}
+
+#fermerModaleCommande
+{
+    width:7%;
+    padding-bottom: 7%;
+    background-repeat:no-repeat;
+}
+
+#fermerModale
+{
+    float:right;
+    max-height:50px;    
+}
+
+.supprimer, .modifier
+{
+    border:none;
+    background-color: white;
 }

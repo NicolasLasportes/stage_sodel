@@ -1,13 +1,13 @@
 <?php
 
-Route::get('/', function() 
+Route::get('/', function()
 {
-    return view('tableauCommande');
+    return view("tableauCommande");
 });
 
-Route::get('/tableauCommande/{id}', function($id) 
-{
-    echo $id;
-    return view('tableauDetailCommande');
-});
- 
+Route::get('/tableauCommande', 'tableauDetailCommande@afficherDetailCommande');
+
+//API
+Route::get('/commande/{id}', 'tableauCommande@obtenirCommande');
+
+Route::post('commandeClient/{id}', 'tableauCommande@obtenirCommandesClient');
