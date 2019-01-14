@@ -77,8 +77,25 @@ label
     max-height:50px;    
 }
 
-.supprimer, .modifier
+.supprimer, .modifier, #afficherCetteCommande
 {
     border:none;
     background-color: white;
+}
+
+.invisible
+{
+    display:none;
+}
+
+#afficherCetteCommande
+{
+    width:100%;
+}
+
+.ligneTableauCommandes
+{
+    margin-top: 5%;
+    padding-bottom: 5%;
+    padding-top:5%; 
 }

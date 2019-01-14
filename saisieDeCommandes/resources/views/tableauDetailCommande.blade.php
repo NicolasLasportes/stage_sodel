@@ -2,6 +2,7 @@
 <html lang="fr">
     <head>
         <meta charset="utf-8">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>tableau commandes</title>
         <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
@@ -11,7 +12,7 @@
         <div class="container-fluid">
             <div id="ligneOptions" class="row">
                 <div class="offset-md-1 col-md-2">
-                    <button class="btn btn-danger">Retour aux commandes</button>
+                    <a href="{{ url()->previous() }}" class="btn btn-danger">Retour aux commandes</a>
                 </div>
                 <div class="col-md-2">
                     <button class="btn btn-success" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter un produit</button>
@@ -38,7 +39,7 @@
         <div id="totalCommande">Total :</div>
 
         <!-- Formulaire d'ajout d'un produit pour une commande 
-        Le formulaire est affiché dans une modale crée avec bootstrap -->
+        Le formulaire est affiché dans une modale créee avec bootstrap -->
 
         <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -46,7 +47,7 @@
                     <div class="modal-header">
                         <h2>Ajouter un produit</h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <img src="../images/shutdown.png" alt="fermer" id="fermerModale">
+                            <img src="../images/fermer.png" alt="fermer" id="fermerModale">
                         </button>
                     </div>
                     <div class="modal-body">
@@ -81,5 +82,8 @@
         <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="../js/dataTables.min.js"></script>
+        <script type="text/javascript" src="../js/function.js"></script>
+        <script type="text/javascript" src="../js/event.js"></script>
     </body>
 </html>

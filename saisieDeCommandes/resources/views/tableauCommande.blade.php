@@ -19,6 +19,9 @@
             </div>
         </div>     
 
+        <div id="monFormulaire">
+           
+        </div>
         <table id="tableauCommande" class="table">
             <thead>
                 <tr>
