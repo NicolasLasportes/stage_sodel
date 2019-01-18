@@ -1,0 +1,112 @@
+#tableauCommande, #tableauDetailCommande, .adresseLivraison
+{
+    margin-top: 3%;
+}
+
+#ligneOptions, #parametreLivraison
+{
+    margin-top:7%;
+}
+
+.note
+{
+    margin-top: 10%;
+}
+
+h1, h2, h3
+{
+    text-align:center;
+}
+
+.enteteTableauCommande
+{
+    background-color: rgb(117, 164, 41);
+    width:12.5%;
+}
+
+.enteteTableauDetailCommande
+{
+    width:11.1%;
+    background-color: rgb(117, 164, 41);
+}
+
+.formBtn
+{
+    margin-top: 10%;
+    margin-bottom: 10%;
+    text-align: center;
+}
+
+.btnInForm
+{
+    margin-right:3%;
+}
+
+label
+{
+    margin-bottom: 1%;
+    margin-right: 3%;
+}
+
+.sectionFormulaire
+{
+    margin-top: 5%;
+}
+
+#inputAddress
+{
+    margin-top: 5%;
+}
+
+#totalCommande
+{
+    margin-top:10%;
+    margin-right: 10%;
+    font-size: 5%;
+}
+
+#fermerModaleCommande
+{
+    width:7%;
+    padding-bottom: 7%;
+    background-repeat:no-repeat;
+}
+
+.fermerModale
+{
+    float:right;
+    max-height:50px;    
+}
+
+.supprimer, .modifier, .afficherCetteCommande
+{
+    border:none;
+    background-color: white;
+}
+
+.invisible
+{
+    display:none;
+}
+
+#afficherCetteCommande
+{
+    width:100%;
+}
+
+.ligneTableauCommandes
+{
+    margin-top: 5%;
+    padding-bottom: 5%;
+    padding-top:5%; 
+}
+
+td, tr
+{
+    text-align:center;
+}
+
+.total
+{
+    text-align:right;
+}
