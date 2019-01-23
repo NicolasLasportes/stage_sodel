@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div id="ligneOptions" class="row">
                 <div class="offset-md-1 col-md-3">
-                    <button class="btn btn-success" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
+                    <button id="ajouterCommande" class="btn btn-success" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
                 </div>
             </div>
         </div>     
@@ -60,8 +60,8 @@
                                 <input type="text" id="reference" class="form-control" placeholder="Référence de la commande">
                                 <div class="note">Commande ou devis ?</div>
                                 <select class="form-control" name="commandeOuDevis" id="commandeOuDevis">
-                                    <option value="commande">Commande</option>
-                                    <option value="devis">Devis</option>
+                                    <option value="CDE">Commande</option>
+                                    <option value="DEV">Devis</option>
                                 </select>
                                 <div class="note">Notes</div>
                                 <textarea class="form-control" name="notes" id="notes"></textarea>
@@ -107,7 +107,7 @@
                             </div>
                         </div>                            
                         <div class="formBtn">
-                            <button id="validerCommande" class="btnInForm btn btn-success">Valider</button>
+                            <button id="validerCommande" data-toggle="modal" data-target=".bd-example-modal-lg" class="btnInForm btn btn-success">Valider</button>
                         </div>
                     </div>
                 </div>

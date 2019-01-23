@@ -18,6 +18,10 @@ Route::post('/modifierLigneCommande', 'tableauDetailCommande@modifierLigne');
 
 Route::post('/cloturerCommande', 'tableauCommande@cloturerCommande');
 
+Route::post('/verifierCommandeCloturer', 'tableauDetailCommande@verifierCommandeCloturer');
+
+Route::post('/detailClient', 'tableauCommande@detailClient');
+
 //routes entete commande
 Route::post('/ajouterCommande', 'tableauCommande@ajouterCommande');
 

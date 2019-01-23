@@ -78,7 +78,7 @@ label
     max-height:50px;    
 }
 
-.supprimer, .modifier, .afficherCetteCommande
+.supprimerCommande, .modifier, .numero_commande
 {
     border:none;
     background-color: white;
@@ -109,4 +109,9 @@ td, tr
 .total
 {
     text-align:right;
+}
+
+.alignementDroite
+{
+    width:30%;
 }

@@ -27,7 +27,7 @@
 
         <table id="tableauDetailCommande" class="table">
             <thead>
-                <tr>
+                <tr id="headerDetailCommande">
                     <th class="enteteTableauDetailCommande">Code</th>
                     <th class="enteteTableauDetailCommande">Référence</th>
                     <th class="enteteTableauDetailCommande">Désignation</th>
@@ -36,7 +36,6 @@
                     <th class="enteteTableauDetailCommande">Stock</th>
                     <th class="enteteTableauDetailCommande">Gratuit</th>
                     <th id="total_detail_commande" class="enteteTableauDetailCommande">Total</th>
-                    <th class="enteteTableauDetailCommande">Options</th>
                 </tr>
             </thead>
             <tbody id="corpsDetailCommande"></tbody>
@@ -76,7 +75,7 @@
                             </div>
                         </div>
                         <div class="formBtn">
-                            <button type="submit" id="validerLigne" class="btnInForm btn btn-success" data-toggle="modal" data-target=".bd-example-modal-lg">Valider</button>
+                            <button type="submit" id="validerLigne" class="btnInForm btn btn-success">Valider</button>
                         </div>
                     </div>
                 </div>
@@ -85,7 +84,7 @@
 
         <!-- Formulaire de modification d'une ligne pour une commande 
         Le formulaire est affiché dans une modale créee les classes avec bootstrap -->
-        <div id="modifierLigneCommande" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div id="formulaireModifierLigneCommande" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -114,7 +113,7 @@
                             </div>
                         </div>
                         <div class="formBtn">
-                            <button type="submit" id="validerModificationLigne" class="btnInForm btn btn-success" data-toggle="modal" data-target="#modifierLigneCommande">Valider</button>
+                            <button id="validerModificationLigne" class="btnInForm btn btn-success" data-toggle="modal" data-target="#formulaireModifierLigneCommande">Valider</button>
                         </div>
                     </div>
                 </div>
