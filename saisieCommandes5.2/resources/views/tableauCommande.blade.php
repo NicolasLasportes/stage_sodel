@@ -114,6 +114,97 @@
             </div>
         </div>
 
+        <!-- Modal modification de l'entete commande -->
+
+        <div class="modal modifierCommande fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Modifier une commande</h2>
+                        <button class="close" data-dismiss="modal" aria-label="Close">
+                            <img src="../images/fermer.png" alt="fermer" id="fermerModale">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="offset-md-1 col-md-4 sectionFormulaire" id="parametreLivraisonDefaut">
+                                <h3>Le client</h3>
+                                <div id="identiteModifier"></div>
+                                <div id="telModifier"></div>
+                                <div id="emailModifier"></div>
+                                <div id="adresseModifier"></div> 
+                                <div id="complementModifier"></div>
+                                <div class="row">
+                                    <div class="col-md-4" id="villeModifier"></div>
+                                    <div class="offset-md-2 col-md-4" id="code_postalModifier"></div>
+                                </div>  
+                            </div>
+                            <div class="offset-md-1 col-md-5 sectionFormulaire" id="parametreCommande">
+                                <h3>La commande</h3>
+                                <label for="referenceModifier">Référence</label>       
+                                <input type="text" id="referenceModifier" class="form-control" placeholder="Référence de la commande">
+                                <div class="noteModifier">Commande ou devis ?</div>
+                                <select class="form-control" name="commandeOuDevisModifier" id="commandeOuDevisModifier">
+                                    <option value="CDE">Commande</option>
+                                    <option value="DEV">Devis</option>
+                                </select>
+                                <div class="noteModifier">Notes</div>
+                                <textarea class="form-control" name="notes" id="notesModifier"></textarea>
+                                <div class="invisible" id="numero_commande"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="offset-md-1 col-md-10 sectionFormulaire">
+                                <h3>Livraison ( facultatif )</h3>
+                            </div>
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="nomLivraisonModifier">Nom du destinataire</label>
+                                <input class="form-control" type="text" id="nomLivraisonModifier">
+                            </div>
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="prenomLivraisonModifier">Prénom du destinataire</label>
+                                <input class="form-control" type="text" id="prenomLivraisonModifier">
+                            </div>
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="emailLivraisonModifier">Email du destinataire</label>
+                                <input class="form-control" type="email" id="emailLivraisonModifier">
+                            </div>
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="telephoneLivraisonModifier">Téléphone du destinataire</label>
+                                <input class="form-control" type="text" id="telephoneLivraisonModifier">
+                            </div>
+                            <div class="offset-md-1 col-md-10 adresseLivraison form-group">
+                                <label for="adresseLivraisonModifier">Adresse de livraison</label>
+                                <input class="form-control" type="text" id="adresseLivraisonModifier">
+                            </div>
+                            <div class="offset-md-1 col-md-10 adresseLivraisonDeux form-group">
+                                <label for="adresseLivraisonDeuxModifier">Adresse de livraison 2</label>
+                                <input class="form-control" type="text" id="adresseLivraisonDeuxModifier" placeholder="facultatif">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="villeLivraisonModifier">Ville</label>
+                                <input type="text" class="form-control" id="villeLivraisonModifier">
+                            </div>
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="codePostalLivraisonModifier">Code Postal</label>
+                                <input type="text" class="form-control" id="codePostalLivraisonModifier">
+                            </div>
+                        </div>                            
+                        <div class="formBtn row">
+                            <div class="offset-md-3 col-md-3">
+                                <button id="validerModificationCommande" data-toggle="modal" data-target=".modifierCommande" class="btnInForm btn btn-success">Valider</button>
+                            </div>
+                            <div class="col-md-3">
+                                <button id="cloturerModificationCommande" data-toggle="modal" data-target=".modifierCommande" class="btnInForm btn btn-primary">Clôturer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>

@@ -75,7 +75,7 @@
                             </div>
                         </div>
                         <div class="formBtn">
-                            <button type="submit" id="validerLigne" class="btnInForm btn btn-success">Valider</button>
+                            <button type="submit" id="validerLigne" data-toggle="modal" data-target=".bd-example-modal-lg" class="btnInForm btn btn-success">Valider</button>
                         </div>
                     </div>
                 </div>

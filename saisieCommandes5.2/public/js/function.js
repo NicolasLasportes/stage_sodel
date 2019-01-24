@@ -83,7 +83,7 @@ function obtenirCommandeClient(dossier_client)
         }
     }).done(function(listeDesCommandes)
     {
-        $("#titre_client").append("Commandes de " + listeDesCommandes[listeDesCommandes.length -1].nom_client);
+        $("#titre_client").empty().append("Commandes de " + listeDesCommandes[listeDesCommandes.length -1].nom_client);
         genererTableauCommande(listeDesCommandes);
         $('#tableauCommande').DataTable();
     });
@@ -97,12 +97,11 @@ function genererTableauCommande(commandes)
     $("#corpsTableauCommande").empty();
     for(var i = 0; i < commandes.length -1; i++)
     {
-        console.log(commandes[i].type_commande);
         if(commandes[i].cloture_commande == "")
         {
             cloturer = "Non";
-            administration = "<td class='administrationTableauCommandes'><button class='modifier' id='modifier" + commandes[i].numero_commande + 
-            "'><img src='../images/crayon32.png' alt='modifier'></button>" + 
+            administration = "<td class='administrationTableauCommandes'><button class='modifier' data-toggle='modal' data-target='.modifierCommande' id='modifier" 
+            + commandes[i].numero_commande + "'><img src='../images/crayon32.png' alt='modifier'></button>" + 
             "<button class='supprimerCommande' id='supprimer" + commandes[i].numero_commande + "'><img src='../images/corbeille32.png' alt='supprimer'></button></td>";
         }
         else
@@ -143,7 +142,6 @@ function afficherDate(date)
 
 function cloturerCommande(numero_commande)
 {
-    console.log(numero_commande);
     $.ajax({
         url : '../cloturerCommande',
         type : 'POST',
@@ -161,18 +159,14 @@ function cloturerCommande(numero_commande)
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    }).done(function(reponse)
-    {
-        console.log(reponse);
     }).fail(function(err)
     {
-        console.log(err);
+        alert("Une erreur est survenue");
     });
 }
 
 function detailClient(dossier)
 {
-    console.log(dossier);
     $.ajax({
         url: '../detailClient',
         type: 'post',
@@ -208,7 +202,7 @@ function detailClient(dossier)
         $("#codePostalLivraison").val(reponse.code_postal_client);
     }).fail(function(err)
     {
-        console.log(err);
+        alert("Une erreur est survenue");
     });
 }
 
@@ -280,20 +274,17 @@ function ajouterCommande()
             }
         }).done(function(reponse)
         {
-            console.log(reponse);
             $('#tableauCommande').DataTable().destroy();
             obtenirCommandeClient(reponse.dossier_client);
         }).fail(function(err)
         {
-            console.log(err);
+            alert("Une erreur est survenue");
         });
     }
 }
 
 function supprimerCommande(numero_commande, dossier_client)
 {
-    console.log(numero_commande);
-    console.log(dossier_client);
     $.ajax({
         url: '../supprimerCommande',
         type: 'post',
@@ -308,27 +299,70 @@ function supprimerCommande(numero_commande, dossier_client)
         }
     }).done(function(reponse)
     {
-        console.log(reponse);
         $('#tableauCommande').DataTable().destroy();
         obtenirCommandeClient(dossier_client);
     }).fail(function(err)
     {
-        console.log(err);
+        alert("Une erreur est survenue");
+    });
+}
+
+function afficherDetailCommande(numero_commande, dossier)
+{
+    $.ajax({
+        url: '../detailClientModification',
+        type: 'post',
+        dataType: 'json',
+        data: 
+        {
+            numero_commande: numero_commande,
+            dossier_client: dossier
+        },
+        headers: 
+        {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    }).done(function(reponse)
+    {
+        $("#identiteModifier").html(reponse.nom_client_facture);
+        $("#telModifier").html(reponse.telephone_client_facture);
+        $("#emailModifier").html(reponse.mail_client_facture);
+        $("#adresseModifier").html(reponse.adresse1_client_facture);
+        $("#complementModifier").html(reponse.adresse2_client_facture);
+        $("#code_postalModifier").html(reponse.code_postal_client_facture);
+        $("#villeModifier").html(reponse.ville_client_facture);
+        $("#referenceModifier").val(reponse.reference_commande);
+        $("#commandeOuDevisModifier").val(reponse.type_commande);
+        $("#notesModifier").val(reponse.commentaire_commande);
+        $("#nomLivraisonModifier").val(reponse.nom_livraison);
+        $("#prenomLivraisonModifier").val(reponse.prenom_livraison);
+        $("#telephoneLivraisonModifier").val(reponse.telephone_livraison);
+        $("#emailLivraisonModifier").val(reponse.mail_livraison);
+        $("#adresseLivraisonModifier").val(reponse.adresse1_livraison);
+        $("#adresseLivraisonDeuxModifier").val(reponse.adresse2_livraison);
+        $("#villeLivraisonModifier").val(reponse.ville_livraison);
+        $("#codePostalLivraisonModifier").val(reponse.code_postal_livraison);
+        $("#numero_commande").html(reponse.numero_commande);
+    }).fail(function(err)
+    {
+        alert("Une erreur est survenue");
     });
 }
 
 function modifierCommande(numero_commande)
-{
-    var type_commande = ;
-    var commentaire_commande = ;
-    var nom_livraison = ;
-    var prenom_livraison = ;
-    var telephone_livraison = ;
-    var email_livraison = ;
-    var adresse1_livraison = ;
-    var adresse2_livraison = ;
-    var ville_livraison = ;
-    var code_postal_livraison = ;
+{   
+    var reference_commande = $("#referenceModifier").val();
+    var type_commande = $("#commandeOuDevisModifier").val();
+    var commentaire_commande = $("#notesModifier").val();
+    var nom_livraison = $("#nomLivraisonModifier").val();
+    var prenom_livraison = $("#prenomLivraisonModifier").val();
+    var telephone_livraison = $("#telephoneLivraisonModifier").val();
+    var email_livraison = $("#emailLivraisonModifier").val();
+    var adresse1_livraison = $("#adresseLivraisonModifier").val();
+    var adresse2_livraison = $("#adresseLivraisonDeuxModifier").val();
+    var ville_livraison = $("#villeLivraisonModifier").val();
+    var code_postal_livraison = $("#codePostalLivraisonModifier").val();
+
     $.ajax({
         url: '../modifierCommande',
         type: 'post',
@@ -354,10 +388,11 @@ function modifierCommande(numero_commande)
         }
     }).done(function(reponse)
     {
-        console.log(reponse);
+        $('#tableauCommande').DataTable().destroy();
+        obtenirCommandeClient(recupererDossierClient(id_inverse));
     }).fail(function(err)
     {
-        console.log(err);
+        alert("Une erreur est survenue");
     });
 }
 
@@ -387,7 +422,6 @@ function obtenirDetailCommande(id_commande, id_client)
         }
     }).done(function(detailCommande)
     {
-        console.log(detailCommande);
         verifierCommandeCloturer(recupererNumCommande(id_inverse), detailCommande);
     });
 }
@@ -413,12 +447,11 @@ function verifierCommandeCloturer(numero_commande, detailCommande)
         }
     }).done(function(reponse)
     {
-        console.log(reponse);
         genererTableauDetailCommande(detailCommande, reponse.cloturer_commande);
     }).fail(function(err)
     {
         alert("Une erreur est survenue");
-        console.log(err);
+        alert("Une erreur est survenue");
     });
 }
 
@@ -619,7 +652,6 @@ function supprimerLigneCommande(code_produit)
 function formulaireModification(ligneCommande)
 {
     var code_societe = ligneCommande[0];
-    console.log(code_societe);
     $("#referenceProduitLigne").val();
     $("#quantiteProduitLigne").val();
     $("#prixProduitLigne").val();
@@ -641,7 +673,6 @@ function formulaireModification(ligneCommande)
 
 function modifierLigneCommande(code_societe)
 {
-    console.log(code_societe);
     var code_produit = $("#referenceProduitLigne").val();
     var quantite =  $("#quantiteProduitLigne").val();
     var prix_unitaire = $("#prixProduitLigne").val();
@@ -665,11 +696,10 @@ function modifierLigneCommande(code_societe)
         }
     }).done(function(donnee)
     {   
-        console.log(donnee);
         $('#tableauDetailCommande').DataTable().destroy();
         obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse))
     }).fail(function(err)
     {
-        console.log(err);
+        alert("Une erreur est survenue");
     })
 }

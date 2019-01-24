@@ -25,14 +25,11 @@ $("table").delegate('.ligneTableauCommandes', 'click', function()
 {
     var numero_commande = 0;
     $(this).parents('tr').find('td').each(function(){
-        console.log($(this));
         if($(this).find("div").hasClass("numero_commande"))
         {
             numero_commande = $(this).children().attr('id');
-            console.log(numero_commande);
         }
     });
-    console.log(numero_commande);
     window.location.replace('../commande/' + numero_commande + '&' + recupererDossierClient(id_inverse));
 });
 
@@ -90,5 +87,21 @@ $("#tableauCommande").on('click', '.supprimerCommande', function()
         }
     });
     supprimerCommande(numero_commande, recupererDossierClient(id_inverse));
+});
+
+$("#tableauCommande").on('click', '.modifier', function()
+{
+    var numero_commande = $(this).attr('id').replace('modifier', '');
+    afficherDetailCommande(numero_commande, recupererDossierClient(id_inverse));
+});
+
+$(".modal").on('click', '#validerModificationCommande', function()
+{
+    modifierCommande($("#numero_commande").html());
+});
+
+$(".formBtn").on('click', '#cloturerModificationCommande', function()
+{
+    cloturerCommande($("#numero_commande").html());
 });
 

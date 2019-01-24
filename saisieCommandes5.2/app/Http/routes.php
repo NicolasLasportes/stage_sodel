@@ -28,3 +28,5 @@ Route::post('/ajouterCommande', 'tableauCommande@ajouterCommande');
 Route::post('/supprimerCommande', 'tableauCommande@supprimerCommande');
 
 Route::post('/modifierCommande', 'tableauCommande@modifierCommande');
+
+Route::post('/detailClientModification', 'tableauCommande@detailClientModification');
