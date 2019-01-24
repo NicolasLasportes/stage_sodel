@@ -86,6 +86,9 @@ function obtenirCommandeClient(dossier_client)
         $("#titre_client").empty().append("Commandes de " + listeDesCommandes[listeDesCommandes.length -1].nom_client);
         genererTableauCommande(listeDesCommandes);
         $('#tableauCommande').DataTable();
+    }).fail(function()
+    {
+        alert("Une erreur est survenue");
     });
 }
 
@@ -159,7 +162,7 @@ function cloturerCommande(numero_commande)
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    }).fail(function(err)
+    }).fail(function()
     {
         alert("Une erreur est survenue");
     });
@@ -186,6 +189,10 @@ function detailClient(dossier)
         }
     }).done(function(reponse)
     {
+        $("#identite").empty();
+        $("#tel").empty();
+        $("#email").empty();
+        $("#adresse").empty();
         $("#identite").append(reponse.nom_client);
         $("#tel").append(reponse.telephone_client);
         $("#email").append(reponse.mail_client);
@@ -200,7 +207,7 @@ function detailClient(dossier)
         $("#adresseLivraisonDeux").val(reponse.complement);
         $("#villeLivraison").val(reponse.ville_client);
         $("#codePostalLivraison").val(reponse.code_postal_client);
-    }).fail(function(err)
+    }).fail(function()
     {
         alert("Une erreur est survenue");
     });
@@ -227,7 +234,7 @@ function ajouterCommande()
     var ville_client = $("#ville_client").html();
     var code_postal_client = $("#code_postal_client").html();
 
-    if(reference == "" || type == "" || commentaire == "")
+    if(reference == "" || type == "")
     {
         alert("Veuillez remplir la partie 'La commande'.");
     }
@@ -276,7 +283,7 @@ function ajouterCommande()
         {
             $('#tableauCommande').DataTable().destroy();
             obtenirCommandeClient(reponse.dossier_client);
-        }).fail(function(err)
+        }).fail(function()
         {
             alert("Une erreur est survenue");
         });
@@ -297,11 +304,11 @@ function supprimerCommande(numero_commande, dossier_client)
         {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    }).done(function(reponse)
+    }).done(function()
     {
         $('#tableauCommande').DataTable().destroy();
         obtenirCommandeClient(dossier_client);
-    }).fail(function(err)
+    }).fail(function()
     {
         alert("Une erreur est survenue");
     });
@@ -343,7 +350,7 @@ function afficherDetailCommande(numero_commande, dossier)
         $("#villeLivraisonModifier").val(reponse.ville_livraison);
         $("#codePostalLivraisonModifier").val(reponse.code_postal_livraison);
         $("#numero_commande").html(reponse.numero_commande);
-    }).fail(function(err)
+    }).fail(function()
     {
         alert("Une erreur est survenue");
     });
@@ -386,11 +393,11 @@ function modifierCommande(numero_commande)
         {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    }).done(function(reponse)
+    }).done(function()
     {
         $('#tableauCommande').DataTable().destroy();
         obtenirCommandeClient(recupererDossierClient(id_inverse));
-    }).fail(function(err)
+    }).fail(function()
     {
         alert("Une erreur est survenue");
     });
@@ -423,6 +430,9 @@ function obtenirDetailCommande(id_commande, id_client)
     }).done(function(detailCommande)
     {
         verifierCommandeCloturer(recupererNumCommande(id_inverse), detailCommande);
+    }).fail(function()
+    {
+        alert("Une erreur est survenue");
     });
 }
 
@@ -448,9 +458,8 @@ function verifierCommandeCloturer(numero_commande, detailCommande)
     }).done(function(reponse)
     {
         genererTableauDetailCommande(detailCommande, reponse.cloturer_commande);
-    }).fail(function(err)
+    }).fail(function()
     {
-        alert("Une erreur est survenue");
         alert("Une erreur est survenue");
     });
 }
@@ -532,7 +541,6 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
                 "</tr>"
             );
         }
-        
     }
 
     var colonne_total = $(".total");
@@ -568,6 +576,9 @@ function obtenirProduits(dossier)
         {
             $("#suggestion_produit").append("<option value='" + produits[i].numero_produit + "'>" + produits[i].numero_produit + " [" + produits[i].designation_produit + "]" + "</option>");
         }
+    }).fail(function()
+    {
+        alert("Une erreur est survenue");
     });
 }
 
@@ -589,21 +600,22 @@ function ajouterLigne()
         var gratuit = "non";
         var numero_commande = recupererNumCommande(id_inverse); //la variable numero_commande contient le n° de commande actuel récupéré dans l'url
         var dossier = recupererDossierClient(id_inverse);
-        $("#referenceProduit").val("");
-        $("#quantiteProduit").val("");
-        $("#prixProduit").val("");
-        $('#gratuitProduit').prop("checked", false);
-    
-        if ($('#gratuitProduit').is(":checked"))
+        
+        if ($('#gratuitProduit').prop("checked"))
         {
             gratuit = "oui";
         }
-    
+
         if(prix_unitaire == "")
         {
             prix_unitaire = 0;
         }
-    
+        
+        $("#referenceProduit").val("");
+        $("#quantiteProduit").val("");
+        $("#prixProduit").val("");
+        $('#gratuitProduit').prop("checked", false);
+
         $.ajax({
             url: "../ajouterLigneCommande",
             type: "post",
@@ -623,6 +635,9 @@ function ajouterLigne()
         {
             $('#tableauDetailCommande').DataTable().destroy();
             obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
+        }).fail(function()
+        {
+            alert("Une erreur est survenue");
         });
     }
 }
@@ -646,12 +661,14 @@ function supprimerLigneCommande(code_produit)
     {   
         $('#tableauDetailCommande').DataTable().destroy();
         obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
+    }).fail(function()
+    {
+        alert("Une erreur est survenue");
     });
 }
 
 function formulaireModification(ligneCommande)
 {
-    var code_societe = ligneCommande[0];
     $("#referenceProduitLigne").val();
     $("#quantiteProduitLigne").val();
     $("#prixProduitLigne").val();
@@ -694,11 +711,11 @@ function modifierLigneCommande(code_societe)
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    }).done(function(donnee)
+    }).done(function()
     {   
         $('#tableauDetailCommande').DataTable().destroy();
         obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse))
-    }).fail(function(err)
+    }).fail(function()
     {
         alert("Une erreur est survenue");
     })

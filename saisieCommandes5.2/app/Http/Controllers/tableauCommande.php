@@ -14,10 +14,12 @@ class tableauCommande extends Controller
     public function afficherCommandeClient($dossier_client)
     {
         include '../../include/connexion.php';
-        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '" . $dossier_client . "' AND SOCTRA <> 'LIVRAISON'";
+        $toutesLesCommandes = [];
+        
+        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$dossier_client' AND SOCTRA <> 'LIVRAISON'";
+        
         $commandes = odbc_Exec($conn, $sql);
 
-        $toutesLesCommandes = [];
         while(odbc_fetch_row($commandes)) 
         {
             $numero_commande = trim(odbc_result($commandes, 'SONCDE'));
@@ -52,8 +54,7 @@ class tableauCommande extends Controller
     public function cloturerCommande(Request $request)
     {
         include '../../include/connexion.php';
-        $commande_a_cloturer = $request->all();
-        $commande_a_cloturer = array_values($commande_a_cloturer);
+        $commande_a_cloturer = array_values($request->all());
         $numero_commande = $commande_a_cloturer[0];
         
         $sql = "UPDATE FILCOMSOD.ENTSODP1 SET SOCTRA = 'IPAD' WHERE SONCDE = '$numero_commande'";

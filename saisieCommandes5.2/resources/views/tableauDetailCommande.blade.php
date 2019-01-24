@@ -14,12 +14,12 @@
         <div class="container-fluid">
             <div id="ligneOptions" class="row">
                 <div class="offset-md-1 col-md-2">
-                    <a href="{{ url()->previous() }}" class="btn btn-danger">Retour aux commandes</a>
+                    <button id="afficherFormAjoutProduit" class="btn" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter un produit</button>
                 </div>
                 <div class="col-md-2">
-                    <button id="afficherFormAjoutProduit" class="btn btn-success" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter un produit</button>
+                    <a href="{{ url()->previous() }}" id="retourCommandes"class="btn">Retour aux commandes</a>
                 </div>
-                <div class="col-md-2">
+                <div class="offset-md-5 col-md-2">
                     <a href="{{ url()->previous() }}" id="cloturerCommande" class="btn btn-primary">Clôturer cette commande</a>
                 </div>
             </div>
@@ -28,19 +28,18 @@
         <table id="tableauDetailCommande" class="table">
             <thead>
                 <tr id="headerDetailCommande">
-                    <th class="enteteTableauDetailCommande">Code</th>
-                    <th class="enteteTableauDetailCommande">Référence</th>
-                    <th class="enteteTableauDetailCommande">Désignation</th>
-                    <th class="enteteTableauDetailCommande">Quantité</th>
-                    <th class="enteteTableauDetailCommande">Prix</th>
-                    <th class="enteteTableauDetailCommande">Stock</th>
-                    <th class="enteteTableauDetailCommande">Gratuit</th>
-                    <th id="total_detail_commande" class="enteteTableauDetailCommande">Total</th>
+                    <th class="code_societe enteteTableauDetailCommande">Code</th>
+                    <th class="reference enteteTableauDetailCommande">Référence</th>
+                    <th class="designation enteteTableauDetailCommande">Désignation</th>
+                    <th class="quantite enteteTableauDetailCommande">Quantité</th>
+                    <th class="prix enteteTableauDetailCommande">Prix</th>
+                    <th class="stock enteteTableauDetailCommande">Stock</th>
+                    <th class="gratuit enteteTableauDetailCommande">Gratuit</th>
+                    <th id="total_detail_commande" class="totalEntete enteteTableauDetailCommande">Total</th>
                 </tr>
             </thead>
             <tbody id="corpsDetailCommande"></tbody>
         </table>
-        
 
         <!-- Formulaire d'ajout d'une ligne de commande 
         Le formulaire est affiché dans une modale créee avec bootstrap -->
@@ -75,7 +74,7 @@
                             </div>
                         </div>
                         <div class="formBtn">
-                            <button type="submit" id="validerLigne" data-toggle="modal" data-target=".bd-example-modal-lg" class="btnInForm btn btn-success">Valider</button>
+                            <button type="submit" id="validerLigne" class="btnInForm btn btn-success">Valider</button>
                         </div>
                     </div>
                 </div>

@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div id="ligneOptions" class="row">
                 <div class="offset-md-1 col-md-3">
-                    <button id="ajouterCommande" class="btn btn-success" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
+                    <button id="ajouterCommande" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
                 </div>
             </div>
         </div>     
@@ -98,12 +98,12 @@
                         </div>
                         <div class="form-row">
                             <div class="offset-md-1 col-md-4 form-group">
-                                <label for="villeLivraison">Ville</label>
-                                <input type="text" class="form-control" id="villeLivraison">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
                                 <label for="codePostalLivraison">Code Postal</label>
                                 <input type="text" class="form-control" id="codePostalLivraison">
+                            </div>
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="villeLivraison">Ville</label>
+                                <input type="text" class="form-control" id="villeLivraison">
                             </div>
                         </div>                            
                         <div class="formBtn">
@@ -135,8 +135,8 @@
                                 <div id="adresseModifier"></div> 
                                 <div id="complementModifier"></div>
                                 <div class="row">
-                                    <div class="col-md-4" id="villeModifier"></div>
-                                    <div class="offset-md-2 col-md-4" id="code_postalModifier"></div>
+                                    <div class="col-md-3" id="code_postalModifier"></div>
+                                    <div class="offset-md-1 col-md-4" id="villeModifier"></div>
                                 </div>  
                             </div>
                             <div class="offset-md-1 col-md-5 sectionFormulaire" id="parametreCommande">
@@ -184,14 +184,14 @@
                         </div>
                         <div class="form-row">
                             <div class="offset-md-1 col-md-4 form-group">
-                                <label for="villeLivraisonModifier">Ville</label>
-                                <input type="text" class="form-control" id="villeLivraisonModifier">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
                                 <label for="codePostalLivraisonModifier">Code Postal</label>
                                 <input type="text" class="form-control" id="codePostalLivraisonModifier">
                             </div>
-                        </div>                            
+                            <div class="offset-md-1 col-md-4 form-group">
+                                <label for="villeLivraisonModifier">Ville</label>
+                                <input type="text" class="form-control" id="villeLivraisonModifier">
+                            </div>
+                        </div>                      
                         <div class="formBtn row">
                             <div class="offset-md-3 col-md-3">
                                 <button id="validerModificationCommande" data-toggle="modal" data-target=".modifierCommande" class="btnInForm btn btn-success">Valider</button>

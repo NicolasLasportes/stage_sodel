@@ -9,6 +9,7 @@ else if(window.location.href.search("commande") != -1)
     obtenirProduits(recupererDossierClient(id_inverse));
     $("#afficherFormAjoutProduit").hide();
     $("#cloturerCommande").hide();
+    $("#titre_commande").append("Commande n°" + recupererNumCommande(id_inverse));
 }
 
 $("#ligneOptions").on('click', '#ajouterCommande', function()
@@ -105,3 +106,7 @@ $(".formBtn").on('click', '#cloturerModificationCommande', function()
     cloturerCommande($("#numero_commande").html());
 });
 
+$(".modal").on('shown.bs.modal', function()
+{
+    $("#referenceProduit").focus();
+});

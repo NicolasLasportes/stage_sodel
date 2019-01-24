@@ -14,11 +14,13 @@ class tableauDetailCommande extends Controller
     public function obtenirProduixCommande($id_commande, $id_client)
     {
         include '../../include/connexion.php';
-
-        $sql = "SELECT LOSOCI, CDPROD, LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$id_commande'";
-        $detailCommande = odbc_Exec($conn, $sql);
         
         $liste_commande = [];
+
+        $sql = "SELECT LOSOCI, CDPROD, LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$id_commande'";
+
+        $detailCommande = odbc_Exec($conn, $sql);
+        
         while(odbc_fetch_row($detailCommande))
         {
             $code_societe = trim(odbc_result($detailCommande, 'LOSOCI'));
@@ -58,36 +60,41 @@ class tableauDetailCommande extends Controller
     public function ajouterLigneCommande(Request $request)
     {
         include '../../include/connexion.php';
-        //header('Content-Type: application/json; Charset=UTF-8');
-        $produitAjouter = $request->all();
-        $produit = array_values($produitAjouter);
-        $numero_commande = $produit[0];
-        $reference_produit = $produit[1];
-        $quantite = $produit[2];
-        $prix_unitaire = $produit[3];
-        $dossier = $produit[4];
-        $gratuit = $produit[5];
 
+        $produitAjouter = array_values($request->all());
+
+        $numero_commande = $produitAjouter[0];
+        $reference_produit = $produitAjouter[1];
+        $quantite = $produitAjouter[2];
+        $prix_unitaire = $produitAjouter[3];
+        $dossier = $produitAjouter[4];
+        $gratuit = $produitAjouter[5];
+
+        
         $recuperer_donnees = "SELECT A0SOCI, WWPRNE FROM FILCOMSOD.PRINETP2 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' FETCH FIRST 1 ROWS ONLY";
+
         $result = odbc_Exec($conn, $recuperer_donnees);
 
         $code_societe = trim(odbc_result($result, 'A0SOCI'));
         $prix_unitaire_produit = trim(odbc_result($result, 'WWPRNE'));
+        
 
-        if($prix_unitaire == 0)
+        if($gratuit == "oui")
+        {
+            $prix_unitaire = 0;
+        }
+        else if($prix_unitaire == 0)
         {
             $prix_unitaire = $prix_unitaire_produit;
         }
         
-        if($gratuit == "true")
-        {
-            $prix_unitaire = 0;
-        }
 
         $sql = "INSERT INTO FILCOMSOD.LIGSODP1 VALUES ('$numero_commande', '$code_societe', '$reference_produit', '$quantite', '$prix_unitaire')";
+
         odbc_Exec($conn, $sql);
 
         $requeteStock = "SELECT WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP2 WHERE DOSSIER = '$dossier' AND A0PROD = '$reference_produit'";
+
         $resultatRequeteStock = odbc_Exec($conn, $requeteStock);
 
         $stock01 = trim(odbc_result($resultatRequeteStock, 'WWSTK01'));
@@ -114,12 +121,14 @@ class tableauDetailCommande extends Controller
     public function supprimerLigne(Request $request)
     {
         include '../../include/connexion.php';
-        $produitASupprimer = $request->all();
-        $donnees = array_values($produitASupprimer);
-        $numero_commande = $donnees[0];
-        $code_produit = $donnees[1];
+
+        $produitASupprimer = array_values($request->all());
+
+        $numero_commande = $produitASupprimer[0];
+        $code_produit = $produitASupprimer[1];
         
         $sql = "DELETE FROM LIGSODP1 WHERE LONCDE = '$numero_commande' AND CDPROD = '$code_produit'";
+
         odbc_Exec($conn, $sql);
 
         $affichageJson = [
@@ -133,8 +142,8 @@ class tableauDetailCommande extends Controller
     public function modifierLigne(Request $request)
     {
         include '../../include/connexion.php';
-        $resultatFormulaire = $request->all();
-        $ligneAModifier = array_values($resultatFormulaire);
+
+        $ligneAModifier = array_values($request->all());
 
         $numero_commande = $ligneAModifier[0];
         $code_societe = $ligneAModifier[1]; 
@@ -152,12 +161,14 @@ class tableauDetailCommande extends Controller
         if($gratuit === "false" && $prix_unitaire == 0)
         {
             $recuperer_prix_unitaire = "SELECT WWPRNE FROM FILCOMSOD.PRINETP2 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' FETCH FIRST 1 ROWS ONLY";
+            
             $result = odbc_Exec($conn, $recuperer_prix_unitaire);
             
             $prix_unitaire = trim(odbc_result($result, 'WWPRNE'));
         }
 
         $sql = "UPDATE FILCOMSOD.LIGSODP1 SET LOQTEE = '$quantite', LOPRIX = '$prix_unitaire' WHERE LONCDE = '$numero_commande' AND LOSOCI = '$code_societe' AND CDPROD = '$reference_produit'";
+        
         odbc_Exec($conn, $sql);
 
         $affichageJson = [
@@ -177,10 +188,9 @@ class tableauDetailCommande extends Controller
     {
         include '../../include/connexion.php';
 
-        $donnees = $request->all();
-        $code_commande = array_values($donnees);
+        $donnees = array_values($request->all());
         
-        $numero_commande = $code_commande[0];
+        $numero_commande = $donnees[0];
 
         $sql = "SELECT SOCTRA FROM FILCOMSOD.ENTSODP1 WHERE SONCDE = '$numero_commande'";
         $resultat = odbc_Exec($conn, $sql);

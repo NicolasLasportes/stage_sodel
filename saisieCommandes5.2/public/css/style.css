@@ -18,15 +18,25 @@ h1, h2, h3
     text-align:center;
 }
 
-.enteteTableauCommande
+.enteteTableauCommande 
 {
     background-color: rgb(117, 164, 41);
     width:12.5%;
 }
 
+#afficherFormAjoutProduit
+{
+    background-color: rgb(117, 164, 41);
+}
+
+#retourCommandes
+{
+    background-color: black;
+    color: white;
+}
+
 .enteteTableauDetailCommande
 {
-    width:11.1%;
     background-color: rgb(117, 164, 41);
 }
 
@@ -78,7 +88,7 @@ label
     max-height:50px;    
 }
 
-.supprimerCommande, .modifier, .numero_commande
+.supprimerCommande, .modifier, .numero_commande, .supprimer
 {
     border:none;
     background-color: white;
@@ -104,6 +114,7 @@ label
 td, tr
 {
     text-align:center;
+    font-size:100%;
 }
 
 .total
