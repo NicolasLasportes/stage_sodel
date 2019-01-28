@@ -28,7 +28,7 @@ class tableauDetailCommande extends Controller
             $quantite = trim(odbc_result($detailCommande, 'LOQTEE'));
             $prix_unitaire = trim(odbc_result($detailCommande, 'LOPRIX'));
             
-            $sql_produit = "SELECT A0SOCI, A0DESI, WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP2 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$id_client' AND A0SOCI = '$code_societe'";
+            $sql_produit = "SELECT A0SOCI, A0DESI, WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$id_client' AND F1QTE = '1' AND A0SOCI = '$code_societe'";
             $produit = odbc_Exec($conn, $sql_produit);
             
             while(odbc_fetch_row($produit))
@@ -41,10 +41,9 @@ class tableauDetailCommande extends Controller
                 $affichageJson = [
                     'code_societe' => $code_societe,
                     'reference_produit' => $reference_produit,
-                    'designation' => $designation,
                     'quantite' => $quantite,
                     'prix_unitaire' => $prix_unitaire,
-                    'designation_produit' => $designation,
+                    'designation_produit' => utf8_encode($designation),
                     'stock01' => $stock01,
                     'stock02' => $stock02,
                     'commentaire_produit' => $commentaire
@@ -71,7 +70,7 @@ class tableauDetailCommande extends Controller
         $gratuit = $produitAjouter[5];
 
         
-        $recuperer_donnees = "SELECT A0SOCI, WWPRNE FROM FILCOMSOD.PRINETP2 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' FETCH FIRST 1 ROWS ONLY";
+        $recuperer_donnees = "SELECT A0SOCI, WWPRNE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' AND F1QTE = '1' FETCH FIRST 1 ROWS ONLY";
 
         $result = odbc_Exec($conn, $recuperer_donnees);
 
@@ -93,7 +92,7 @@ class tableauDetailCommande extends Controller
 
         odbc_Exec($conn, $sql);
 
-        $requeteStock = "SELECT WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP2 WHERE DOSSIER = '$dossier' AND A0PROD = '$reference_produit'";
+        $requeteStock = "SELECT WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP1 WHERE DOSSIER = '$dossier' AND A0PROD = '$reference_produit'";
 
         $resultatRequeteStock = odbc_Exec($conn, $requeteStock);
 
@@ -160,7 +159,7 @@ class tableauDetailCommande extends Controller
 
         if($gratuit === "false" && $prix_unitaire == 0)
         {
-            $recuperer_prix_unitaire = "SELECT WWPRNE FROM FILCOMSOD.PRINETP2 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' FETCH FIRST 1 ROWS ONLY";
+            $recuperer_prix_unitaire = "SELECT WWPRNE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' FETCH FIRST 1 ROWS ONLY";
             
             $result = odbc_Exec($conn, $recuperer_prix_unitaire);
             

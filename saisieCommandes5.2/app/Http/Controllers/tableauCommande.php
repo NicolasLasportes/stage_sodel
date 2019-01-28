@@ -16,7 +16,7 @@ class tableauCommande extends Controller
         include '../../include/connexion.php';
         $toutesLesCommandes = [];
         
-        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$dossier_client' AND SOCTRA <> 'LIVRAISON'";
+        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF, SOVALI FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$dossier_client' AND SOCTRA <> 'LIVRAISON'";
         
         $commandes = odbc_Exec($conn, $sql);
 
@@ -27,14 +27,16 @@ class tableauCommande extends Controller
             $type_commande = trim(odbc_result($commandes, 'SOTYPO'));
             $date_commande = trim(odbc_result($commandes, 'SODATE'));
             $cloture_commande = trim(odbc_result($commandes, 'SOCTRA'));
-            $nom_client = trim(odbc_result($commandes, 'CENOMF'));
+            $nom_client = utf8_encode(trim(odbc_result($commandes, 'CENOMF')));
+            $sovali = trim(odbc_result($commandes, 'SOVALI'));
 
             $affichageJson = [
                 'numero_commande' => $numero_commande,
-                'reference_commande' => $reference_commande,
+                'reference_commande' => utf8_encode($reference_commande),
                 'type_commande' => $type_commande,
                 'date_commande' => $date_commande,
-                'cloture_commande' => $cloture_commande
+                'cloture_commande' => $cloture_commande,
+                'ventiler_commande' => $sovali
             ];
 
             array_push($toutesLesCommandes, $affichageJson);
@@ -43,7 +45,7 @@ class tableauCommande extends Controller
         $recuperer_nom_client = "SELECT TITNOM FROM FILCOMSOD.TIEWEBP1 WHERE DOSSIER = '$dossier_client'";
         $resultat = odbc_exec($conn, $recuperer_nom_client);
         $nom_client = [
-            'nom_client' => trim(odbc_result($resultat, 'TITNOM'))
+            'nom_client' => utf8_encode(trim(odbc_result($resultat, 'TITNOM')))
         ];
 
         array_push($toutesLesCommandes, $nom_client);
@@ -77,14 +79,14 @@ class tableauCommande extends Controller
         $sql = "SELECT TITELE, TITNOM, TSMEL1, TIADR1, TIADR2, TINVOI, TICPOS, TIVILL FROM TIEWEBP1 WHERE DOSSIER = '$dossier'";
         $resultat = odbc_Exec($conn, $sql);
 
-        $nom_client = trim(odbc_result($resultat, 'TITNOM'));
+        $nom_client = utf8_encode(trim(odbc_result($resultat, 'TITNOM')));
         $telephone_client = trim(odbc_result($resultat, 'TITELE'));
         $mail_client = trim(odbc_result($resultat, 'TSMEL1'));
-        $nom_voie_client = trim(odbc_result($resultat, 'TIADR1'));
-        $complement = trim(odbc_result($resultat, 'TIADR2'));
-        $num_voie_client = trim(odbc_result($resultat, 'TINVOI'));
+        $nom_voie_client = utf8_encode(trim(odbc_result($resultat, 'TIADR1')));
+        $complement = utf8_encode(trim(odbc_result($resultat, 'TIADR2')));
+        $num_voie_client = utf8_encode(trim(odbc_result($resultat, 'TINVOI')));
         $code_postal_client = trim(odbc_result($resultat, 'TICPOS'));
-        $ville_client = trim(odbc_result($resultat, 'TIVILL'));
+        $ville_client = utf8_encode(trim(odbc_result($resultat, 'TIVILL')));
 
         $affichageJson = [
             'nom_client' => $nom_client,
@@ -153,11 +155,20 @@ class tableauCommande extends Controller
         $result = odbc_exec($conn, $recuperer_pays_client);
         $pays = trim(odbc_result($result, 'TLLIBE'));
         
+        $commentaire_commande_encode = mb_convert_encoding($commentaire_commande, "iso-8859-1", "UTF-8");
+        $reference_commande_encode = mb_convert_encoding($reference_commande, "iso-8859-1", "UTF-8");
+        $nom_livraison_encode = mb_convert_encoding($nom_livraison, "iso-8859-1", "UTF-8");
+        $prenom_livraison_encode = mb_convert_encoding($prenom_livraison, "iso-8859-1", "UTF-8");
+        $adresse1_livraison_encode = mb_convert_encoding($adresse1_livraison, "iso-8859-1", "UTF-8");
+        $adresse2_livraison_encode = mb_convert_encoding($adresse2_livraison, "iso-8859-1", "UTF-8");
+        $ville_livraison_encode = mb_convert_encoding($ville_livraison, "iso-8859-1", "UTF-8");
+
         $ajouter_commande = "INSERT INTO FILCOMSOD.ENTSODP1 VALUES ('$numero_commande', '$date_du_jour', '$numero_client', '$nom_client', '$mail_client', '$adresse1_client', 
-        '$adresse2_client', '$adresse3_client', '$code_postal_client', '$ville_client', '$pays', '$telephone_client', '$prefixe_facture', '$nom_livraison', '$prenom_livraison', 
-        '$telephone_livraison', '$adresse1_livraison', '$adresse2_livraison', '$adresse3_livraison', '$code_postal_livraison', '$ville_livraison', '$pays_client', '$mail_livraison', 
-        '$telephone_livraison', '$cloturer', '$cout_transport', '$reference_commande', '$commentaire_commande', '$pdf', '$numero_ordre', '$numero_commande', '$type_commande', 
-        '$code_societe', '$code_client', '$dossier_client')";
+        '$adresse2_client', '$adresse3_client', '$code_postal_client', '$ville_client', '$pays', '$telephone_client', '$prefixe_facture', '$nom_livraison_encode', 
+        '$prenom_livraison_encode', '$telephone_livraison', '$adresse1_livraison_encode', '$adresse2_livraison_encode', '$adresse3_livraison', 
+        '$code_postal_livraison', '$ville_livraison_encode', '$pays_client', '$mail_livraison', '$telephone_livraison', '$cloturer', '$cout_transport', 
+        '$reference_commande_encode', '$commentaire_commande_encode', '$pdf', '$numero_ordre', '$numero_commande', '$type_commande', '$code_societe', '$code_client', 
+        '$dossier_client')";
 
         odbc_Exec($conn, $ajouter_commande);
         
@@ -176,8 +187,8 @@ class tableauCommande extends Controller
             'telephone_livraison' => $telephone_livraison,
             'adresse1_livraison' => $adresse1_livraison,
             'adresse2_livraison' => $adresse2_livraison,
-            'ville_livraison' => $ville_livraison,
             'code_postal_livraison' => $code_postal_livraison,
+            'ville_livraison' => $ville_livraison,
             'reference_commande' => $reference_commande,
             'type_commande' => $type_commande,
             'commentaire_commande' => $commentaire_commande,
@@ -227,25 +238,34 @@ class tableauCommande extends Controller
         $ville_livraison = $donnees[10];
         $code_postal_livraison = $donnees[11];
 
-        $sql = "UPDATE FILCOMSOD.ENTSODP1 SET CENOML = '$nom_livraison', SONOML = '$prenom_livraison', SOTELL = '$telephone_livraison', CEAD1L = '$adresse1_livraison', 
-        CEAD2L = '$adresse2_livraison', CEPOSL = '$code_postal_livraison', CELVIL = '$ville_livraison', SOMAIL = '$email_livraison', SOTEL2 = '$telephone_livraison', 
-        SOTYPO = '$type_commande', SOCOMM = '$commentaire_commande', CECREF = '$reference_commande' WHERE SONCDE = '$numero_commande'";
+        $reference_commande_encode = mb_convert_encoding($reference_commande, "iso-8859-1", "UTF-8");
+        $commentaire_commande_encode = mb_convert_encoding($commentaire_commande, "iso-8859-1", "UTF-8");
+        $nom_livraison_encode = mb_convert_encoding($nom_livraison, "iso-8859-1", "UTF-8");
+        $prenom_livraison_encode = mb_convert_encoding($prenom_livraison, "iso-8859-1", "UTF-8");
+        $adresse1_livraison_encode = mb_convert_encoding($adresse1_livraison, "iso-8859-1", "UTF-8");
+        $adresse2_livraison_encode = mb_convert_encoding($adresse2_livraison, "iso-8859-1", "UTF-8");
+        $ville_livraison_encode = mb_convert_encoding($ville_livraison, "iso-8859-1", "UTF-8");
+
+        $sql = "UPDATE FILCOMSOD.ENTSODP1 SET CENOML = '$nom_livraison_encode', SONOML = '$prenom_livraison_encode', SOTELL = '$telephone_livraison', 
+        CEAD1L = '$adresse1_livraison_encode', CEAD2L = '$adresse2_livraison_encode', CEPOSL = '$code_postal_livraison', CELVIL = '$ville_livraison_encode', 
+        SOMAIL = '$email_livraison', SOTEL2 = '$telephone_livraison', SOTYPO = '$type_commande', SOCOMM = '$commentaire_commande_encode', CECREF = '$reference_commande_encode' 
+        WHERE SONCDE = '$numero_commande'";
 
         odbc_Exec($conn, $sql);
 
         $reponse = [
             'numero_commande' => $numero_commande,
-            'nom_livraison' => $nom_livraison,
-            'prenom_livraison' => $prenom_livraison,
-            'mail_livraison' => $email_livraison,
+            'nom_livraison' => utf8_encode($nom_livraison_encode),
+            'prenom_livraison' => utf8_encode($prenom_livraison_encode),
             'telephone_livraison' => $telephone_livraison,
-            'adresse1_livraison' => $adresse1_livraison,
-            'adresse2_livraison' => $adresse2_livraison,
-            'ville_livraison' => $ville_livraison,
+            'adresse1_livraison' => utf8_encode($adresse1_livraison_encode),
+            'adresse2_livraison' => utf8_encode($adresse2_livraison_encode),
             'code_postal_livraison' => $code_postal_livraison,
-            'reference_commande' => $reference_commande,
+            'ville_livraison' => utf8_encode($ville_livraison_encode),
+            'mail_livraison' => $email_livraison,
+            'reference_commande' => utf8_encode($reference_commande_encode),
             'type_commande' => $type_commande,
-            'commentaire_commande' => $commentaire_commande
+            'commentaire_commande' => utf8_encode($commentaire_commande_encode)
         ];
 
         return $reponse;
@@ -265,24 +285,24 @@ class tableauCommande extends Controller
 
         $resultat = odbc_Exec($conn, $sql);
 
-        $nom_facture = trim(odbc_result($resultat, 'CENOMF'));
+        $nom_facture = utf8_encode(trim(odbc_result($resultat, 'CENOMF')));
         $telephone_facture = trim(odbc_result($resultat, 'SOTELF'));
         $mail_facture = trim(odbc_result($resultat, 'SOMAIF'));
-        $adresse1_facture = trim(odbc_result($resultat, 'SOAD1F'));
-        $adresse2_facture = trim(odbc_result($resultat, 'SOAD2F'));
+        $adresse1_facture = utf8_encode(trim(odbc_result($resultat, 'SOAD1F')));
+        $adresse2_facture = utf8_encode(trim(odbc_result($resultat, 'SOAD2F')));
         $code_postal_facture = trim(odbc_result($resultat, 'SOPOSF'));
-        $ville_facture = trim(odbc_result($resultat, 'SOLVIF'));
-        $nom_livraison = trim(odbc_result($resultat, 'CENOML'));
-        $prenom_livraison = trim(odbc_result($resultat, 'SONOML'));
+        $ville_facture = utf8_encode(trim(odbc_result($resultat, 'SOLVIF')));
+        $nom_livraison = utf8_encode(trim(odbc_result($resultat, 'CENOML')));
+        $prenom_livraison = utf8_encode(trim(odbc_result($resultat, 'SONOML')));
         $telephone_livraison = trim(odbc_result($resultat, 'SOTELL'));
         $mail_livraison = trim(odbc_result($resultat, 'SOMAIL'));
-        $adresse1_livraison = trim(odbc_result($resultat, 'CEAD1L'));
-        $adresse2_livraison = trim(odbc_result($resultat, 'CEAD2L'));
+        $adresse1_livraison = utf8_encode(trim(odbc_result($resultat, 'CEAD1L')));
+        $adresse2_livraison = utf8_encode(trim(odbc_result($resultat, 'CEAD2L')));
         $code_postal_livraison = trim(odbc_result($resultat, 'CEPOSL'));
-        $ville_livraison = trim(odbc_result($resultat, 'CELVIL'));
-        $reference_commande = trim(odbc_result($resultat, 'CECREF'));
+        $ville_livraison = utf8_encode(trim(odbc_result($resultat, 'CELVIL')));
+        $reference_commande = utf8_encode(trim(odbc_result($resultat, 'CECREF')));
         $type_commande = trim(odbc_result($resultat, 'SOTYPO'));
-        $commentaire_commande = trim(odbc_result($resultat, 'SOCOMM'));
+        $commentaire_commande = utf8_encode(trim(odbc_result($resultat, 'SOCOMM')));
 
         $affichageJson = [
             'numero_commande' => $numero_commande,

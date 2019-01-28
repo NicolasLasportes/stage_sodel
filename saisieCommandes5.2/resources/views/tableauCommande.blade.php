@@ -8,35 +8,36 @@
         <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../css/dataTables.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     </head>
     <body>
-        <h1 id="titre_client"></h1>
-        <div class="container-fluid">
-            <div id="ligneOptions" class="row">
-                <div class="offset-md-1 col-md-3">
-                    <button id="ajouterCommande" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
-                </div>
-            </div>
-        </div>     
-
-        <div id="monFormulaire">
-           
+        <div id="entetePageCommande">
+            <h2 id="titre_client"></h2>
+            <button class="close" id="fermerPage">
+                <img src="../images/fermer.png" alt="fermer" id="fermerPage">
+            </button>
         </div>
+        <div id="ligneOptions">
+            <button id="ajouterCommande" class="btn" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
+        </div>
+
         <table id="tableauCommande" class="table">
             <thead>
                 <tr>
+                    <th class="enteteTableauCommande"><i class='fas fa-pen-square'></i></th>
                     <th class="enteteTableauCommande">N° commande</th>
-                    <th class="enteteTableauCommande">Référence commande</th>
+                    <th class="enteteTableauCommande">Référence</th>
                     <th class="enteteTableauCommande">Type</th>
                     <th class="enteteTableauCommande">Date</th>
                     <th class="enteteTableauCommande">Clôturé</th>
+                    <th class="enteteTableauCommande">N° Cde AS400</th>
                     <th class="enteteTableauCommande">Options</th>
                 </tr>
             </thead>
             <tbody id="corpsTableauCommande"></tbody>
         </table>
 
-        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal fade bd-example-modal-lg" id="formulaireAjouterCommande" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -57,7 +58,7 @@
                             <div class="offset-md-1 col-md-5 sectionFormulaire" id="parametreCommande">
                                 <h3>La commande</h3>
                                 <label for="reference">Référence</label>       
-                                <input type="text" id="reference" class="form-control" placeholder="Référence de la commande">
+                                <input type="text" maxlength="25" id="reference" class="form-control" placeholder="Référence de la commande">
                                 <div class="note">Commande ou devis ?</div>
                                 <select class="form-control" name="commandeOuDevis" id="commandeOuDevis">
                                     <option value="CDE">Commande</option>
@@ -67,47 +68,49 @@
                                 <textarea class="form-control" name="notes" id="notes"></textarea>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="offset-md-1 col-md-10 sectionFormulaire">
-                                <h3>Livraison ( facultatif )</h3>
+                        <div id="parametreLivraisonFacultatif">
+                            <div class="form-row">
+                                <div class="offset-md-1 col-md-10 sectionFormulaire">
+                                    <h3>Livraison</h3>
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="nomLivraison">Nom du destinataire</label>
+                                    <input class="form-control" maxlength="40" type="text" id="nomLivraison">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="prenomLivraison">Prénom</label>
+                                    <input class="form-control" maxlength="40" type="text" id="prenomLivraison">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="emailLivraison">Email</label>
+                                    <input class="form-control" type="email" maxlength="80" id="emailLivraison">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="telephoneLivraison">Téléphone</label>
+                                    <input class="form-control" type="text" maxlength="20" id="telephoneLivraison">
+                                </div>
+                                <div class="offset-md-1 col-md-10 adresseLivraison form-group">
+                                    <label for="adresseLivraison">Adresse de livraison</label>
+                                    <input class="form-control" type="text" maxlength="30" id="adresseLivraison">
+                                </div>
+                                <div class="offset-md-1 col-md-10 adresseLivraisonDeux form-group">
+                                    <label for="adresseLivraisonDeux">Complément d'adresse</label>
+                                    <input class="form-control" type="text" maxlength="30" id="adresseLivraisonDeux" placeholder="facultatif">
+                                </div>
                             </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="nomLivraison">Nom du destinataire</label>
-                                <input class="form-control" type="text" id="nomLivraison">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="prenomLivraison">Prénom du destinataire</label>
-                                <input class="form-control" type="text" id="prenomLivraison">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="emailLivraison">Email du destinataire</label>
-                                <input class="form-control" type="email" id="emailLivraison">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="telephoneLivraison">Téléphone du destinataire</label>
-                                <input class="form-control" type="text" id="telephoneLivraison">
-                            </div>
-                            <div class="offset-md-1 col-md-10 adresseLivraison form-group">
-                                <label for="adresseLivraison">Adresse de livraison</label>
-                                <input class="form-control" type="text" id="adresseLivraison">
-                            </div>
-                            <div class="offset-md-1 col-md-10 adresseLivraisonDeux form-group">
-                                <label for="adresseLivraisonDeux">Adresse de livraison 2</label>
-                                <input class="form-control" type="text" id="adresseLivraisonDeux" placeholder="facultatif">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="codePostalLivraison">Code Postal</label>
-                                <input type="text" class="form-control" id="codePostalLivraison">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="villeLivraison">Ville</label>
-                                <input type="text" class="form-control" id="villeLivraison">
-                            </div>
-                        </div>                            
+                            <div class="form-row">
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="codePostalLivraison">Code Postal</label>
+                                    <input type="text" class="form-control" maxlength="5" id="codePostalLivraison">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="villeLivraison">Ville</label>
+                                    <input type="text" class="form-control" maxlength="26" id="villeLivraison">
+                                </div>
+                            </div>    
+                        </div>                        
                         <div class="formBtn">
-                            <button id="validerCommande" data-toggle="modal" data-target=".bd-example-modal-lg" class="btnInForm btn btn-success">Valider</button>
+                            <button id="validerCommande" class="btnInForm btn btn-success">Valider</button>
                         </div>
                     </div>
                 </div>
@@ -127,7 +130,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-row">
-                            <div class="offset-md-1 col-md-4 sectionFormulaire" id="parametreLivraisonDefaut">
+                            <div class="offset-md-1 col-md-4 sectionFormulaire" id="parametreLivraisonDefautModifier">
                                 <h3>Le client</h3>
                                 <div id="identiteModifier"></div>
                                 <div id="telModifier"></div>
@@ -153,51 +156,53 @@
                                 <div class="invisible" id="numero_commande"></div>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="offset-md-1 col-md-10 sectionFormulaire">
-                                <h3>Livraison ( facultatif )</h3>
+                        <div id="parametreLivraisonFacultatifModifier">
+                            <div class="form-row">
+                                <div class="offset-md-1 col-md-10 sectionFormulaire">
+                                    <h3>Livraison</h3>
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="nomLivraisonModifier">Nom du destinataire</label>
+                                    <input class="form-control" type="text" maxlength="40" id="nomLivraisonModifier">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="prenomLivraisonModifier">Prénom</label>
+                                    <input class="form-control" type="text" maxlength="40" id="prenomLivraisonModifier" placeholder="facultatif">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="emailLivraisonModifier">Email</label>
+                                    <input class="form-control" type="email" maxlength="80" id="emailLivraisonModifier" placeholder="facultatif">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="telephoneLivraisonModifier">Téléphone</label>
+                                    <input class="form-control" type="text" maxlength="20" id="telephoneLivraisonModifier">
+                                </div>
+                                <div class="offset-md-1 col-md-10 adresseLivraison form-group">
+                                    <label for="adresseLivraisonModifier">Adresse de livraison</label>
+                                    <input class="form-control" type="text" maxlength="30" id="adresseLivraisonModifier">
+                                </div>
+                                <div class="offset-md-1 col-md-10 adresseLivraisonDeux form-group">
+                                    <label for="adresseLivraisonDeuxModifier">Adresse de livraison 2</label>
+                                    <input class="form-control" type="text" maxlength="30" id="adresseLivraisonDeuxModifier" placeholder="facultatif">
+                                </div>
                             </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="nomLivraisonModifier">Nom du destinataire</label>
-                                <input class="form-control" type="text" id="nomLivraisonModifier">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="prenomLivraisonModifier">Prénom du destinataire</label>
-                                <input class="form-control" type="text" id="prenomLivraisonModifier">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="emailLivraisonModifier">Email du destinataire</label>
-                                <input class="form-control" type="email" id="emailLivraisonModifier">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="telephoneLivraisonModifier">Téléphone du destinataire</label>
-                                <input class="form-control" type="text" id="telephoneLivraisonModifier">
-                            </div>
-                            <div class="offset-md-1 col-md-10 adresseLivraison form-group">
-                                <label for="adresseLivraisonModifier">Adresse de livraison</label>
-                                <input class="form-control" type="text" id="adresseLivraisonModifier">
-                            </div>
-                            <div class="offset-md-1 col-md-10 adresseLivraisonDeux form-group">
-                                <label for="adresseLivraisonDeuxModifier">Adresse de livraison 2</label>
-                                <input class="form-control" type="text" id="adresseLivraisonDeuxModifier" placeholder="facultatif">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="codePostalLivraisonModifier">Code Postal</label>
-                                <input type="text" class="form-control" id="codePostalLivraisonModifier">
-                            </div>
-                            <div class="offset-md-1 col-md-4 form-group">
-                                <label for="villeLivraisonModifier">Ville</label>
-                                <input type="text" class="form-control" id="villeLivraisonModifier">
+                            <div class="form-row">
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="codePostalLivraisonModifier">Code Postal</label>
+                                    <input type="text" class="form-control" maxlength="5" id="codePostalLivraisonModifier">
+                                </div>
+                                <div class="offset-md-1 col-md-4 form-group">
+                                    <label for="villeLivraisonModifier">Ville</label>
+                                    <input type="text" class="form-control" maxlength="26" id="villeLivraisonModifier">
+                                </div>
                             </div>
                         </div>                      
                         <div class="formBtn row">
                             <div class="offset-md-3 col-md-3">
-                                <button id="validerModificationCommande" data-toggle="modal" data-target=".modifierCommande" class="btnInForm btn btn-success">Valider</button>
+                                <button id="validerModificationCommande" class="btnInForm btn btn-success">Valider</button>
                             </div>
                             <div class="col-md-3">
-                                <button id="cloturerModificationCommande" data-toggle="modal" data-target=".modifierCommande" class="btnInForm btn btn-primary">Clôturer</button>
+                                <button id="cloturerModificationCommande" class="btnInForm btn btn-primary">Clôturer</button>
                             </div>
                         </div>
                     </div>

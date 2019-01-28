@@ -20,13 +20,26 @@ h1, h2, h3
 
 .enteteTableauCommande 
 {
-    background-color: rgb(117, 164, 41);
-    width:12.5%;
+    background-color: #63B3D6;
+    color:white;
+    width:11.1%;
 }
 
 #afficherFormAjoutProduit
 {
-    background-color: rgb(117, 164, 41);
+    background-color: #5CBC65;
+}
+
+#cloturerCommande
+{
+    background-color: #63B3D6; 
+}
+
+#ajouterCommande
+{
+    background-color: #63B3D6; 
+    border-color:  #63B3D6;
+    float:left;
 }
 
 #retourCommandes
@@ -37,13 +50,13 @@ h1, h2, h3
 
 .enteteTableauDetailCommande
 {
-    background-color: rgb(117, 164, 41);
+    background-color: #5CBC65;
 }
 
 .formBtn
 {
-    margin-top: 10%;
-    margin-bottom: 10%;
+    margin-top: 2%;
+    margin-bottom: 2%;
     text-align: center;
 }
 
@@ -88,10 +101,10 @@ label
     max-height:50px;    
 }
 
-.supprimerCommande, .modifier, .numero_commande, .supprimer
+.supprimerCommande, .numero_commande, .supprimer
 {
     border:none;
-    background-color: white;
+    background-color: #e1e1e1;
 }
 
 .invisible
@@ -104,17 +117,10 @@ label
     width:100%;
 }
 
-.ligneTableauCommandes
-{
-    margin-top: 5%;
-    padding-bottom: 5%;
-    padding-top:5%; 
-}
-
-td, tr
+td, th
 {
     text-align:center;
-    font-size:100%;
+    font-size:80%;
 }
 
 .total
@@ -126,3 +132,80 @@ td, tr
 {
     width:30%;
 }
+
+.afficherTotal
+{
+    text-align:right;    
+    margin-right: 10%;
+    font-weight:bold;
+}
+
+.ajouterProduit
+{
+    margin-top:3%;
+    margin-right:2%;
+}
+.retourCommandes
+{
+    margin-top:3%;
+}
+.cloturerCommande
+{
+    margin-top:3%;
+    float:right;
+    margin-right:2%;
+}
+
+.designation
+{
+    font-size: 55%;
+}
+
+body, td
+{
+    background-color: #e1e1e1;
+}
+
+table 
+{
+    border-collapse: collapse;
+}
+  
+table, th, td 
+{
+    border: 1px solid #e6e6e6;
+}
+
+#tableauCommande_wrapper
+{
+    margin-top:3%;
+}
+
+#fermerPage
+{
+    float:right;
+}
+
+#reference, #commandeOuDevis, #notes, #referenceModifier, #commandeOuDevisModifier, #notesModifier
+{
+    width:80% !important;
+}
+
+#adresseLivraison, #adresseLivraisonDeux
+{
+    width:90%;
+}
+
+#parametreLivraisonDefaut, #parametreLivraisonFacultatif, #parametreLivraisonDefautModifier, #parametreLivraisonFacultatifModifier
+{
+    background-color: #e1e1e1;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#parametreLivraisonFacultatif, #parametreLivraisonFacultatifModifier
+{
+    margin-top: 5%;
+}
+
+

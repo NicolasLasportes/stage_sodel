@@ -10,7 +10,7 @@ class produits extends Controller
     {
         include '../../include/connexion.php';
 
-        $sql = "SELECT A0PROD, A0DESI FROM FILCOMSOD.PRINETP2 WHERE DOSSIER = '" . $dossier . "'";
+        $sql = "SELECT A0PROD, A0DESI FROM FILCOMSOD.PRINETP1 WHERE DOSSIER = '$dossier' AND F1QTE = '1'";
 
         $produits = odbc_Exec($conn, $sql);
         $tous_les_produits = [];

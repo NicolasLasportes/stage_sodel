@@ -10,45 +10,38 @@
         <link rel="stylesheet" type="text/css" href="../css/dataTables.min.css">
     </head>
     <body>
-        <h1 id="titre_commande"></h1>
-        <div class="container-fluid">
-            <div id="ligneOptions" class="row">
-                <div class="offset-md-1 col-md-2">
-                    <button id="afficherFormAjoutProduit" class="btn" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter un produit</button>
-                </div>
-                <div class="col-md-2">
-                    <a href="{{ url()->previous() }}" id="retourCommandes"class="btn">Retour aux commandes</a>
-                </div>
-                <div class="offset-md-5 col-md-2">
-                    <a href="{{ url()->previous() }}" id="cloturerCommande" class="btn btn-primary">Clôturer cette commande</a>
-                </div>
-            </div>
+        <h3 id="titre_commande"></h3>
+        <div class="boutonsDetailCommande">
+            <button id="afficherFormAjoutProduit" class="btn ajouterProduit" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter un produit</button>
+            <a href="{{ url()->previous() }}" id="retourCommandes"class="btn retourCommandes">Retour aux commandes</a>
+            <a href="{{ url()->previous() }}" id="cloturerCommande" class="btn cloturerCommande">Clôturer cette commande</a>
         </div>
 
         <table id="tableauDetailCommande" class="table">
             <thead>
                 <tr id="headerDetailCommande">
-                    <th class="code_societe enteteTableauDetailCommande">Code</th>
-                    <th class="reference enteteTableauDetailCommande">Référence</th>
-                    <th class="designation enteteTableauDetailCommande">Désignation</th>
-                    <th class="quantite enteteTableauDetailCommande">Quantité</th>
-                    <th class="prix enteteTableauDetailCommande">Prix</th>
-                    <th class="stock enteteTableauDetailCommande">Stock</th>
-                    <th class="gratuit enteteTableauDetailCommande">Gratuit</th>
+                    <th class="enteteTableauDetailCommande">Code</th>
+                    <th class="enteteTableauDetailCommande">Référence</th>
+                    <th class="enteteTableauDetailCommande">Désignation</th>
+                    <th class="enteteTableauDetailCommande">Quantité</th>
+                    <th class="enteteTableauDetailCommande">Prix</th>
+                    <th class="enteteTableauDetailCommande">Stock</th>
+                    <th class="enteteTableauDetailCommande">Gratuit</th>
                     <th id="total_detail_commande" class="totalEntete enteteTableauDetailCommande">Total</th>
                 </tr>
             </thead>
             <tbody id="corpsDetailCommande"></tbody>
         </table>
+        <div class="afficherTotal"></div>
 
         <!-- Formulaire d'ajout d'une ligne de commande 
         Le formulaire est affiché dans une modale créee avec bootstrap -->
 
-        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal fade bd-example-modal-lg" id="formulaireAjouterLigneCommande" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2>Ajouter un produit</h2>
+                        <h3>Ajouter un produit</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
@@ -57,12 +50,12 @@
                         <div class="form-row">
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="referenceProduit">Référence du produit</label>
-                                <input list="suggestion_produit" type="text" class="form-control" id="referenceProduit" placeholder="Chercher un produit par son nom">
+                                <input list="suggestion_produit" type="text" class="form-control" id="referenceProduit" placeholder="Chercher un produit par son nom ou sa référence">
                                 <datalist id="suggestion_produit"></datalist>
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="quantiteProduit">Quantité</label>
-                                <input type="number" class="form-control" id="quantiteProduit">
+                                <input type="number" value="1" class="form-control" id="quantiteProduit">
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="prixProduit">Prix unitaire</label>
@@ -76,6 +69,15 @@
                         <div class="formBtn">
                             <button type="submit" id="validerLigne" class="btnInForm btn btn-success">Valider</button>
                         </div>
+                        <div id="dernierLigneSaisie">Derniere ligne saisie :</div>
+                        <div class="container">
+                            <div class="row" id="infoAjoutLigneCommande">
+                                <div id="referenceProduitAjout"></div>
+                                <div id="quantiteProduitAjout"></div>
+                                <div id="prixUnitaireProduit"></div>
+                                <div id="stockProduitAjout"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,6 +85,7 @@
 
         <!-- Formulaire de modification d'une ligne pour une commande 
         Le formulaire est affiché dans une modale créee les classes avec bootstrap -->
+        
         <div id="formulaireModifierLigneCommande" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -112,7 +115,7 @@
                             </div>
                         </div>
                         <div class="formBtn">
-                            <button id="validerModificationLigne" class="btnInForm btn btn-success" data-toggle="modal" data-target="#formulaireModifierLigneCommande">Valider</button>
+                            <button id="validerModificationLigne" data-toggle="modal" data-target="#formulaireModifierLigneCommande" class="btnInForm btn btn-success">Valider</button>
                         </div>
                     </div>
                 </div>
