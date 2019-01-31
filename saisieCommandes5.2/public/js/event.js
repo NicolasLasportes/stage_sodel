@@ -1,10 +1,31 @@
-if(window.location.href.search("client") != -1)
+if(window.location.href.search("clients") != -1)
 {
+    page_courante = "panierRepresentant";
+    recupererCleCommercial(id_inverse);
+    if(nom_commercial == "Tous secteurs")
+    {
+        $("#titre_client").empty().append(nom_commercial);
+    }
+    else
+    {
+        $("#titre_client").empty().append("Commandes secteur : " + nom_commercial);
+    }
+    obtenirListeCommandes(cle_commercial);
+}
+
+else if(window.location.href.search("client") != -1)
+{
+    page_courante = "listeCommandes";
     obtenirCommandeClient(id_client);
 }
 
 else if(window.location.href.search("commande") != -1)
 {
+    page_courante = "commande";
+    if(window.location.href.search("#consulter") != -1)
+    {
+        page_courante = "consulterCommande";
+    }
     obtenirDetailCommande(recupererNumCommande(id_inverse),recupererDossierClient(id_inverse));
     obtenirProduits(recupererDossierClient(id_inverse));
     $("#afficherFormAjoutProduit").hide();
@@ -29,13 +50,20 @@ $(".modal-body").on('click', '#validerCommande', function()
 $("table").delegate('.ligneTableauCommandes', 'click', function()
 {
     var numero_commande = 0;
+    var dossier = "";
+    var affichageTableau = "";
     $(this).parents('tr').find('td').each(function(){
-        if($(this).find("div").hasClass("numero_commande"))
+        if($(this).hasClass("numero_commande"))
         {
-            numero_commande = $(this).children().attr('id');
+            numero_commande = $(this).attr('id');
+            dossier = $(this).data("dossier");
         }
     });
-    window.location.replace('../commande/' + numero_commande + '&' + recupererDossierClient(id_inverse));
+    if(page_courante == "panierRepresentant")
+    {
+        affichageTableau = "#consulter";
+    }
+    window.location.replace('../commande/' + numero_commande + '&' + dossier + affichageTableau);
 });
 
 $(".modal").on('click', '#validerLigne', function()
@@ -92,9 +120,9 @@ $("#tableauCommande").on('click', '.supprimerCommande', function()
     var numero_commande;
     $(this).parents('tr').find('td').each(function()
     {
-        if($(this).children('div').hasClass('numero_commande'))
+        if($(this).hasClass('numero_commande'))
         {
-            numero_commande = $(this).children('div').html();
+            numero_commande = $(this).html();
         }
     });
     if(confirm("Êtes-vous sûr de vouloir supprimer cette commande ?")) 
@@ -128,3 +156,4 @@ $("#entetePageCommande").on('click', '#fermerPage', function()
 {
     window.close();
 });
+

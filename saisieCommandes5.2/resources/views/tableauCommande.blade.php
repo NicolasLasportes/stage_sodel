@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>tableau commandes</title>
+        <title>Commandes</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
@@ -11,11 +11,17 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     </head>
     <body>
-        <div id="entetePageCommande">
-            <h2 id="titre_client"></h2>
-            <button class="close" id="fermerPage">
-                <img src="../images/fermer.png" alt="fermer" id="fermerPage">
-            </button>
+        <div id="entetePageCommande" class="container">
+            <div class="row">
+                <div class="col-md-10">
+                    <h2 id="titre_client"></h2>
+                </div>
+                <div id="retour" class="offset-md-1 col-md-1">
+                    <button class="close" id="fermerPage">
+                        <img src="../images/fermer.png" alt="fermer" class="fermerModale">
+                    </button>
+                </div>
+            </div>
         </div>
         <div id="ligneOptions">
             <button id="ajouterCommande" class="btn" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
@@ -24,14 +30,16 @@
         <table id="tableauCommande" class="table">
             <thead>
                 <tr>
-                    <th class="enteteTableauCommande"><i class='fas fa-pen-square'></i></th>
+                    <th id="enteteTableauModifier" class="enteteTableauCommande"><i class='fas fa-pen-square'></i></th>
+                    <th id="enteteTableauNom" class="enteteTableauCommande">Nom</th>
                     <th class="enteteTableauCommande">N° commande</th>
                     <th class="enteteTableauCommande">Référence</th>
                     <th class="enteteTableauCommande">Type</th>
                     <th class="enteteTableauCommande">Date</th>
                     <th class="enteteTableauCommande">Clôturé</th>
                     <th class="enteteTableauCommande">N° Cde AS400</th>
-                    <th class="enteteTableauCommande">Options</th>
+                    <th id="enteteTableauSupprimer" class="enteteTableauCommande">Options</th>
+                    <th id="nom_representant" class="enteteTableauCommande">Nom du représentant</th>
                 </tr>
             </thead>
             <tbody id="corpsTableauCommande"></tbody>
@@ -43,7 +51,7 @@
                     <div class="modal-header">
                         <h2>Ajouter une commande</h2>
                         <button class="close" data-dismiss="modal" aria-label="Close">
-                            <img src="../images/fermer.png" alt="fermer" id="fermerModale">
+                            <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
                     </div>
                     <div class="modal-body">
@@ -59,7 +67,7 @@
                                 <h3>La commande</h3>
                                 <label for="reference">Référence</label>       
                                 <input type="text" maxlength="25" id="reference" class="form-control" placeholder="Référence de la commande">
-                                <div class="note">Commande ou devis ?</div>
+                                <div class="note">Commande ou devis</div>
                                 <select class="form-control" name="commandeOuDevis" id="commandeOuDevis">
                                     <option value="CDE">Commande</option>
                                     <option value="DEV">Devis</option>
@@ -67,6 +75,10 @@
                                 <div class="note">Notes</div>
                                 <textarea class="form-control" name="notes" id="notes"></textarea>
                             </div>
+                        </div>
+                        <div id="parametreClient">
+                            <input type="hidden" id="num_representant">
+                            <input type="hidden" id="cle_representant">
                         </div>
                         <div id="parametreLivraisonFacultatif">
                             <div class="form-row">
@@ -125,7 +137,7 @@
                     <div class="modal-header">
                         <h2>Modifier une commande</h2>
                         <button class="close" data-dismiss="modal" aria-label="Close">
-                            <img src="../images/fermer.png" alt="fermer" id="fermerModale">
+                            <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
                     </div>
                     <div class="modal-body">
@@ -146,7 +158,7 @@
                                 <h3>La commande</h3>
                                 <label for="referenceModifier">Référence</label>       
                                 <input type="text" id="referenceModifier" class="form-control" placeholder="Référence de la commande">
-                                <div class="noteModifier">Commande ou devis ?</div>
+                                <div class="noteModifier">Commande ou devis</div>
                                 <select class="form-control" name="commandeOuDevisModifier" id="commandeOuDevisModifier">
                                     <option value="CDE">Commande</option>
                                     <option value="DEV">Devis</option>

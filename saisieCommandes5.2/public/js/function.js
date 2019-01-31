@@ -1,13 +1,18 @@
 var id_inverse = [];
 var id_client = "";
 var genererColonneOptions = true;
-var current_url = window.location.href.split('');
+var url_actuelle = window.location.href.split('');
 var afficher_dernier_produit = false;
 var reference_dernier_produit = "";
+var page_courante = "";
+var cle_commercial = [];
+var nom_commercial = [];
+var code_T = [];
+var direction = false;
 
-for(var i = current_url.length - 1; i >= 0; i--)
+for(var i = url_actuelle.length - 1; i >= 0; i--)
 {
-    if(current_url[i] == "/")
+    if(url_actuelle[i] == "/")
     {
         
         for(var j = id_inverse.length - 1; j >= 0; j--)
@@ -19,7 +24,7 @@ for(var i = current_url.length - 1; i >= 0; i--)
     
     else
     {
-        id_inverse.push(current_url[i]);
+        id_inverse.push(url_actuelle[i]);
     }
 }
 
@@ -65,6 +70,42 @@ function recupererDossierClient(url)
     return (dossier);
 }
 
+function recupererCleCommercial(url)
+{
+    var tableau_a_remplir = 1;
+  
+    for( var i = url.length - 1; i >= 0; i--)
+    {
+        if(url[i] == "&")
+        {
+            tableau_a_remplir++;
+        }
+
+        else if(tableau_a_remplir == 1)
+        {
+            cle_commercial.push(url[i]);
+        }
+
+        else if(tableau_a_remplir == 2)
+        {
+            nom_commercial.push(url[i]);
+        }
+    }
+
+    cle_commercial = cle_commercial.join('');
+    nom_commercial = nom_commercial.join('');
+
+    if(nom_commercial == "code=T")
+    {
+        direction = true;
+        nom_commercial = "Tous secteurs";
+    }
+    else
+    {
+        nom_commercial = nom_commercial.replace("intitule=", "").replace("%20", " ");
+    }
+}
+
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -91,37 +132,97 @@ function obtenirCommandeClient(dossier_client)
         }
     }).done(function(listeDesCommandes)
     {
+        console.log(listeDesCommandes)
         $("#titre_client").empty().append("Commandes de " + listeDesCommandes[listeDesCommandes.length -1].nom_client);
-        genererTableauCommande(listeDesCommandes);
-        $('#tableauCommande').DataTable({
-            "order": [[ 1, "desc" ]]
-        });
+        if(listeDesCommandes[listeDesCommandes.length -1].nom_client != undefined)
+        {
+            listeDesCommandes.splice(-1, 1);
+
+        }
+        if(listeDesCommandes.length >=  0)
+        {
+            console.log(listeDesCommandes)
+            genererTableauCommande(listeDesCommandes, 0);
+            $('#tableauCommande').DataTable({
+                "order": [[ 1, "desc" ]]
+            });
+        }
+        else
+        {
+            $('#tableauCommande').DataTable({
+                "order": [[ 1, "desc" ]]
+            });
+        }
     }).fail(function()
     {
         alert("Une erreur est survenue");
     });
 }
 
-function genererTableauCommande(commandes)
+function genererTableauCommande(commandes, interface)
 {
     var cloturer; 
     var modification;
     var suppression;
+    var nom;
+    var nom_representant = "";
     $("#corpsTableauCommande").empty();
-    for(var i = 0; i < commandes.length -1; i++)
+    for(var i = 0; i < commandes.length; i++)
     {
-        if(commandes[i].cloture_commande == "")
+        if(commandes[i].nom_representant != undefined)
+        {   
+            nom_representant = "<td>" + commandes[i].nom_representant + "</td>";
+        }
+        else
+        {
+            $("#nom_representant").remove();
+        }
+ 
+        if(commandes[i].cloture_commande == "IPAD")
+        {
+            cloturer = "Oui";
+        }
+        else if(commandes[i].cloture_commande == "")
         {
             cloturer = "";
-            modification = "<td><button data-toggle='modal' data-target='.modifierCommande'" +"class='modifier btn btn-dark a-btn-slide-text' id='modifier" + 
+        }
+
+        if(interface == 1)
+        {
+
+            if(commandes[i].nom_client != commandes[i].nom_client_livraison || commandes[i].adresse_facture != commandes[i].adresse_livraison || commandes[i].ville_facture != commandes[i].ville_livraison || commandes[i].code_postal_livraison != commandes[i].code_postal_facture)
+            {
+                nom = "<td class='ligneTableauCommandes'>" + commandes[i].nom_client + "<br> Livré à : " + commandes[i].nom_client_livraison + " " +
+                commandes[i].adresse_livraison + " " + commandes[i].complement_livraison + " " + commandes[i].code_postal_livraison + " " +
+                commandes[i].ville_livraison + "</td>";
+            }
+            else
+            {
+                nom = "<td class='ligneTableauCommandes'>" + commandes[i].nom_client + "</td>";
+            }
+
+            modification = "";
+            suppression = "";
+            $("#enteteTableauModifier").remove();
+            $("#enteteTableauSupprimer").remove();
+            $("#ajouterCommande").hide();
+        }
+
+        else if(interface == 0 && cloturer == "")
+        {
+            $("#enteteTableauNom").remove();
+            nom = "";
+            modification = "<td><button data-toggle='modal' data-target='.modifierCommande'" + "class='modifier btn btn-dark a-btn-slide-text' id='modifier" + 
             commandes[i].numero_commande + "'>" + "<i class='fas fa-pen-square'></i></button></td>";
             
             suppression = "<td><button class='supprimerCommande' id='supprimer" + commandes[i].numero_commande + 
             "'><img src='../images/corbeille24.png' alt='supprimer'></button></td>";
         }
-        else
+
+        else if(interface == 0 && cloturer == "Oui")
         {
-            cloturer = "Oui";
+            $("#enteteTableauNom").remove();
+            nom = "";
             modification = "<td></td>";
             suppression = "<td></td>";
         }
@@ -130,6 +231,7 @@ function genererTableauCommande(commandes)
         {
             ventiler_commande = "";
         }
+
         else
         {
             ventiler_commande = commandes[i].ventiler_commande;
@@ -138,13 +240,16 @@ function genererTableauCommande(commandes)
         $("#corpsTableauCommande").append(
             "<tr>" + 
                 modification +
-                "<td><div id='" + commandes[i].numero_commande + "' class='ligneTableauCommandes numero_commande'>" + commandes[i].numero_commande + "</div></td>" + 
-                "<td><div class='ligneTableauCommandes'>" + commandes[i].reference_commande + "</div></td>" + 
-                "<td><div class='ligneTableauCommandes'>" + commandes[i].type_commande + "</div></td>" + 
-                "<td><div class='ligneTableauCommandes'>" + afficherDate(commandes[i].date_commande) + "</div></td>" + 
-                "<td><div class='ligneTableauCommandes'>" + cloturer + "</div></td>" + 
-                "<td><div class='ligneTableauCommandes'>" + ventiler_commande + "</div></td>" +
+                nom +
+                "<td data-dossier='" + commandes[i].dossier + "'id='" + commandes[i].numero_commande + "' class='ligneTableauCommandes numero_commande'>" + 
+                    commandes[i].numero_commande + "</td>" + 
+                "<td class='ligneTableauCommandes'>" + commandes[i].reference_commande + "</td>" + 
+                "<td class='ligneTableauCommandes'>" + commandes[i].type_commande + "</td>" + 
+                "<td class='ligneTableauCommandes'>" + afficherDate(commandes[i].date_commande) + "</td>" + 
+                "<td class='ligneTableauCommandes'>" + cloturer + "</td>" + 
+                "<td class='ligneTableauCommandes'>" + ventiler_commande + "</td>" +
                 suppression + 
+                nom_representant +
             "</tr>"
         );
     }
@@ -216,6 +321,9 @@ function detailClient(dossier)
         reponse.complement + "</div><div id='numero_voie_client'> " + reponse.num_voie_client + "</div><div class='row'><div class='col-md-3' id='code_postal_client'>" + 
         reponse.code_postal_client + "</div><div class='col-md-6' id='ville_client'>" + reponse.ville_client + "</div>");
 
+        $("#cle_representant").val(reponse.cle_representant);
+        $("#num_representant").val(reponse.numero_representant);
+
         $("#nomLivraison").val(reponse.nom_client); 
         $("#emailLivraison").val(reponse.mail_client); 
         $("#telephoneLivraison").val(reponse.telephone_client);
@@ -249,6 +357,8 @@ function ajouterCommande()
     var adresse2_client = $("#complement_adresse_client").html();
     var ville_client = $("#ville_client").html();
     var code_postal_client = $("#code_postal_client").html();
+    var cle_representant = $("#cle_representant").val();
+    var numero_representant = $("#num_representant").val();
 
     if(reference.length > 25)
     {
@@ -289,10 +399,12 @@ function ajouterCommande()
     {
         alert("Veuillez remplir la référence de la commande");
     }
+
     else if(nom_livraison == "" || adresse1_livraison == "" || ville_livraison == "" || code_postal_livraison == "")
     {
         alert("Veuillez remplir la partie 'Livraison'.");
     }
+
     else
     {
         $.ajax({
@@ -318,7 +430,9 @@ function ajouterCommande()
                 reference_commande: reference,
                 type_commande: type,
                 commentaire_commande: commentaire,
-                dossier_client: recupererDossierClient(id_inverse)
+                dossier_client: recupererDossierClient(id_inverse),
+                cle_representant: cle_representant,
+                num_representant: numero_representant
             },
             statusCode : 
             {
@@ -335,7 +449,7 @@ function ajouterCommande()
             window.location.replace('../commande/' + reponse.numero_commande + '&' + reponse.dossier_client + "#ajouterProduit");
         }).fail(function()
         {
-            alert("Une erreur est survenue");
+           alert("Une erreur est survenue.");
         });
     }
 }
@@ -568,14 +682,7 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
     $("#corpsDetailCommande").empty();
     var total = 0;
 
-    if(cloturer_commande == "IPAD")
-    {
-        $("#headerDetailCommande").find('th').each(function() 
-        {
-            $(this).removeClass('enteteTableauDetailCommande').addClass('enteteTableauCommande');
-        }); 
-    }
-    else if(cloturer_commande == "" && genererColonneOptions == true)
+    if(cloturer_commande == "" && genererColonneOptions == true && page_courante != "consulterCommande")
     {
         $("#afficherFormAjoutProduit").show();
         $("#cloturerCommande").show();
@@ -607,7 +714,7 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
             gratuit = "";
         }
 
-        if(cloturer_commande == 'IPAD')
+        if(cloturer_commande == 'IPAD' || page_courante == "consulterCommande")
         {
             $("#corpsDetailCommande").append(
                 "<tr>" +
@@ -659,7 +766,7 @@ function obtenirProduits(dossier)
     $.ajax({
         url : '../listeProduits/' + dossier,
         type : 'POST',
-        contentType : "json",
+        dataType : "json",
         statusCode : 
         {
             404:function()
@@ -672,10 +779,29 @@ function obtenirProduits(dossier)
         }
     }).done(function(produits)
     {
+        console.log(produits);
         for(var i = 0; i < produits.length; i++)
         {
             $("#suggestion_produit").append("<option value='" + produits[i].numero_produit + "'>" + produits[i].numero_produit + " [" + produits[i].designation_produit + "]" + "</option>");
         }
+
+        $("#referenceProduit").on('input', function() //cette fonction récupere le prix unitaire du produit (dans le tableau associatif produits)
+        {                                            //quand on sélectionne une référence
+            var inputValue = this.value;
+            if($('datalist').find('option').filter(function()
+            {
+                return this.value == inputValue;        
+            }).length) {
+                for(var i = 0; i < produits.length; i++)
+                {
+                    if(this.value == produits[i].numero_produit)
+                    {
+                        $("#prixProduit").val(produits[i].prix_unitaire);
+                        break;
+                    }
+                }
+            }
+        });
     }).fail(function()
     {
         alert("Une erreur est survenue");
@@ -846,7 +972,8 @@ function afficherDetailProduit(produit)
             }
         }
         
-        $("#referenceProduitAjout").append(listeCellules[0] + " Qte : " + listeCellules[1] + " Prix unit : " + listeCellules[2] + " Stock : " + listeCellules[3] + " (Frn : " + listeCellules[4] + ")");
+        $("#referenceProduitAjout").append(listeCellules[0] + " Qte : " + listeCellules[1] + 
+        " Prix unit : " + listeCellules[2] + " Stock : " + listeCellules[3] + " (Frn : " + listeCellules[4] + ")");
     }
 
     else
@@ -854,4 +981,44 @@ function afficherDetailProduit(produit)
         $("#dernierLigneSaisie").hide();
         $("#infoAjoutLigneCommande").hide();
     }
+}
+
+
+/*
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Fonction pour la page liste des clients d'un commercial
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*/
+
+
+function obtenirListeCommandes(cle_representant)
+{
+    $.ajax({
+        url: '../obtenirClients/' + cle_representant,
+            type: 'post',
+            dataType: 'json',
+            data:
+            {
+                direction: direction
+            },
+            statusCode : 
+            {
+                404:function()
+                {
+                    alert("Commandes introuvables");
+                }
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+    }).done(function(reponse)
+    {
+        genererTableauCommande(reponse, 1);
+        $('#tableauCommande').DataTable({
+            "order": [[ 1, "desc" ]]
+        });
+    }).fail(function()
+    {
+        alert("Une erreur est survenue");
+    });
 }

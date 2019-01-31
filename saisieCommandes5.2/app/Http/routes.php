@@ -5,6 +5,8 @@ Route::get('/client/{id}', 'tableauCommande@afficherTableauCommandes');
 
 Route::get('/commande/{id}', 'tableauDetailCommande@afficherDetailCommande');
 
+Route::get('/clients/{id_representant}', 'tableauCommande@afficherTableauCommandes');
+
 //Routes pour les lignes d'une commande
 Route::post('/detailCommandeClient/{id_commande}&{id_client}', 'tableauDetailCommande@obtenirProduixCommande');
 
@@ -17,6 +19,8 @@ Route::post('/modifierLigneCommande', 'tableauDetailCommande@modifierLigne');
 Route::post('/detailClient', 'tableauCommande@detailClient');
 
 //routes entete commande
+Route::post('/obtenirClients/{cle_representant}', 'tableauCommande@obtenirListeCommandes');
+
 Route::post('/commandesClient/{id}', 'tableauCommande@afficherCommandeClient');
 
 Route::post('/ajouterCommande', 'tableauCommande@ajouterCommande');
