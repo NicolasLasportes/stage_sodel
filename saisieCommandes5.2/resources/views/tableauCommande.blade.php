@@ -31,13 +31,13 @@
             <thead>
                 <tr>
                     <th id="enteteTableauModifier" class="enteteTableauCommande"><i class='fas fa-pen-square'></i></th>
-                    <th id="enteteTableauNom" class="enteteTableauCommande">Nom</th>
+                    <th id="enteteTableauNom" class="enteteTableauCommande nom_commande">Nom</th>
                     <th class="enteteTableauCommande">N° commande</th>
                     <th class="enteteTableauCommande">Référence</th>
                     <th class="enteteTableauCommande">Type</th>
                     <th class="enteteTableauCommande">Date</th>
                     <th class="enteteTableauCommande">Clôturé</th>
-                    <th class="enteteTableauCommande">N° Cde AS400</th>
+                    <th class="enteteTableauCommande">Cde AS400</th>
                     <th id="enteteTableauSupprimer" class="enteteTableauCommande">Options</th>
                     <th id="nom_representant" class="enteteTableauCommande">Nom du représentant</th>
                 </tr>

@@ -5,10 +5,12 @@ if(window.location.href.search("clients") != -1)
     if(nom_commercial == "Tous secteurs")
     {
         $("#titre_client").empty().append(nom_commercial);
+        $("title").append(" : " + nom_commercial);
     }
     else
     {
         $("#titre_client").empty().append("Commandes secteur : " + nom_commercial);
+        $("title").append(" : " + nom_commercial);
     }
     obtenirListeCommandes(cle_commercial);
 }
@@ -28,6 +30,7 @@ else if(window.location.href.search("commande") != -1)
     }
     obtenirDetailCommande(recupererNumCommande(id_inverse),recupererDossierClient(id_inverse));
     obtenirProduits(recupererDossierClient(id_inverse));
+    //envoyer_email();
     $("#afficherFormAjoutProduit").hide();
     $("#cloturerCommande").hide();
     $("#titre_commande").append("Commande n°" + recupererNumCommande(id_inverse));

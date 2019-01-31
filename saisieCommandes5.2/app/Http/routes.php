@@ -35,5 +35,7 @@ Route::post('/cloturerCommande', 'tableauCommande@cloturerCommande');
 
 Route::post('/verifierCommandeCloturer', 'tableauDetailCommande@verifierCommandeCloturer');
 
+//Route::get('/envoyer_email', 'tableauDetailCommande@envoyerEmail');
+
 //Liste produits
 Route::post('/listeProduits/{dossier}', 'produits@obtenirProduits');

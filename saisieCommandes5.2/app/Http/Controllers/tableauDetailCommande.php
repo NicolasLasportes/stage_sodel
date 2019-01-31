@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Mail;
+
 use Illuminate\Http\Request;
 
 class tableauDetailCommande extends Controller
@@ -203,4 +205,40 @@ class tableauDetailCommande extends Controller
         
         return $affichageJson;
     }
+
+    public function envoyer_email(Request $request)
+    {
+        $donnees = array_values($request->all());
+        $numero_commande = $donnees[0];
+        $dossier = $donnees[1];
+
+        $sql = "SELECT SODATE, CENOMF, SOMAIF, SOAD1F, SOAD2F, SOPOSF, SOLVIF, SOPAYF, SOTELF, CECREF, SOCOMM, CENOML, SONOML, SOTELL, CEAD1L, CEAD2L, CEPOSL, CELVIL, SOPAYL,
+        SOMAIL, SOTYPO";
+
+        $entete_commande = odbc_exec($conn, $sql);
+
+        $date_du_jour = trim(odbc_result($entete_commande, 'SODATE'));
+        $nom_facture = trim(odbc_result($entete_commande, 'CENOMF'));
+        $mail_facture = trim(odbc_result($entete_commande, 'SOMAIF'));
+        $telephone_facture = trim(odbc_result($entete_commande, 'SOTELF'));
+        $adresse1_facture = trim(odbc_result($entete_commande, 'SOAD1F'));
+        $adresse2_facture = trim(odbc_result($entete_commande, 'SOAD2F'));
+        $code_postal_facture = trim(odbc_result($entete_commande, 'SOPOSF'));
+        $ville_facture = trim(odbc_result($entete_commande, 'SOLVIF'));
+        $pays_facture = trim(odbc_result($entete_commande, 'SOPAYF'));
+        $nom_livraison = trim(odbc_result($entete_commande, 'CENOML'));
+        $prenom_livraison = trim(odbc_result($entete_commande, 'SONOML'));
+        $mail_livraison = trim(odbc_result($entete_commande, 'SOMAIL'));
+        $telephone_livraison = trim(odbc_result($entete_commande, 'SOTELL'));
+        $adresse1_livraison = trim(odbc_result($entete_commande, 'CEAD1L'));
+        $adresse2_livraison = trim(odbc_result($entete_commande, 'CEAD2L'));
+        $code_postal_livraison = trim(odbc_result($entete_commande, 'CEPOSL'));
+        $ville_livraison = trim(odbc_result($entete_commande, 'CELVIL'));
+        $pays_livraison = trim(odbc_result($entete_commande, 'SOPAYL'));
+        $reference_commande = trim(odbc_result($entete_commande, 'CECREF'));
+        $type_commande = trim(odbc_result($entete_commande, 'SOTYPO'));
+        $commentaire_commande = trim(odbc_result($entete_commande, 'SOCOMM'));
+
+    }
 }
+

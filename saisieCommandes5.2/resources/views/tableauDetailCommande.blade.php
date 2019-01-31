@@ -8,9 +8,11 @@
         <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../css/dataTables.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     </head>
     <body>
         <h3 id="titre_commande"></h3>
+        <div id="envoyer_email"></div>
         <div class="boutonsDetailCommande">
             <button id="afficherFormAjoutProduit" class="btn ajouterProduit" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter un produit</button>
             <a href="{{ url()->previous() }}" id="retourCommandes"class="btn retourCommandes">Retour aux commandes</a>

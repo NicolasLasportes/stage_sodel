@@ -171,7 +171,7 @@ function genererTableauCommande(commandes, interface)
     {
         if(commandes[i].nom_representant != undefined)
         {   
-            nom_representant = "<td>" + commandes[i].nom_representant + "</td>";
+            nom_representant = "<td class='ligneTableauCommandes'>" + commandes[i].nom_representant + "</td>";
         }
         else
         {
@@ -192,8 +192,8 @@ function genererTableauCommande(commandes, interface)
 
             if(commandes[i].nom_client != commandes[i].nom_client_livraison || commandes[i].adresse_facture != commandes[i].adresse_livraison || commandes[i].ville_facture != commandes[i].ville_livraison || commandes[i].code_postal_livraison != commandes[i].code_postal_facture)
             {
-                nom = "<td class='ligneTableauCommandes'>" + commandes[i].nom_client + "<br> Livré à : " + commandes[i].nom_client_livraison + " " +
-                commandes[i].adresse_livraison + " " + commandes[i].complement_livraison + " " + commandes[i].code_postal_livraison + " " +
+                nom = "<td class='ligneTableauCommandes nom_commande'>" + commandes[i].nom_client + "<br> Livré à : " + commandes[i].nom_client_livraison + " " +
+                " " + commandes[i].code_postal_livraison + " " +
                 commandes[i].ville_livraison + "</td>";
             }
             else
@@ -981,6 +981,31 @@ function afficherDetailProduit(produit)
         $("#dernierLigneSaisie").hide();
         $("#infoAjoutLigneCommande").hide();
     }
+}
+
+function envoyer_email(numero_commande, dossier)
+{
+    $.ajax({
+        url: '/envoyer_email',
+        type: 'post',
+        dataType: 'json',
+        data:
+        {
+            numero_commande: numero_commande,
+            dossier: dossier
+        },
+        headers: 
+        {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    }).done(function(reponse)
+    {
+        $("#envoyer_email").append("<a href='mailto:tricky730@gmail.com' subject=''  class='btn'><i class='fas fa-envelope fa-3x'></i></a>");
+        
+    }).fail(function(err)
+    {
+        console.log(err)
+    })
 }
 
 

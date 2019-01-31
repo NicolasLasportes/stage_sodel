@@ -22,7 +22,7 @@ h3
 {
     background-color: #63B3D6;
     color:white;
-    width:11.1%;
+    /*width:11.1%;*/
 }
 
 #afficherFormAjoutProduit
@@ -211,4 +211,14 @@ table, th, td
 #fermerPage
 {
     float:right;
+}
+
+.nom_commande
+{
+    width:100%;
+}
+
+.envoyerEmail
+{
+    text-align:center;
 }

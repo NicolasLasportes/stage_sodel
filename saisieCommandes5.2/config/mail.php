@@ -15,6 +15,11 @@ return [
     |            "ses", "sparkpost", "log"
     |
     */
+    
+    'mailgun' => [
+        'domain' => 'your-mailgun-domain',
+        'secret' => 'your-mailgun-key',
+    ],
 
     'driver' => env('MAIL_DRIVER', 'smtp'),
 
