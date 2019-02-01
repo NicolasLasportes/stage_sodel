@@ -30,7 +30,7 @@ else if(window.location.href.search("commande") != -1)
     }
     obtenirDetailCommande(recupererNumCommande(id_inverse),recupererDossierClient(id_inverse));
     obtenirProduits(recupererDossierClient(id_inverse));
-    //envoyer_email();
+    envoyer_email(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
     $("#afficherFormAjoutProduit").hide();
     $("#cloturerCommande").hide();
     $("#titre_commande").append("Commande n°" + recupererNumCommande(id_inverse));

@@ -218,7 +218,12 @@ table, th, td
     width:100%;
 }
 
-.envoyerEmail
+#envoyer_email
 {
     text-align:center;
+}
+
+.essai_email
+{
+    color: red;
 }

@@ -985,8 +985,10 @@ function afficherDetailProduit(produit)
 
 function envoyer_email(numero_commande, dossier)
 {
+    console.log(numero_commande)
+    console.log(dossier)
     $.ajax({
-        url: '/envoyer_email',
+        url: '../envoyer_email',
         type: 'post',
         dataType: 'json',
         data:
@@ -1000,7 +1002,55 @@ function envoyer_email(numero_commande, dossier)
         }
     }).done(function(reponse)
     {
-        $("#envoyer_email").append("<a href='mailto:tricky730@gmail.com' subject=''  class='btn'><i class='fas fa-envelope fa-3x'></i></a>");
+        console.log(reponse)
+        var objet_email = "Commandes%20n°" + reponse.numero_commande + "%20du%20" + afficherDate(reponse.date) + "%20V/Ref:%20" + reponse.reference_commande;
+        var corps_email = "Facture%20%3A" +
+        "%0D%0A" + reponse.nom_facture + 
+        "%0D%0A" + reponse.adresse1_facture +
+        "%0D%0A" + reponse.adresse2_facture + 
+        "%0D%0A" + reponse.code_postal_facture + "%20" + reponse.ville_facture +
+        "%0D%0A%20Livraison%20%3A" +
+        "%0D%0A" + reponse.nom_livraison + 
+        "%0D%0A" + reponse.adresse1_livraison +
+        "%0D%0A" + reponse.adresse2_livraison + 
+        "%0D%0A" + reponse.code_postal_livraison + "%20" + reponse.ville_livraison +
+        "%0D%0ACommande%20%3A" + 
+        "%0D%0ARéférence%20/%20Désignation%20%20%20%20Quantité%20Prix%20unitaire";
+
+        delete reponse.numero_commande;
+        delete reponse.date;
+        delete reponse.reference_commande;
+        delete reponse.nom_facture;
+        delete reponse.adresse1_facture;
+        delete reponse.adresse2_facture;
+        delete reponse.code_postal_facture;
+        delete reponse.ville_facture;
+        delete reponse.nom_livraison;
+        delete reponse.adresse1_livraison;
+        delete reponse.adresse2_livraison;
+        delete reponse.code_postal_livraison;
+        delete reponse.ville_livraison;
+        delete reponse.pays_facture;
+        delete reponse.pays_livraison;
+        delete reponse.commentaire_commande;
+        delete reponse.mail_facture;
+        delete reponse.mail_livraison;
+        delete reponse.prenom_livraison;
+        delete reponse.telephone_facture;
+        delete reponse.telephone_livraison;
+        delete reponse.type_commande;
+
+        var ligne_produit = [];
+        console.log(reponse)
+        for (var cle in reponse) 
+        {
+            ligne_produit.push("%0D%0A" + reponse[cle].reference_produit + "%20Designation%20produit%20" + reponse[cle].quantite + "%20" + reponse[cle].prix_unitaire);
+            console.log(ligne_produit);
+        }
+        $("#envoyer_email").append(
+            "<a href='mailto:tricky730@gmail.com?subject=" + objet_email + "&body=" + corps_email + ligne_produit.join('') + 
+            "' class='btn'><i class='fas fa-envelope fa-3x'></i></a>"
+        );
         
     }).fail(function(err)
     {

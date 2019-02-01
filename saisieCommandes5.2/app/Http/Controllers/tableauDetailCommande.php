@@ -208,14 +208,18 @@ class tableauDetailCommande extends Controller
 
     public function envoyer_email(Request $request)
     {
+        include '../../include/connexion.php';
+
         $donnees = array_values($request->all());
         $numero_commande = $donnees[0];
         $dossier = $donnees[1];
+        
 
-        $sql = "SELECT SODATE, CENOMF, SOMAIF, SOAD1F, SOAD2F, SOPOSF, SOLVIF, SOPAYF, SOTELF, CECREF, SOCOMM, CENOML, SONOML, SOTELL, CEAD1L, CEAD2L, CEPOSL, CELVIL, SOPAYL,
-        SOMAIL, SOTYPO";
 
-        $entete_commande = odbc_exec($conn, $sql);
+        $recuperer_entete_commande = "SELECT SODATE, CENOMF, SOMAIF, SOAD1F, SOAD2F, SOPOSF, SOLVIF, SOPAYF, SOTELF, CECREF, SOCOMM, CENOML, SONOML, SOTELL, CEAD1L, CEAD2L, CEPOSL, CELVIL, SOPAYL,
+        SOMAIL, SOTYPO FROM FILCOMSOD.ENTSODP1 WHERE SONCDE = '$numero_commande' AND SODOSS = '$dossier'";
+
+        $entete_commande = odbc_exec($conn, $recuperer_entete_commande);
 
         $date_du_jour = trim(odbc_result($entete_commande, 'SODATE'));
         $nom_facture = trim(odbc_result($entete_commande, 'CENOMF'));
@@ -239,6 +243,63 @@ class tableauDetailCommande extends Controller
         $type_commande = trim(odbc_result($entete_commande, 'SOTYPO'));
         $commentaire_commande = trim(odbc_result($entete_commande, 'SOCOMM'));
 
+        $recapitulatif_commande = [
+            'numero_commande' => $numero_commande,
+            'date' => $date_du_jour,
+            'nom_facture' => $nom_facture,
+            'mail_facture' => $mail_facture,
+            'telephone_facture' => $telephone_facture,
+            'adresse1_facture' => $adresse1_facture,
+            'adresse2_facture' => $adresse2_facture,
+            'code_postal_facture' => $code_postal_facture,
+            'ville_facture' => $ville_facture,
+            'pays_facture' => $pays_facture,
+            'nom_livraison' => $nom_livraison,
+            'prenom_livraison' => $prenom_livraison,
+            'mail_livraison' => $mail_livraison,
+            'telephone_livraison' => $telephone_livraison,
+            'adresse1_livraison' => $adresse1_livraison,
+            'adresse2_livraison' => $adresse2_livraison,
+            'code_postal_livraison' => $code_postal_livraison,
+            'ville_livraison' => $ville_livraison,
+            'pays_livraison' => $pays_livraison,
+            'reference_commande' => $reference_commande,
+            'type_commande' => $type_commande,
+            'commentaire_commande' => $commentaire_commande
+        ];
+
+        $recuperer_lignes_commande = "SELECT LOSOCI, CDPROD, LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$numero_commande'";
+
+        $ligne_commande = odbc_exec($conn, $recuperer_lignes_commande);
+
+        while(odbc_fetch_row($ligne_commande))
+        {
+            $code_societe = trim(odbc_result($ligne_commande, 'LOSOCI'));
+            $reference_produit = trim(odbc_result($ligne_commande, 'CDPROD'));
+            $quantite = trim(odbc_result($ligne_commande, 'LOQTEE'));
+            $prix_unitaire = trim(odbc_result($ligne_commande, 'LOPRIX'));
+
+            $ligne = [
+                'code_societe' => $code_societe,
+                'reference_produit' => $reference_produit,
+                'quantite' => $quantite,
+                'prix_unitaire' => $prix_unitaire
+            ];
+
+            array_push($recapitulatif_commande, $ligne);
+        }
+
+        return $recapitulatif_commande;
+    }
+
+    public function send_email()
+    {
+        $user = "nicolas";
+        Mail::send('emails.recapitulatif_commande', ['user' => $user], function ($m) use ($user) {
+            $m->from('nicolas.lasportes@gmail.com', 'Your Application');
+
+            $m->to('tricky730@gmail.com', 'Lasportes Nicolas')->subject('Your Reminder!');
+        });
     }
 }
 
