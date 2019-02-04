@@ -19,6 +19,16 @@ class tableauDetailCommande extends Controller
         
         $liste_commande = [];
 
+        $recuperer_nom_client = "SELECT CENOMF FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$id_client'";
+        
+        $resultat_nom_client  = odbc_exec($conn, $recuperer_nom_client);
+
+        $nom_client = trim(odbc_result($resultat_nom_client, 'CENOMF'));
+        
+        $liste_commande = [
+            'nom_client' => $nom_client
+        ];
+
         $sql = "SELECT LOSOCI, CDPROD, LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$id_commande'";
 
         $detailCommande = odbc_Exec($conn, $sql);
@@ -30,7 +40,8 @@ class tableauDetailCommande extends Controller
             $quantite = trim(odbc_result($detailCommande, 'LOQTEE'));
             $prix_unitaire = trim(odbc_result($detailCommande, 'LOPRIX'));
             
-            $sql_produit = "SELECT A0SOCI, A0DESI, WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$id_client' AND F1QTE = '1' AND A0SOCI = '$code_societe'";
+            $sql_produit = "SELECT A0SOCI, A0DESI, WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$id_client' 
+            AND F1QTE = '1' AND A0SOCI = '$code_societe'";
             $produit = odbc_Exec($conn, $sql_produit);
             
             while(odbc_fetch_row($produit))
@@ -70,9 +81,10 @@ class tableauDetailCommande extends Controller
         $prix_unitaire = $produitAjouter[3];
         $dossier = $produitAjouter[4];
         $gratuit = $produitAjouter[5];
-
+        $affichageFinal = [];
         
-        $recuperer_donnees = "SELECT A0SOCI, WWPRNE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' AND F1QTE = '1' FETCH FIRST 1 ROWS ONLY";
+        $recuperer_donnees = "SELECT A0SOCI, WWPRNE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' AND F1QTE <= '$quantite' 
+        FETCH FIRST 1 ROWS ONLY";
 
         $result = odbc_Exec($conn, $recuperer_donnees);
 
@@ -116,7 +128,9 @@ class tableauDetailCommande extends Controller
             'commentaire' => $commentaire
         ];
         
-        return $affichageJson;
+        array_push($affichageFinal, $affichageJson);
+
+        return $affichageFinal;
     }
 
     public function supprimerLigne(Request $request)
@@ -168,7 +182,8 @@ class tableauDetailCommande extends Controller
             $prix_unitaire = trim(odbc_result($result, 'WWPRNE'));
         }
 
-        $sql = "UPDATE FILCOMSOD.LIGSODP1 SET LOQTEE = '$quantite', LOPRIX = '$prix_unitaire' WHERE LONCDE = '$numero_commande' AND LOSOCI = '$code_societe' AND CDPROD = '$reference_produit'";
+        $sql = "UPDATE FILCOMSOD.LIGSODP1 SET LOQTEE = '$quantite', LOPRIX = '$prix_unitaire' WHERE LONCDE = '$numero_commande' AND LOSOCI = '$code_societe' 
+        AND CDPROD = '$reference_produit'";
         
         odbc_Exec($conn, $sql);
 
@@ -214,10 +229,8 @@ class tableauDetailCommande extends Controller
         $numero_commande = $donnees[0];
         $dossier = $donnees[1];
         
-
-
-        $recuperer_entete_commande = "SELECT SODATE, CENOMF, SOMAIF, SOAD1F, SOAD2F, SOPOSF, SOLVIF, SOPAYF, SOTELF, CECREF, SOCOMM, CENOML, SONOML, SOTELL, CEAD1L, CEAD2L, CEPOSL, CELVIL, SOPAYL,
-        SOMAIL, SOTYPO FROM FILCOMSOD.ENTSODP1 WHERE SONCDE = '$numero_commande' AND SODOSS = '$dossier'";
+        $recuperer_entete_commande = "SELECT SODATE, CENOMF, SOMAIF, SOAD1F, SOAD2F, SOPOSF, SOLVIF, SOPAYF, SOTELF, CECREF, SOCOMM, CENOML, SONOML, SOTELL, 
+        CEAD1L, CEAD2L, CEPOSL, CELVIL, SOPAYL, SOMAIL, SOTYPO FROM FILCOMSOD.ENTSODP1 WHERE SONCDE = '$numero_commande' AND SODOSS = '$dossier'";
 
         $entete_commande = odbc_exec($conn, $recuperer_entete_commande);
 
@@ -246,26 +259,26 @@ class tableauDetailCommande extends Controller
         $recapitulatif_commande = [
             'numero_commande' => $numero_commande,
             'date' => $date_du_jour,
-            'nom_facture' => $nom_facture,
+            'nom_facture' => utf8_encode($nom_facture),
             'mail_facture' => $mail_facture,
             'telephone_facture' => $telephone_facture,
-            'adresse1_facture' => $adresse1_facture,
-            'adresse2_facture' => $adresse2_facture,
+            'adresse1_facture' => utf8_encode($adresse1_facture),
+            'adresse2_facture' => utf8_encode($adresse2_facture),
             'code_postal_facture' => $code_postal_facture,
-            'ville_facture' => $ville_facture,
-            'pays_facture' => $pays_facture,
-            'nom_livraison' => $nom_livraison,
-            'prenom_livraison' => $prenom_livraison,
+            'ville_facture' => utf8_encode($ville_facture),
+            'pays_facture' => utf8_encode($pays_facture),
+            'nom_livraison' => utf8_encode($nom_livraison),
+            'prenom_livraison' => utf8_encode($prenom_livraison),
             'mail_livraison' => $mail_livraison,
             'telephone_livraison' => $telephone_livraison,
-            'adresse1_livraison' => $adresse1_livraison,
-            'adresse2_livraison' => $adresse2_livraison,
+            'adresse1_livraison' => utf8_encode($adresse1_livraison),
+            'adresse2_livraison' => utf8_encode($adresse2_livraison),
             'code_postal_livraison' => $code_postal_livraison,
-            'ville_livraison' => $ville_livraison,
-            'pays_livraison' => $pays_livraison,
-            'reference_commande' => $reference_commande,
+            'ville_livraison' => utf8_encode($ville_livraison),
+            'pays_livraison' => utf8_encode($pays_livraison),
+            'reference_commande' => utf8_encode($reference_commande),
             'type_commande' => $type_commande,
-            'commentaire_commande' => $commentaire_commande
+            'commentaire_commande' => utf8_encode($commentaire_commande)
         ];
 
         $recuperer_lignes_commande = "SELECT LOSOCI, CDPROD, LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$numero_commande'";
@@ -279,7 +292,14 @@ class tableauDetailCommande extends Controller
             $quantite = trim(odbc_result($ligne_commande, 'LOQTEE'));
             $prix_unitaire = trim(odbc_result($ligne_commande, 'LOPRIX'));
 
+            $recuperer_infos_produit = "SELECT A0DESI FROM FILCOMSOD.PRINETP1 WHERE DOSSIER = '$dossier' AND A0PROD = '$reference_produit' AND A0SOCI = '$code_societe'";
+
+            $infos_produit = odbc_exec($conn, $recuperer_infos_produit);
+
+            $designation_produit = utf8_encode(trim(odbc_result($infos_produit, 'A0DESI')));
+
             $ligne = [
+                'designation_produit' => $designation_produit,
                 'code_societe' => $code_societe,
                 'reference_produit' => $reference_produit,
                 'quantite' => $quantite,
@@ -290,16 +310,6 @@ class tableauDetailCommande extends Controller
         }
 
         return $recapitulatif_commande;
-    }
-
-    public function send_email()
-    {
-        $user = "nicolas";
-        Mail::send('emails.recapitulatif_commande', ['user' => $user], function ($m) use ($user) {
-            $m->from('nicolas.lasportes@gmail.com', 'Your Application');
-
-            $m->to('tricky730@gmail.com', 'Lasportes Nicolas')->subject('Your Reminder!');
-        });
     }
 }
 

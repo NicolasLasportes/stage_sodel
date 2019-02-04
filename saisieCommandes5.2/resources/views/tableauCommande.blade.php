@@ -38,7 +38,7 @@
                     <th class="enteteTableauCommande">Date</th>
                     <th class="enteteTableauCommande">Clôturé</th>
                     <th class="enteteTableauCommande">Cde AS400</th>
-                    <th id="enteteTableauSupprimer" class="enteteTableauCommande">Options</th>
+                    <th id="enteteTableauSupprimer" class="enteteTableauCommande">Supprimer</th>
                     <th id="nom_representant" class="enteteTableauCommande">Nom du représentant</th>
                 </tr>
             </thead>

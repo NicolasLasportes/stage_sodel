@@ -17,20 +17,19 @@ if(window.location.href.search("clients") != -1)
 
 else if(window.location.href.search("client") != -1)
 {
-    page_courante = "listeCommandes";
+    page_courante = "Liste Commandes";
     obtenirCommandeClient(id_client);
 }
 
 else if(window.location.href.search("commande") != -1)
 {
-    page_courante = "commande";
+    page_courante = "Commande";
     if(window.location.href.search("#consulter") != -1)
     {
         page_courante = "consulterCommande";
     }
     obtenirDetailCommande(recupererNumCommande(id_inverse),recupererDossierClient(id_inverse));
     obtenirProduits(recupererDossierClient(id_inverse));
-    envoyer_email(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
     $("#afficherFormAjoutProduit").hide();
     $("#cloturerCommande").hide();
     $("#titre_commande").append("Commande n°" + recupererNumCommande(id_inverse));
@@ -147,7 +146,10 @@ $(".modal").on('click', '#validerModificationCommande', function()
 
 $(".formBtn").on('click', '#cloturerModificationCommande', function()
 {
-    cloturerCommande($("#numero_commande").html());
+    if(confirm("Êtes-vous sûr de vouloir clôturer cette commande ? (Vous ne pourrez ni la supprimer ni la modifier)")) 
+    {
+        cloturerCommande($("#numero_commande").html());
+    }  
 });
 
 $(".modal").on('shown.bs.modal', function()

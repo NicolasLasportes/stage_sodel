@@ -10,7 +10,7 @@ class produits extends Controller
     {
         include '../../include/connexion.php';
 
-        $sql = "SELECT A0PROD, A0DESI, WWPRNE FROM FILCOMSOD.PRINETP1 WHERE DOSSIER = '$dossier' AND F1QTE = '1'";
+        $sql = "SELECT A0PROD, A0DESI, WWPRNE, WWCOD2, F1QTE FROM FILCOMSOD.PRINETP1 WHERE DOSSIER = '$dossier'";
 
         $produits = odbc_Exec($conn, $sql);
         $tous_les_produits = [];
@@ -19,11 +19,15 @@ class produits extends Controller
             $numero_produit = trim(odbc_result($produits, 'A0PROD'));
             $desi_produit = trim(odbc_result($produits, 'A0DESI'));
             $prix_produit = trim(odbc_result($produits, 'WWPRNE'));
+            $code_combinaison = trim(odbc_result($produits, 'WWCOD2'));
+            $quantite = trim(odbc_result($produits, 'F1QTE'));
 
             $affichage_json = [
                 'numero_produit' => $numero_produit,
                 'designation_produit' => utf8_encode($desi_produit),
-                'prix_unitaire' => $prix_produit
+                'prix_unitaire' => $prix_produit,
+                'quantite' => $quantite,
+                'code_combinaison' => $code_combinaison
             ];
 
             array_push($tous_les_produits, $affichage_json);

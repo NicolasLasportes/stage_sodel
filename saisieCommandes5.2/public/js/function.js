@@ -106,6 +106,17 @@ function recupererCleCommercial(url)
     }
 }
 
+function somme_tableau(tableau)
+{
+    var somme = 0;
+
+    for(var i = 0; i < tableau.length; i++)
+    {
+        somme += tableau[i];
+    }
+
+    return somme.toFixed(2);
+}
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -282,6 +293,12 @@ function cloturerCommande(numero_commande)
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
+    }).done(function()
+    {
+        if(page_courante == "Liste Commandes")
+        {
+            obtenirCommandeClient(id_client);
+        }
     }).fail(function()
     {
         alert("Une erreur est survenue");
@@ -447,9 +464,10 @@ function ajouterCommande()
         }).done(function(reponse)
         {
             window.location.replace('../commande/' + reponse.numero_commande + '&' + reponse.dossier_client + "#ajouterProduit");
-        }).fail(function()
+        }).fail(function(err)
         {
-           alert("Une erreur est survenue.");
+            console.log(err);
+            alert("Une erreur est survenue.");
         });
     }
 }
@@ -642,7 +660,10 @@ function obtenirDetailCommande(id_commande, id_client)
         }
     }).done(function(detailCommande)
     {
+        $("#titre_commande").empty().append("Commande n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
+        delete detailCommande.nom_client;
         verifierCommandeCloturer(recupererNumCommande(id_inverse), detailCommande);
+        envoyer_email(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
     }).fail(function()
     {
         alert("Une erreur est survenue");
@@ -681,7 +702,6 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
 {
     $("#corpsDetailCommande").empty();
     var total = 0;
-
     if(cloturer_commande == "" && genererColonneOptions == true && page_courante != "consulterCommande")
     {
         $("#afficherFormAjoutProduit").show();
@@ -690,7 +710,7 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
         genererColonneOptions = false;
     }
 
-    for(var i = 0; i < detailCommande.length; i++)
+    for(var i in detailCommande)
     {
         var stock; 
         var gratuit;
@@ -755,7 +775,6 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
         total = total + $(colonne_total[i]).data('total');
     }
 
-    afficherDetailProduit(detailCommande);
     $(".afficherTotal").empty();
     $(".afficherTotal").append("Total : " + total.toFixed(2) + " €");
     $('#tableauDetailCommande').DataTable();
@@ -780,6 +799,7 @@ function obtenirProduits(dossier)
     }).done(function(produits)
     {
         console.log(produits);
+        var cmt = 0;
         for(var i = 0; i < produits.length; i++)
         {
             $("#suggestion_produit").append("<option value='" + produits[i].numero_produit + "'>" + produits[i].numero_produit + " [" + produits[i].designation_produit + "]" + "</option>");
@@ -797,6 +817,7 @@ function obtenirProduits(dossier)
                     if(this.value == produits[i].numero_produit)
                     {
                         $("#prixProduit").val(produits[i].prix_unitaire);
+                        console.log(produits[i].code_combinaison)
                         break;
                     }
                 }
@@ -858,12 +879,14 @@ function ajouterLigne()
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        }).done(function()
+        }).done(function(reponse)
         {
             $('#tableauDetailCommande').DataTable().destroy();
-            obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse), reference_produit);
-        }).fail(function()
+            afficherDetailProduit(reponse);
+            obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
+        }).fail(function(err)
         {
+            console.log(err)
             alert("Une erreur est survenue");
         });
     }
@@ -959,8 +982,8 @@ function afficherDetailProduit(produit)
         $("#stockProduitAjout").empty();
     
         var listeCellules = [];
-        console.log(produit);
-        for(var i = 0; i < produit.length; i++)
+
+        for(var i in produit)
         {
             if(produit[i].reference_produit == reference_dernier_produit)
             {
@@ -1002,20 +1025,38 @@ function envoyer_email(numero_commande, dossier)
         }
     }).done(function(reponse)
     {
-        console.log(reponse)
-        var objet_email = "Commandes%20n°" + reponse.numero_commande + "%20du%20" + afficherDate(reponse.date) + "%20V/Ref:%20" + reponse.reference_commande;
-        var corps_email = "Facture%20%3A" +
-        "%0D%0A" + reponse.nom_facture + 
-        "%0D%0A" + reponse.adresse1_facture +
-        "%0D%0A" + reponse.adresse2_facture + 
-        "%0D%0A" + reponse.code_postal_facture + "%20" + reponse.ville_facture +
-        "%0D%0A%20Livraison%20%3A" +
-        "%0D%0A" + reponse.nom_livraison + 
-        "%0D%0A" + reponse.adresse1_livraison +
-        "%0D%0A" + reponse.adresse2_livraison + 
-        "%0D%0A" + reponse.code_postal_livraison + "%20" + reponse.ville_livraison +
-        "%0D%0ACommande%20%3A" + 
-        "%0D%0ARéférence%20/%20Désignation%20%20%20%20Quantité%20Prix%20unitaire";
+        if(reponse.type_commande == "CDE")
+        {
+            var type_commande = "Commande";
+        }
+        else
+        {
+            var type_commande = "Devis";
+        }
+        var objet_email = type_commande + "%20n°" + reponse.numero_commande + "%20du%20" + afficherDate(reponse.date) + "%20V/Ref:%20" + reponse.reference_commande;
+        var adresse_mail = reponse.mail_facture;
+        if( reponse.nom_facture != reponse.nom_livraison || reponse.adresse1_facture != reponse.adresse1_livraison || reponse.adresse2_facture != reponse.adresse2_livraison || reponse.code_postal_facture != reponse.code_postal_livraison || reponse.ville_facture != reponse.ville_livraison)
+        {
+            var corps_email = reponse.nom_facture + 
+            "%0D%0A" + reponse.adresse1_facture +
+            "%0D%0A" + reponse.adresse2_facture + 
+            + reponse.code_postal_facture + "&nbsp;" + reponse.ville_facture +
+            "%0D%0A%0D%0ALivré à %20%3A" +
+            "%0D%0A" + reponse.nom_livraison + 
+            "%0D%0A" + reponse.adresse1_livraison +
+            "%0D%0A" + reponse.adresse2_livraison + 
+            + reponse.code_postal_livraison + "&nbsp;" + reponse.ville_livraison +
+            "%0D%0A%0D%0A" + objet_email;
+        }
+
+        else
+        {
+            var corps_email = reponse.nom_facture + 
+            "%0D%0A" + reponse.adresse1_facture +
+            "%0D%0A" + reponse.adresse2_facture + 
+            + reponse.code_postal_facture + "&nbsp;" + reponse.ville_facture +
+            "%0D%0A%0D%0A" + objet_email;
+        }
 
         delete reponse.numero_commande;
         delete reponse.date;
@@ -1041,14 +1082,26 @@ function envoyer_email(numero_commande, dossier)
         delete reponse.type_commande;
 
         var ligne_produit = [];
-        console.log(reponse)
+        var total = [];
         for (var cle in reponse) 
         {
-            ligne_produit.push("%0D%0A" + reponse[cle].reference_produit + "%20Designation%20produit%20" + reponse[cle].quantite + "%20" + reponse[cle].prix_unitaire);
-            console.log(ligne_produit);
+            if(reponse[cle].prix_unitaire < 1)
+            {
+                prix_unitaire = parseFloat("0" + reponse[cle].prix_unitaire);
+            }
+            else 
+            {
+                prix_unitaire = reponse[cle].prix_unitaire;
+            }
+
+            ligne_produit.push("%0D%0A%0D%0A" + reponse[cle].quantite + "&nbsp;" + reponse[cle].reference_produit + "&nbsp;à&nbsp;" + prix_unitaire + " h.t" + 
+            "%0D%0A" + reponse[cle].designation_produit);
+            total.push(reponse[cle].quantite * reponse[cle].prix_unitaire);
         }
-        $("#envoyer_email").append(
-            "<a href='mailto:tricky730@gmail.com?subject=" + objet_email + "&body=" + corps_email + ligne_produit.join('') + 
+
+        var afficher_total = "%0D%0A%0D%0ATotal : " + somme_tableau(total) + " € Hors taxes marchandises (En supplément : éco-contribution et frais de port éventuels)";
+        $("#envoyer_email").empty().append(
+            "<a href='mailto:" + adresse_mail + "?subject=" + objet_email + "&body=" + corps_email + ligne_produit.join('') + afficher_total +
             "' class='btn'><i class='fas fa-envelope fa-3x'></i></a>"
         );
         
