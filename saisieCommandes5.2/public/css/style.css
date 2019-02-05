@@ -215,15 +215,10 @@ table, th, td
 
 .nom_commande
 {
-    width:100%;
+    width:80%;
 }
 
 #envoyer_email
 {
     text-align:center;
-}
-
-.essai_email
-{
-    color: red;
 }

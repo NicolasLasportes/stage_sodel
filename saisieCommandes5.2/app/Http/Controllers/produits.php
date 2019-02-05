@@ -29,9 +29,13 @@ class produits extends Controller
                 'quantite' => $quantite,
                 'code_combinaison' => $code_combinaison
             ];
-
+            
             array_push($tous_les_produits, $affichage_json);
         }
+        // $tous_infos_produits = array(
+        //     'tous_les_produits' => $tous_les_produits,
+        //     'toutes_les_quantites' =>
+        // );
 
         return $tous_les_produits;
     }

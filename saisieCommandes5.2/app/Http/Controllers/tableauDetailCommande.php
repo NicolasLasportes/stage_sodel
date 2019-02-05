@@ -81,17 +81,51 @@ class tableauDetailCommande extends Controller
         $prix_unitaire = $produitAjouter[3];
         $dossier = $produitAjouter[4];
         $gratuit = $produitAjouter[5];
+        $code_combinaison = $produitAjouter[6];
         $affichageFinal = [];
+        $prix_speciaux = [];
+        $plus_grande_quantite = 0;
+
+        if($code_combinaison == "S")
+        {
+            $recuperer_prix_quantite = "SELECT A0SOCI, WWPRNE, F1QTE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' 
+            AND F1QTE <= '$quantite'";
+
+            $result = odbc_exec($conn, $recuperer_prix_quantite);
+
+            while(odbc_fetch_row($result))
+            {
+                $code_societe = trim(odbc_result($result, 'A0SOCI'));
+                $prix_unitaire_produit = trim(odbc_result($result, 'WWPRNE'));
+                $quantite_prix = trim(odbc_result($result, 'F1QTE'));
+    
+                $produit = [$prix_unitaire_produit, $quantite_prix, $code_societe];
+    
+                array_push($prix_speciaux, $produit);
+            }
+
+            foreach($prix_speciaux as $cle)
+            {
+                if($cle[1] > $plus_grande_quantite)
+                {
+                    $plus_grande_quantite = $cle[1];
+                    $prix_par_quantite_final = $cle;
+                }
+            }
+            $code_societe = $prix_par_quantite_final[2];
+            $prix_unitaire_produit = $prix_par_quantite_final[0];
+        }
+        else
+        {
+            $recuperer_prix_quantite = "SELECT A0SOCI, WWPRNE, F1QTE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' AND F1QTE = '1'";
+            
+            $result = odbc_Exec($conn, $recuperer_prix_quantite);
+
+            $code_societe = trim(odbc_result($result, 'A0SOCI'));
+            $prix_unitaire_produit = trim(odbc_result($result, 'WWPRNE'));
+            $quantite_prix = trim(odbc_result($result, 'F1QTE'));
+        }
         
-        $recuperer_donnees = "SELECT A0SOCI, WWPRNE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' AND F1QTE <= '$quantite' 
-        FETCH FIRST 1 ROWS ONLY";
-
-        $result = odbc_Exec($conn, $recuperer_donnees);
-
-        $code_societe = trim(odbc_result($result, 'A0SOCI'));
-        $prix_unitaire_produit = trim(odbc_result($result, 'WWPRNE'));
-        
-
         if($gratuit == "oui")
         {
             $prix_unitaire = 0;
@@ -101,7 +135,6 @@ class tableauDetailCommande extends Controller
             $prix_unitaire = $prix_unitaire_produit;
         }
         
-
         $sql = "INSERT INTO FILCOMSOD.LIGSODP1 VALUES ('$numero_commande', '$code_societe', '$reference_produit', '$quantite', '$prix_unitaire')";
 
         odbc_Exec($conn, $sql);
@@ -116,7 +149,7 @@ class tableauDetailCommande extends Controller
 
         $affichageJson = [
             'numero_commande' => $numero_commande,
-            "dossier" => $dossier,
+            'dossier' => $dossier,
             'code_societe' => $code_societe,
             'reference_produit' => $reference_produit,
             'quantite' => $quantite,

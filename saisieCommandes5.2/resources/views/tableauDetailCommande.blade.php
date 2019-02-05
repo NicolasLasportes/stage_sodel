@@ -68,6 +68,7 @@
                                 <label for="gratuitProduit">Gratuit</label>
                             </div>
                         </div>
+                        <div id="code_combinaison_produit" type="hidden"></div>
                         <div class="formBtn">
                             <button type="submit" id="validerLigne" class="btnInForm btn btn-success">Valider</button>
                         </div>
@@ -116,6 +117,7 @@
                                 <label for="gratuitProduitLigne">Gratuit</label>
                             </div>
                         </div>
+                        <div id="code_combinaison_produit_modifier" type="hidden"></div>
                         <div class="formBtn">
                             <button id="validerModificationLigne" data-toggle="modal" data-target="#formulaireModifierLigneCommande" class="btnInForm btn btn-success">Valider</button>
                         </div>

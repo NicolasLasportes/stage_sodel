@@ -2,7 +2,7 @@ if(window.location.href.search("clients") != -1)
 {
     page_courante = "panierRepresentant";
     recupererCleCommercial(id_inverse);
-    if(nom_commercial == "Tous secteurs")
+    if(direction == true)
     {
         $("#titre_client").empty().append(nom_commercial);
         $("title").append(" : " + nom_commercial);

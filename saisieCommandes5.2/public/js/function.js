@@ -98,7 +98,7 @@ function recupererCleCommercial(url)
     if(nom_commercial == "code=T")
     {
         direction = true;
-        nom_commercial = "Tous secteurs";
+        nom_commercial = "Commandes tous secteurs";
     }
     else
     {
@@ -143,7 +143,6 @@ function obtenirCommandeClient(dossier_client)
         }
     }).done(function(listeDesCommandes)
     {
-        console.log(listeDesCommandes)
         $("#titre_client").empty().append("Commandes de " + listeDesCommandes[listeDesCommandes.length -1].nom_client);
         if(listeDesCommandes[listeDesCommandes.length -1].nom_client != undefined)
         {
@@ -152,7 +151,6 @@ function obtenirCommandeClient(dossier_client)
         }
         if(listeDesCommandes.length >=  0)
         {
-            console.log(listeDesCommandes)
             genererTableauCommande(listeDesCommandes, 0);
             $('#tableauCommande').DataTable({
                 "order": [[ 1, "desc" ]]
@@ -255,6 +253,7 @@ function genererTableauCommande(commandes, interface)
                 "<td data-dossier='" + commandes[i].dossier + "'id='" + commandes[i].numero_commande + "' class='ligneTableauCommandes numero_commande'>" + 
                     commandes[i].numero_commande + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + commandes[i].reference_commande + "</td>" + 
+                "<td class='ligneTableauCommandes'>" + commandes[i].total + "</td>" +
                 "<td class='ligneTableauCommandes'>" + commandes[i].type_commande + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + afficherDate(commandes[i].date_commande) + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + cloturer + "</td>" + 
@@ -326,7 +325,6 @@ function detailClient(dossier)
         }
     }).done(function(reponse)
     {
-        console.log(reponse);
         $("#identite").empty();
         $("#tel").empty();
         $("#email").empty();
@@ -464,9 +462,8 @@ function ajouterCommande()
         }).done(function(reponse)
         {
             window.location.replace('../commande/' + reponse.numero_commande + '&' + reponse.dossier_client + "#ajouterProduit");
-        }).fail(function(err)
+        }).fail(function()
         {
-            console.log(err);
             alert("Une erreur est survenue.");
         });
     }
@@ -798,27 +795,54 @@ function obtenirProduits(dossier)
         }
     }).done(function(produits)
     {
-        console.log(produits);
-        var cmt = 0;
-        for(var i = 0; i < produits.length; i++)
+        var produits_sans_prix_speciaux = [];
+        var dernier_produit = "";
+        for(var i = 0; i < produits.length ; i++)
         {
-            $("#suggestion_produit").append("<option value='" + produits[i].numero_produit + "'>" + produits[i].numero_produit + " [" + produits[i].designation_produit + "]" + "</option>");
+            if(dernier_produit != produits[i].numero_produit)
+            {
+                produits_sans_prix_speciaux.push(produits[i]);
+                dernier_produit = produits[i].numero_produit;
+            }
+        }
+
+        var produit_actuel;
+        for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
+        {
+            $("#suggestion_produit").append("<option value='" + produits_sans_prix_speciaux[i].numero_produit + "'>" + produits_sans_prix_speciaux[i].numero_produit + 
+            " [" + produits_sans_prix_speciaux[i].designation_produit + "]" + "</option>");
         }
 
         $("#referenceProduit").on('input', function() //cette fonction récupere le prix unitaire du produit (dans le tableau associatif produits)
         {                                            //quand on sélectionne une référence
-            var inputValue = this.value;
+            var valeur_input = this.value;
             if($('datalist').find('option').filter(function()
             {
-                return this.value == inputValue;        
+                return this.value == valeur_input;        
             }).length) {
                 for(var i = 0; i < produits.length; i++)
                 {
                     if(this.value == produits[i].numero_produit)
                     {
+                        produit_actuel = produits[i].numero_produit;
                         $("#prixProduit").val(produits[i].prix_unitaire);
-                        console.log(produits[i].code_combinaison)
+                        $("#code_combinaison_produit").val(produits[i].code_combinaison);
                         break;
+                    }
+                }
+            }
+        });
+
+        $("#quantiteProduit").on('input', function() //cette fonction récupere le prix unitaire du produit (dans le tableau associatif produits)
+        {                                            //quand on sélectionne une référence
+            var quantite_demande = this.value;
+            if($("#code_combinaison_produit").val() == "S")
+            {
+                for(var i = 0; i < produits.length; i++)
+                {
+                    if(produit_actuel == produits[i].numero_produit && parseInt(produits[i].quantite) <= quantite_demande)
+                    {
+                        $("#prixProduit").val(produits[i].prix_unitaire);   
                     }
                 }
             }
@@ -846,6 +870,7 @@ function ajouterLigne()
         var quantite = $("#quantiteProduit").val();
         var prix_unitaire = $("#prixProduit").val();
         var gratuit = "non";
+        var code_combinaison = $("#code_combinaison_produit").val();
         var numero_commande = recupererNumCommande(id_inverse); //la variable numero_commande contient le n° de commande actuel récupéré dans l'url
         var dossier = recupererDossierClient(id_inverse);
         
@@ -874,7 +899,8 @@ function ajouterLigne()
                 quantite: quantite, 
                 prix_unitaire: prix_unitaire,
                 dossier: dossier,
-                gratuit: gratuit
+                gratuit: gratuit,
+                code_combinaison: code_combinaison
             },
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -884,11 +910,11 @@ function ajouterLigne()
             $('#tableauDetailCommande').DataTable().destroy();
             afficherDetailProduit(reponse);
             obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
-        }).fail(function(err)
+        }).fail(function()
         {
-            console.log(err)
             alert("Une erreur est survenue");
         });
+
     }
 }
 
@@ -1008,8 +1034,6 @@ function afficherDetailProduit(produit)
 
 function envoyer_email(numero_commande, dossier)
 {
-    console.log(numero_commande)
-    console.log(dossier)
     $.ajax({
         url: '../envoyer_email',
         type: 'post',
@@ -1105,9 +1129,9 @@ function envoyer_email(numero_commande, dossier)
             "' class='btn'><i class='fas fa-envelope fa-3x'></i></a>"
         );
         
-    }).fail(function(err)
+    }).fail(function()
     {
-        console.log(err)
+        alert("une erreur est survenue")
     })
 }
 

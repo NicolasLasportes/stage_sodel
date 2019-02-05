@@ -16,8 +16,10 @@ class tableauCommande extends Controller
         include '../../include/connexion.php';
         $toutesLesCommandes = [];
         
+        $total = [];
+
         $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF, SOVALI FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$dossier_client' AND SOCTRA <> 'LIVRAISON'";
-        
+       
         $commandes = odbc_Exec($conn, $sql);
 
         while(odbc_fetch_row($commandes)) 
@@ -30,6 +32,17 @@ class tableauCommande extends Controller
             $nom_client = utf8_encode(trim(odbc_result($commandes, 'CENOMF')));
             $sovali = trim(odbc_result($commandes, 'SOVALI'));
 
+            $recuperer_total_commande = "SELECT LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$numero_commande'";
+
+            $resultat = odbc_exec($conn, $recuperer_total_commande);
+
+            while(odbc_fetch_row($resultat))
+            {
+                $prix_unitaire = trim(odbc_result($resultat, 'LOQTEE'));
+                $quantite = trim(odbc_result($resultat, 'LOPRIX'));
+                array_push($total, $prix_unitaire * $quantite);
+            }
+
             $affichageJson = [
                 'numero_commande' => $numero_commande,
                 'reference_commande' => utf8_encode($reference_commande),
@@ -38,9 +51,11 @@ class tableauCommande extends Controller
                 'cloture_commande' => $cloture_commande,
                 'ventiler_commande' => $sovali,
                 'nom_facture' => utf8_encode($nom_client),
-                'dossier' => $dossier_client
+                'dossier' => $dossier_client,
+                'total' => array_sum($total)
             ];
             
+            $total = [];
             array_push($toutesLesCommandes, $affichageJson);
         }
 
@@ -382,6 +397,7 @@ class tableauCommande extends Controller
 
         $donnees = array_values($request->all());
         $direction = $donnees[0];
+        $total = [];
 
         if($direction == "true")
         {
@@ -418,6 +434,17 @@ class tableauCommande extends Controller
 
                 $nom_representant = utf8_encode(trim(odbc_result($representant, 'SRNOML')));
 
+                $recuperer_total_commande = "SELECT LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$numero_commande'";
+
+                $resultat = odbc_exec($conn, $recuperer_total_commande);
+
+                while(odbc_fetch_row($resultat))
+                {
+                    $prix_unitaire = trim(odbc_result($resultat, 'LOQTEE'));
+                    $quantite = trim(odbc_result($resultat, 'LOPRIX'));
+                    array_push($total, $prix_unitaire * $quantite);
+                }
+
                 $affichageJson = [
                     'numero_commande' => $numero_commande,
                     'reference_commande' => $reference_commande,
@@ -435,9 +462,11 @@ class tableauCommande extends Controller
                     'complement_livraison' => $complement_livraison,
                     'code_postal_livraison' => $code_postal_livraison,
                     'ville_livraison' => $ville_livraison,
-                    'nom_representant' =>$nom_representant
+                    'nom_representant' => $nom_representant,
+                    'total' => array_sum($total)
                 ];
 
+                $total = [];
                 array_push($toutesLesCommandes, $affichageJson);
             }
         }
@@ -470,6 +499,17 @@ class tableauCommande extends Controller
                 $code_postal_livraison = trim(odbc_result($commandes, 'CEPOSL'));
                 $ville_livraison = utf8_encode(trim(odbc_result($commandes, 'CELVIL')));
 
+                $recuperer_total_commande = "SELECT LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$numero_commande'";
+
+                $resultat = odbc_exec($conn, $recuperer_total_commande);
+
+                while(odbc_fetch_row($resultat))
+                {
+                    $prix_unitaire = trim(odbc_result($resultat, 'LOQTEE'));
+                    $quantite = trim(odbc_result($resultat, 'LOPRIX'));
+                    array_push($total, $prix_unitaire * $quantite);
+                }
+
                 $affichageJson = [
                     'numero_commande' => $numero_commande,
                     'reference_commande' => $reference_commande,
@@ -487,8 +527,10 @@ class tableauCommande extends Controller
                     'complement_livraison' => $complement_livraison,
                     'code_postal_livraison' => $code_postal_livraison,
                     'ville_livraison' => $ville_livraison,
+                    'total' => array_sum($total)
                 ];
 
+                $total = [];
                 array_push($toutesLesCommandes, $affichageJson);
             }
         }

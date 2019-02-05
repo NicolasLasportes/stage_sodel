@@ -34,6 +34,7 @@
                     <th id="enteteTableauNom" class="enteteTableauCommande nom_commande">Nom</th>
                     <th class="enteteTableauCommande">N° commande</th>
                     <th class="enteteTableauCommande">Référence</th>
+                    <th class="enteteTableauCommande">Total HT</th>
                     <th class="enteteTableauCommande">Type</th>
                     <th class="enteteTableauCommande">Date</th>
                     <th class="enteteTableauCommande">Clôturé</th>
