@@ -52,7 +52,7 @@
                         <div class="form-row">
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="referenceProduit">Référence du produit</label>
-                                <input list="suggestion_produit" type="text" class="form-control" id="referenceProduit" placeholder="Chercher un produit par son nom ou sa référence">
+                                <input list="suggestion_produit" type="text" class="form-control" id="referenceProduit" placeholder="Chercher un produit par référence ou désignation">
                                 <datalist id="suggestion_produit"></datalist>
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">

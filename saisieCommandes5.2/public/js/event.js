@@ -32,7 +32,7 @@ else if(window.location.href.search("commande") != -1)
     obtenirProduits(recupererDossierClient(id_inverse));
     $("#afficherFormAjoutProduit").hide();
     $("#cloturerCommande").hide();
-    $("#titre_commande").append("Commande n°" + recupererNumCommande(id_inverse));
+
     if(window.location.href.search("#ajouterProduit") != -1)
     {
         $("#formulaireAjouterLigneCommande").modal('show');

@@ -19,14 +19,16 @@ class tableauDetailCommande extends Controller
         
         $liste_commande = [];
 
-        $recuperer_nom_client = "SELECT CENOMF FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$id_client'";
+        $recuperer_nom_client = "SELECT CENOMF, SOTYPO FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$id_client' AND SONCDE = '$id_commande'";
         
         $resultat_nom_client  = odbc_exec($conn, $recuperer_nom_client);
 
         $nom_client = trim(odbc_result($resultat_nom_client, 'CENOMF'));
+        $type_commande = trim(odbc_result($resultat_nom_client, 'SOTYPO'));
         
         $liste_commande = [
-            'nom_client' => $nom_client
+            'nom_client' => $nom_client,
+            'type_commande' => $type_commande
         ];
 
         $sql = "SELECT LOSOCI, CDPROD, LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$id_commande'";

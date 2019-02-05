@@ -246,6 +246,16 @@ function genererTableauCommande(commandes, interface)
             ventiler_commande = commandes[i].ventiler_commande;
         }
 
+        if(commandes[i].type_commande == "DEV")
+        {
+            var type_commande = "Devis";
+        }
+
+        else
+        {
+            var type_commande = "Commande";
+        }
+
         $("#corpsTableauCommande").append(
             "<tr>" + 
                 modification +
@@ -254,7 +264,7 @@ function genererTableauCommande(commandes, interface)
                     commandes[i].numero_commande + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + commandes[i].reference_commande + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + commandes[i].total + "</td>" +
-                "<td class='ligneTableauCommandes'>" + commandes[i].type_commande + "</td>" + 
+                "<td class='ligneTableauCommandes'>" + type_commande + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + afficherDate(commandes[i].date_commande) + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + cloturer + "</td>" + 
                 "<td class='ligneTableauCommandes'>" + ventiler_commande + "</td>" +
@@ -657,7 +667,16 @@ function obtenirDetailCommande(id_commande, id_client)
         }
     }).done(function(detailCommande)
     {
-        $("#titre_commande").empty().append("Commande n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
+        console.log(detailCommande)
+        //$("#titre_commande").empty().append("Commande n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
+        if(detailCommande.type_commande == "DEV")
+        {
+            $("#titre_commande").empty().append("Devis n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
+        }
+        else
+        {
+            $("#titre_commande").empty().append("Commande n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
+        }
         delete detailCommande.nom_client;
         verifierCommandeCloturer(recupererNumCommande(id_inverse), detailCommande);
         envoyer_email(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
@@ -701,11 +720,16 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
     var total = 0;
     if(cloturer_commande == "" && genererColonneOptions == true && page_courante != "consulterCommande")
     {
+        if(detailCommande.type_commande != "DEV")
+        {
+            $("#cloturerCommande").show();
+        }
         $("#afficherFormAjoutProduit").show();
-        $("#cloturerCommande").show();
         $("#headerDetailCommande").append("<th id='administrationDetailCommande' class='enteteTableauDetailCommande'>Options</th>");
         genererColonneOptions = false;
     }
+
+    delete detailCommande.type_commande;
 
     for(var i in detailCommande)
     {
