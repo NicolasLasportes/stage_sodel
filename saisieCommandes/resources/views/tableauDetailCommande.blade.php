@@ -28,7 +28,7 @@
                     <th class="enteteTableauDetailCommande">Quantité</th>
                     <th class="enteteTableauDetailCommande">Prix</th>
                     <th class="enteteTableauDetailCommande">Stock</th>
-                    <th class="enteteTableauDetailCommande">Gratuit</th>
+                    <!-- <th class="enteteTableauDetailCommande">Gratuit</th> -->
                     <th id="total_detail_commande" class="totalEntete enteteTableauDetailCommande">Total</th>
                 </tr>
             </thead>
@@ -63,10 +63,14 @@
                                 <label for="prixProduit">Prix unitaire</label>
                                 <input type="number" step="0.01" class="form-control" id="prixProduit" placeholder="Facultatif">
                             </div>
-                            <div class="offset-md-2 col-md-8">
+                            <div class="offset-md-2 col-md-8 form-group">
+                                <label for="pourcentageRemise">Remise ( % )</label>
+                                <input type="number" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemise">
+                            </div>
+                            <!-- <div class="offset-md-2 col-md-8">
                                 <input id="gratuitProduit" type="checkbox">
                                 <label for="gratuitProduit">Gratuit</label>
-                            </div>
+                            </div> -->
                         </div>
                         <div id="code_combinaison_produit" type="hidden"></div>
                         <div class="formBtn">
@@ -112,10 +116,14 @@
                                 <label for="prixProduitLigne">Prix unitaire</label>
                                 <input type="number" step="0.01" class="form-control" id="prixProduitLigne" placeholder="Facultatif">
                             </div>
-                            <div class="offset-md-2 col-md-8">
+                            <div class="offset-md-2 col-md-8 form-group">
+                                <label for="pourcentageRemiseLigne">Remise ( % )</label>
+                                <input type="number" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemiseLigne">
+                            </div>
+                            <!-- <div class="offset-md-2 col-md-8">
                                 <input id="gratuitProduitLigne" type="checkbox">
                                 <label for="gratuitProduitLigne">Gratuit</label>
-                            </div>
+                            </div> -->
                         </div>
                         <div id="code_combinaison_produit_modifier" type="hidden"></div>
                         <div class="formBtn">

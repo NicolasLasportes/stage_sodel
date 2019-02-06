@@ -65,6 +65,12 @@ h3
     margin-right:3%;
 }
 
+#validerCommande , #validerModificationCommande
+{
+    background-color: #63B3D6; 
+    border-color:  #63B3D6;
+}
+
 label
 {
     margin-bottom: 1%;

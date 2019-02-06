@@ -210,13 +210,8 @@
                                 </div>
                             </div>
                         </div>                      
-                        <div class="formBtn row">
-                            <div class="offset-md-3 col-md-3">
-                                <button id="validerModificationCommande" class="btnInForm btn btn-success">Valider</button>
-                            </div>
-                            <div class="col-md-3">
-                                <button id="cloturerModificationCommande" class="btnInForm btn btn-primary">Clôturer</button>
-                            </div>
+                        <div class="formBtn">
+                            <button id="validerModificationCommande" class="btnInForm btn">Valider</button>
                         </div>
                     </div>
                 </div>

@@ -668,7 +668,6 @@ function obtenirDetailCommande(id_commande, id_client)
     }).done(function(detailCommande)
     {
         console.log(detailCommande)
-        //$("#titre_commande").empty().append("Commande n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
         if(detailCommande.type_commande == "DEV")
         {
             $("#titre_commande").empty().append("Devis n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
@@ -737,23 +736,23 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
         var gratuit;
         var totalLigne = detailCommande[i].prix_unitaire * detailCommande[i].quantite;
 
-        if(detailCommande[i].commentaire_stock === undefined)
+        if(detailCommande[i].commentaire_produit === undefined)
         {
-            stock = detailCommande[i].stock01 + " (Frn : " + detailCommande[i].stock02 + ")";
+            stock = detailCommande[i].stock01 + " (Frs=" + detailCommande[i].stock02 + ")";
         }
         else 
         {
-            stock = detailCommande[i].stock01 + " (Frn : " + detailCommande[i].stock02 + ") " + detailCommande[i].commentaire_produit;
+            stock = detailCommande[i].stock01 + " (Frs=" + detailCommande[i].stock02 + ") " + detailCommande[i].commentaire_produit;
         }
 
-        if(detailCommande[i].prix_unitaire == 0)
-        {
-            gratuit = "Oui";
-        }
-        else
-        {
-            gratuit = "";
-        }
+        // if(detailCommande[i].prix_unitaire == 0)
+        // {
+        //     gratuit = "Oui";
+        // }
+        // else
+        // {
+        //     gratuit = "";
+        // }
 
         if(cloturer_commande == 'IPAD' || page_courante == "consulterCommande")
         {
@@ -765,7 +764,7 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
                     "<td class='" + detailCommande[i].reference_produit + "'>" + parseInt(detailCommande[i].quantite) + "</td>" +
                     "<td class='" + detailCommande[i].reference_produit + "'>" + detailCommande[i].prix_unitaire + "</td>" +
                     "<td class='" + detailCommande[i].reference_produit + "'>" + stock + "</td>" +
-                    "<td class='" + detailCommande[i].reference_produit + "'>" + gratuit + "</td>" +
+                    //"<td class='" + detailCommande[i].reference_produit + "'>" + gratuit + "</td>" +
                     "<td class='" + detailCommande[i].reference_produit + " total' data-total='" + totalLigne + "'>" + totalLigne.toFixed(2) + "</td>" +
                 "</tr>"
             );
@@ -781,7 +780,7 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + parseInt(detailCommande[i].quantite) + "</td>" +
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + detailCommande[i].prix_unitaire + "</td>" +
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + stock + "</td>" +
-                    "<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + gratuit + "</td>" +
+                    //"<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + gratuit + "</td>" +
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='total ligneDetailCommande' data-total='" + totalLigne + "'>" + totalLigne.toFixed(2) + "</td>" +
                     "<td class='administrationTableauCommandes'><button class='supprimer' id='" + detailCommande[i].reference_produit + 
                     "supprimer'><img src='../images/corbeille32.png' alt='supprimer'></button></td>"  + 
@@ -819,6 +818,7 @@ function obtenirProduits(dossier)
         }
     }).done(function(produits)
     {
+        console.log(produits)
         var produits_sans_prix_speciaux = [];
         var dernier_produit = "";
         for(var i = 0; i < produits.length ; i++)
@@ -871,8 +871,9 @@ function obtenirProduits(dossier)
                 }
             }
         });
-    }).fail(function()
+    }).fail(function(err)
     {
+        console.log(err)
         alert("Une erreur est survenue");
     });
 }
@@ -887,21 +888,29 @@ function ajouterLigne()
     {
         alert("Veuillez saisir une quantité supérieure ou égale à 0");
     }
-    
+    else if($("#quantiteProduit").val() > 99999)
+    {
+        alert("Veuillez saisir une quantité inférieure à 99 999");
+    }
     else
     {
         var reference_produit = $("#referenceProduit").val();
         var quantite = $("#quantiteProduit").val();
         var prix_unitaire = $("#prixProduit").val();
-        var gratuit = "non";
+        var remise = $("#pourcentageRemise").val();
+        console.log(remise)
+        //var gratuit = "non";
         var code_combinaison = $("#code_combinaison_produit").val();
         var numero_commande = recupererNumCommande(id_inverse); //la variable numero_commande contient le n° de commande actuel récupéré dans l'url
         var dossier = recupererDossierClient(id_inverse);
         
-        if ($('#gratuitProduit').prop("checked"))
-        {
-            gratuit = "oui";
-        }
+        // if ($('#gratuitProduit').prop("checked"))
+        // {
+        //     gratuit = "oui";
+        // }
+        prix_unitaire = prix_unitaire / remise * 100;
+
+        console.log(prix_unitaire)
 
         if(prix_unitaire == "")
         {
@@ -911,7 +920,8 @@ function ajouterLigne()
         $("#referenceProduit").val("");
         $('#quantiteProduit').val("1");
         $("#prixProduit").val("");
-        $('#gratuitProduit').prop("checked", false);
+        $("#pourcentageRemise").val("");
+        //$('#gratuitProduit').prop("checked", false);
 
         $.ajax({
             url: "../ajouterLigneCommande",
@@ -923,7 +933,7 @@ function ajouterLigne()
                 quantite: quantite, 
                 prix_unitaire: prix_unitaire,
                 dossier: dossier,
-                gratuit: gratuit,
+                //gratuit: gratuit,
                 code_combinaison: code_combinaison
             },
             headers: {
@@ -934,8 +944,9 @@ function ajouterLigne()
             $('#tableauDetailCommande').DataTable().destroy();
             afficherDetailProduit(reponse);
             obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
-        }).fail(function()
+        }).fail(function(err)
         {
+            console.log(err)
             alert("Une erreur est survenue");
         });
 

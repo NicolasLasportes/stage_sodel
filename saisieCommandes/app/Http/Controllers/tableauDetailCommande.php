@@ -82,7 +82,7 @@ class tableauDetailCommande extends Controller
         $quantite = $produitAjouter[2];
         $prix_unitaire = $produitAjouter[3];
         $dossier = $produitAjouter[4];
-        $gratuit = $produitAjouter[5];
+        //$gratuit = $produitAjouter[5];
         $code_combinaison = $produitAjouter[6];
         $affichageFinal = [];
         $prix_speciaux = [];
@@ -128,11 +128,11 @@ class tableauDetailCommande extends Controller
             $quantite_prix = trim(odbc_result($result, 'F1QTE'));
         }
         
-        if($gratuit == "oui")
-        {
-            $prix_unitaire = 0;
-        }
-        else if($prix_unitaire == 0)
+        // if($gratuit == "oui")
+        // {
+        //     $prix_unitaire = 0;
+        // }
+        if($prix_unitaire == 0)
         {
             $prix_unitaire = $prix_unitaire_produit;
         }
@@ -157,7 +157,7 @@ class tableauDetailCommande extends Controller
             'quantite' => $quantite,
             'prix_unitaire' => $prix_unitaire,
             'prix_unitaire_final' => $prix_unitaire_produit,
-            'gratuit' => $gratuit,
+            //'gratuit' => $gratuit,
             'stock01' => $stock01,
             'stock02' => $stock02,
             'commentaire' => $commentaire
