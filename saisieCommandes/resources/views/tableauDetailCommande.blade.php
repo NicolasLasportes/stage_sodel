@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../css/dataTables.min.css">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link href="../fontawesome/css/all.css" rel="stylesheet">    
     </head>
     <body>
         <h3 id="titre_commande"></h3>
@@ -57,14 +57,14 @@
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="quantiteProduit">Quantité</label>
-                                <input type="number" value="1" class="form-control" id="quantiteProduit">
+                                <input type="number" value="1" class="form-control" id="quantiteProduit" required>
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="prixProduit">Prix unitaire</label>
                                 <input type="number" step="0.01" class="form-control" id="prixProduit" placeholder="Facultatif">
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
-                                <label for="pourcentageRemise">Remise ( % )</label>
+                                <label for="pourcentageRemise">Remise</label>
                                 <input type="number" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemise">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
@@ -117,8 +117,8 @@
                                 <input type="number" step="0.01" class="form-control" id="prixProduitLigne" placeholder="Facultatif">
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
-                                <label for="pourcentageRemiseLigne">Remise ( % )</label>
-                                <input type="number" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemiseLigne">
+                                <label for="pourcentageRemiseLigne">Remise</label>
+                                <input type="number" step="0.01" class="form-control" min="O.OO" value="0" max="100.00" id="pourcentageRemiseLigne">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
                                 <input id="gratuitProduitLigne" type="checkbox">
