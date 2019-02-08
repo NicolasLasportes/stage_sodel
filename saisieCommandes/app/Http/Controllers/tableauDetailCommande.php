@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Mail;
-
 use Illuminate\Http\Request;
 
 class tableauDetailCommande extends Controller
@@ -16,7 +14,7 @@ class tableauDetailCommande extends Controller
     public function obtenirProduixCommande($id_commande, $id_client)
     {
         include '../../include/connexion.php';
-        
+
         $liste_commande = [];
 
         $recuperer_nom_client = "SELECT CENOMF, SOTYPO FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$id_client' AND SONCDE = '$id_commande'";
@@ -30,42 +28,65 @@ class tableauDetailCommande extends Controller
             'nom_client' => $nom_client,
             'type_commande' => $type_commande
         ];
-
+        
         $sql = "SELECT LOSOCI, CDPROD, LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$id_commande'";
 
         $detailCommande = odbc_Exec($conn, $sql);
-        
+
         while(odbc_fetch_row($detailCommande))
         {
             $code_societe = trim(odbc_result($detailCommande, 'LOSOCI'));
             $reference_produit = trim(odbc_result($detailCommande, 'CDPROD'));
             $quantite = trim(odbc_result($detailCommande, 'LOQTEE'));
             $prix_unitaire = trim(odbc_result($detailCommande, 'LOPRIX'));
-            
+
             $sql_produit = "SELECT A0SOCI, A0DESI, WWSTK01, WWSTK02, WWTEXTE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$id_client' 
             AND F1QTE = '1' AND A0SOCI = '$code_societe'";
-            $produit = odbc_Exec($conn, $sql_produit);
-            
-            while(odbc_fetch_row($produit))
-            {
-                $designation = trim(odbc_result($produit, 'A0DESI'));
-                $stock01 = trim(odbc_result($produit, 'WWSTK01'));
-                $stock02 = trim(odbc_result($produit, 'WWSTK02'));
-                $commentaire = trim(odbc_result($produit, 'WWTEXTE'));
 
+            $produit = odbc_Exec($conn, $sql_produit);
+
+            $designation = trim(odbc_result($produit, 'A0DESI'));
+            $stock01 = trim(odbc_result($produit, 'WWSTK01'));
+            $stock02 = trim(odbc_result($produit, 'WWSTK02'));
+            $commentaire = trim(odbc_result($produit, 'WWTEXTE'));
+
+            $affichageJson = [
+                'code_societe' => $code_societe,
+                'reference_produit' => $reference_produit,
+                'quantite' => $quantite,
+                'prix_unitaire' => $prix_unitaire,
+                'designation_produit' => utf8_encode($designation),
+                'stock01' => $stock01,
+                'stock02' => $stock02,
+                'commentaire_produit' => $commentaire
+            ];
+
+            if($designation === "" && $stock01 === "" && $stock02 === "" && $commentaire === "")
+            {
+                $recuperer_designation_produit = "SELECT A0DESI FROM FILBASSOD.produip1 WHERE A0SOCI = '$code_societe' AND A0PROD =  '$reference_produit'"; 
+                
+                $informations_produit = odbc_Exec($conn, $recuperer_designation_produit);
+
+                $designation = trim(odbc_result($informations_produit, 'A0DESI'));
+
+                $recuperer_stock_produit = "SELECT SKQSTO, SKQECC FROM stocksp1 WHERE SKSOCI = '$code_societe' and SKDEPO = '001' AND SKPROD = '$reference_produit'";
+
+                $stock_produit = odbc_exec($conn, $recuperer_stock_produit);
+
+                $stock_reel = trim(odbc_result($stock_produit, 'SKQSTO'));
+                $encours_client = trim(odbc_result($stock_produit, 'SKQECC'));
+                $stock01 = $stock_reel - $encours_client;
+                
                 $affichageJson = [
                     'code_societe' => $code_societe,
                     'reference_produit' => $reference_produit,
                     'quantite' => $quantite,
                     'prix_unitaire' => $prix_unitaire,
                     'designation_produit' => utf8_encode($designation),
-                    'stock01' => $stock01,
-                    'stock02' => $stock02,
-                    'commentaire_produit' => $commentaire
+                    'stock01' => $stock01
                 ];
-
-                array_push($liste_commande, $affichageJson);
             }
+            array_push($liste_commande, $affichageJson);
         }
 
         return $liste_commande;

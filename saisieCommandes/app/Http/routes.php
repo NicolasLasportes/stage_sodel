@@ -40,4 +40,5 @@ Route::post('/envoyer_email', 'tableauDetailCommande@envoyer_email');
 //Liste produits
 Route::post('/listeProduits/{dossier}', 'produits@obtenirProduits');
 
+//Route::get('produits', 'produits@produits');
 //Route::get('/send_email', 'tableauDetailCommande@send_email');

@@ -65,7 +65,7 @@
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="pourcentageRemise">Remise</label>
-                                <input type="number" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemise">
+                                <input type="text" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemise">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
                                 <input id="gratuitProduit" type="checkbox">
@@ -118,7 +118,7 @@
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="pourcentageRemiseLigne">Remise</label>
-                                <input type="number" step="0.01" class="form-control" min="O.OO" value="0" max="100.00" id="pourcentageRemiseLigne">
+                                <input type="text" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemiseLigne">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
                                 <input id="gratuitProduitLigne" type="checkbox">

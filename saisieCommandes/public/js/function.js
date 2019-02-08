@@ -657,8 +657,9 @@ function obtenirDetailCommande(id_commande, id_client)
 {
     $.ajax({
         url : '../detailCommandeClient/' + id_commande + "&" + id_client,
-        type : 'POST',
-        contentType : "json",
+        type : 'post',
+        contentType : "application/json",
+        dataType: 'json',
         statusCode : 
         {
             404:function()
@@ -671,7 +672,6 @@ function obtenirDetailCommande(id_commande, id_client)
         }
     }).done(function(detailCommande)
     {
-        console.log(detailCommande)
         if(detailCommande.type_commande == "DEV")
         {
             $("#titre_commande").empty().append("Devis n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
@@ -683,7 +683,7 @@ function obtenirDetailCommande(id_commande, id_client)
         delete detailCommande.nom_client;
         verifierCommandeCloturer(recupererNumCommande(id_inverse), detailCommande);
         envoyer_email(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
-    }).fail(function()
+    }).fail(function(err)
     {
         alert("Une erreur est survenue");
     });
@@ -710,8 +710,8 @@ function verifierCommandeCloturer(numero_commande, detailCommande)
         }
     }).done(function(reponse)
     {
-        genererTableauDetailCommande(detailCommande, reponse.cloturer_commande);
         console.log(reponse)
+        genererTableauDetailCommande(detailCommande, reponse.cloturer_commande);
     }).fail(function()
     {
         alert("Une erreur est survenue");
@@ -721,9 +721,7 @@ function verifierCommandeCloturer(numero_commande, detailCommande)
 function genererTableauDetailCommande(detailCommande, cloturer_commande)
 {
     $("#corpsDetailCommande").empty();
-    var total = 0;
-    console.log(cloturer_commande)
-    
+    var total = 0;    
     
     if(cloturer_commande == "" && genererColonneOptions == true)
     {
@@ -734,10 +732,10 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
         if(page_courante != "consulterCommande")
         {
             $("#afficherFormAjoutProduit").show();
+            $("#headerDetailCommande").append("<th id='administrationDetailCommande' class='enteteTableauDetailCommande'>Supprimer</th>");
         }
 
         $("#cloturerCommande").show();
-        $("#headerDetailCommande").append("<th id='administrationDetailCommande' class='enteteTableauDetailCommande'>Options</th>");
         genererColonneOptions = false;
     }
 
@@ -749,7 +747,11 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
         //var gratuit;
         var totalLigne = detailCommande[i].prix_unitaire * detailCommande[i].quantite;
 
-        if(detailCommande[i].commentaire_produit === undefined)
+        if(detailCommande[i].stock01 === undefined && detailCommande[i].stock02 === undefined)
+        {
+            stock = "";
+        }
+        else if(detailCommande[i].commentaire_produit === undefined)
         {
             stock = detailCommande[i].stock01 + " (Frs=" + detailCommande[i].stock02 + ")";
         }
@@ -861,9 +863,6 @@ function obtenirProduits(dossier)
             }
         }
 
-
-
-
         for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
         {
             $("#suggestion_produit").append("<option value='" + produits_sans_prix_speciaux[i].numero_produit + "'>" + produits_sans_prix_speciaux[i].numero_produit + 
@@ -938,23 +937,22 @@ function obtenirProduits(dossier)
 
 function ajouterLigne()
 {
-    var remise = 0;
-    if($("#pourcentageRemise").val() != '')
+    if($("#pourcentageRemise").val() == '')
     {
-        remise = parseFloat($("#pourcentageRemise").val());
+        var remise = 0;
+    }
+    else
+    {
+        var remise = $("#pourcentageRemise").val();
     }
 
     if($("#referenceProduit").val() == "")
     {
-        alert("Veuillez saisir un produit valide");
+        alert("Veuillez saisir un produit valide"); 
     }
     else if($("#quantiteProduit").val() == "" || $("#quantiteProduit").val() <= 0)
     {
-        alert("Veuillez saisir une quantité supérieure ou égale à 0");
-    }
-    else if(isNaN(parseFloat($("#quantiteProduit").val() )) === true)
-    {
-        alert("Veuillez saisir uniquement des chiffres pour la quantité");
+        alert("Veuillez saisir une quantité supérieure à 0");
     }
     else if($("#quantiteProduit").val() > 99999)
     {
@@ -964,6 +962,10 @@ function ajouterLigne()
     {
         alert("Veuillez saisir un prix unitaire valide");
     }
+    else if(!$.isNumeric(remise))
+    {
+        alert("Veuillez saisir un nombre valide");
+    }
     else if(remise < 0)
     {
         alert("Veuillez choisir une remise supérieure à 0");
@@ -971,10 +973,6 @@ function ajouterLigne()
     else if(remise > 100)
     {
         alert("Veuillez choisir une remise inférieure à 100");
-    }
-    else if(isNaN(parseFloat(remise)) === true)
-    {
-        alert("Veuillez saisir uniquement des chiffres pour la remise");
     }
     else
     {
@@ -991,8 +989,6 @@ function ajouterLigne()
         //     gratuit = "oui";
         // }
         prix_unitaire = prix_unitaire - (prix_unitaire * remise / 100);
-
-        console.log(prix_unitaire)
         
         $("#referenceProduit").val("");
         $('#quantiteProduit').val("1");
@@ -1018,7 +1014,6 @@ function ajouterLigne()
             }
         }).done(function(reponse)
         {
-            console.log(reponse)
             $('#tableauDetailCommande').DataTable().destroy();
             afficherDetailProduit(reponse);
             obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
@@ -1081,34 +1076,73 @@ function modifierLigneCommande(code_societe)
     var code_produit = $("#referenceProduitLigne").val();
     var quantite =  $("#quantiteProduitLigne").val();
     var prix_unitaire = $("#prixProduitLigne").val();
-    var remise = $("#pourcentageRemiseLigne").val();
+    if($("#pourcentageRemiseLigne").val() == '')
+    {
+        var remise = 0;
+    }
+    else
+    {
+        var remise = $("#pourcentageRemiseLigne").val();
+    }
     //var gratuit = $("#gratuitProduitLigne").prop("checked");
 
-    prix_unitaire = prix_unitaire - (prix_unitaire * remise / 100);
-
-    $.ajax({
-        url: "../modifierLigneCommande",
-        type: "post",
-        dataType: 'json',
-        data: { 
-            numero_commande: recupererNumCommande(id_inverse),
-            code_societe: code_societe,
-            code_produit: code_produit,
-            quantite: quantite,
-            prix_unitaire: prix_unitaire,
-            dossier: recupererDossierClient(id_inverse)
-        },
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    }).done(function()
-    {   
-        $('#tableauDetailCommande').DataTable().destroy();
-        obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse))
-    }).fail(function()
+    if($("#referenceProduitLigne").val() == "")
     {
-        alert("Une erreur est survenue");
-    })
+        alert("Veuillez saisir un produit valide"); 
+    }
+    else if($("#quantiteProduitLigne").val() == "" || $("#quantiteProduit").val() <= 0)
+    {
+        alert("Veuillez saisir une quantité supérieure à 0");
+    }
+    else if($("#quantiteProduitLigne").val() > 99999)
+    {
+        alert("Veuillez saisir une quantité inférieure à 99 999");
+    }
+    else if ($("#prixProduitLigne").val() == '' || $("#prixProduitLigne").val() < 0)
+    {
+        alert("Veuillez saisir un prix unitaire valide");
+    }
+    else if(!$.isNumeric(remise))
+    {
+        alert("Veuillez saisir un nombre valide");
+    }
+    else if(remise < 0)
+    {
+        alert("Veuillez choisir une remise supérieure à 0");
+    }
+    else if(remise > 100)
+    {
+        alert("Veuillez choisir une remise inférieure à 100");
+    }
+    else
+    {
+        $("#pourcentageRemiseLigne").val("");
+        prix_unitaire = prix_unitaire - (prix_unitaire * remise / 100);
+
+        $.ajax({
+            url: "../modifierLigneCommande",
+            type: "post",
+            dataType: 'json',
+            data: { 
+                numero_commande: recupererNumCommande(id_inverse),
+                code_societe: code_societe,
+                code_produit: code_produit,
+                quantite: quantite,
+                prix_unitaire: prix_unitaire,
+                dossier: recupererDossierClient(id_inverse)
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }).done(function()
+        {   
+            $('#tableauDetailCommande').DataTable().destroy();
+            obtenirDetailCommande(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse))
+        }).fail(function()
+        {
+            alert("Une erreur est survenue");
+        })
+    }
 }
 
 function afficherDetailProduit(produit)
