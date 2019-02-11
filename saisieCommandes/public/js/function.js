@@ -9,6 +9,9 @@ var cle_commercial = [];
 var nom_commercial = [];
 var code_T = [];
 var direction = false;
+var formulaire_actif = "";
+var clignoter;
+var afficher_clignoter = false;
 
 for(var i = url_actuelle.length - 1; i >= 0; i--)
 {
@@ -744,8 +747,8 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
     for(var i in detailCommande)
     {
         var stock; 
-        //var gratuit;
         var totalLigne = detailCommande[i].prix_unitaire * detailCommande[i].quantite;
+        //var gratuit;
 
         if(detailCommande[i].stock01 === undefined && detailCommande[i].stock02 === undefined)
         {
@@ -834,25 +837,56 @@ function obtenirProduits(dossier)
     }).done(function(produits)
     {
         console.log(produits)
+        $("#chargementProduits").empty();
+        clearInterval(clignoter);
         var produits_sans_prix_speciaux = [];
         var dernier_produit = "";
         var prix_a_modifier;
         var code_combinaison;
         var produit_actuel;
 
+        if(formulaire_actif == "ajouter")
+        {
+            prix_a_modifier = "#prixProduit";
+            code_combinaison = "#code_combinaison_produit";
+        }
+        else if(formulaire_actif == "modifier")
+        {
+            prix_a_modifier = "#prixProduitLigne";
+            code_combinaison = "#code_combinaison_produit_modifier";
+            produit_actuel = $("#referenceProduitLigne").val();
+
+            for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
+            {
+                if(produit_actuel == produits_sans_prix_speciaux[i].numero_produit && produits_sans_prix_speciaux[i].code_combinaison == "S")
+                {
+                    $("#code_combinaison_produit_modifier").val("S");
+                    break;  
+                }
+            }    
+        }
+
         $("#formulaireModifierLigneCommande").on('shown.bs.modal', function()
         {
             prix_a_modifier = "#prixProduitLigne";
             code_combinaison = "#code_combinaison_produit_modifier";
             produit_actuel = $("#referenceProduitLigne").val();
-        })
+
+            for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
+            {
+                if(produit_actuel == produits_sans_prix_speciaux[i].numero_produit && produits_sans_prix_speciaux[i].code_combinaison == "S")
+                {
+                    $("#code_combinaison_produit_modifier").val("S");
+                    break;  
+                }
+            }    
+        });
 
         $("#formulaireAjouterLigneCommande").on('shown.bs.modal', function()
         {
             prix_a_modifier = "#prixProduit";
-
             code_combinaison = "#code_combinaison_produit";
-        })
+        });
 
         for(var i = 0; i < produits.length ; i++)
         {
@@ -888,46 +922,23 @@ function obtenirProduits(dossier)
                 }
             }
         });
-
+        
         $("#quantiteProduit, #quantiteProduitLigne").on('input', function() //cette fonction récupere le prix unitaire du produit (s'il a un code_combinaison == "S")
-        {                                                                   //quand on sélectionne la quantité
-            console.log(prix_a_modifier)                                               
+        {                                                                  //quand on sélectionne la quantité                                            
             var quantite_demande = this.value;
-            console.log(quantite_demande)
-            console.log(produit_actuel)
-            console.log($("#code_combinaison_produit_modifier").val())
-            console.log(code_combinaison)
             if($(code_combinaison).val() == "S")
             {
-                console.log("il y a bien un S")
                 for(var i = 0; i < produits.length; i++)
                 {
-                    //console.log("je boucle dans produits")
                     if(produit_actuel == produits[i].numero_produit && parseInt(produits[i].quantite) >= quantite_demande)
                     {
                         $(prix_a_modifier).val(produits[i].prix_unitaire);
-                        console.log(produits[i].quantite)
-                        console.log(quantite_demande)
-                        console.log(produits[i].prix_unitaire);
                         break; 
                     }
                 }
             }
         });
-
-        $(".ligneDetailCommande").on('click', function()
-        {
-            var ce_produit = $("#referenceProduitLigne").val();
-            for(var i = 0; i < produits.length; i++)
-            {
-                if(ce_produit == produits[i].numero_produit && produits[i].code_combinaison == "S")
-                {
-                    $("#code_combinaison_produit_modifier").val("S");
-                    console.log($("#code_combinaison_produit_modifier").val());
-                    break;  
-                }
-            }
-        });
+        
     }).fail(function(err)
     {
         console.log(err)
@@ -1322,4 +1333,21 @@ function obtenirListeCommandes(cle_representant)
     {
         alert("Une erreur est survenue");
     });
+}
+
+function faireClignoter(element)
+{
+    clignoter = window.setInterval(function()
+    {
+        if(afficher_clignoter == true)
+        {
+            $("#" + element).show();
+            afficher_clignoter = false;
+        }
+        else
+        {
+            $("#" + element).hide();
+            afficher_clignoter = true;
+        }
+    }, 700);
 }

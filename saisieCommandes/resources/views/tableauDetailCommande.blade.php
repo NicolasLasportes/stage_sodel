@@ -44,6 +44,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>Ajouter un produit</h3>
+                        <h4 id="chargementProduits"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
@@ -65,7 +66,7 @@
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="pourcentageRemise">Remise</label>
-                                <input type="text" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemise">
+                                <input type="text" step="0.01" class="form-control" maxlength="3" min="O.OO" max="100.00" id="pourcentageRemise">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
                                 <input id="gratuitProduit" type="checkbox">
@@ -118,7 +119,7 @@
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="pourcentageRemiseLigne">Remise</label>
-                                <input type="text" step="0.01" class="form-control" min="O.OO" max="100.00" id="pourcentageRemiseLigne">
+                                <input type="text" step="0.01" class="form-control" maxlength="3" min="O.OO" max="100.00" id="pourcentageRemiseLigne">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
                                 <input id="gratuitProduitLigne" type="checkbox">

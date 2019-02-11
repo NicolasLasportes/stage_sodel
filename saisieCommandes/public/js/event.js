@@ -23,7 +23,8 @@ else if(window.location.href.search("client") != -1)
 
 else if(window.location.href.search("commande") != -1)
 {
-    page_courante = "Commande";
+    $("#chargementProduits").append("Chargement du tarif");
+    faireClignoter("chargementProduits");
     if(window.location.href.search("#consulter") != -1)
     {
         page_courante = "consulterCommande";
@@ -36,6 +37,7 @@ else if(window.location.href.search("commande") != -1)
     if(window.location.href.search("#ajouterProduit") != -1)
     {
         $("#formulaireAjouterLigneCommande").modal('show');
+        formulaire_actif = "ajouter";
     }
 }
 
@@ -160,5 +162,15 @@ $(".modal").on('shown.bs.modal', function()
 $("#entetePageCommande").on('click', '#fermerPage', function()
 {
     window.close();
+});
+
+$("#afficherFormAjoutProduit").on('click', function()
+{
+    formulaire_actif = "ajouter";
+});
+
+$(".ligneDetailCommande").on('click', function()
+{
+    formulaire_actif = "modifier";
 });
 
