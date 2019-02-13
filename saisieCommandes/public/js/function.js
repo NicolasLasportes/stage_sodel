@@ -12,6 +12,7 @@ var direction = false;
 var formulaire_actif = "";
 var clignoter;
 var afficher_clignoter = false;
+var ma_liste_des_produits = [];
 
 for(var i = url_actuelle.length - 1; i >= 0; i--)
 {
@@ -841,52 +842,12 @@ function obtenirProduits(dossier)
         clearInterval(clignoter);
         var produits_sans_prix_speciaux = [];
         var dernier_produit = "";
+        var liste_produits = [];
         var prix_a_modifier;
-        var code_combinaison;
+        var code_combinaison = "";
         var produit_actuel;
-
-        if(formulaire_actif == "ajouter")
-        {
-            prix_a_modifier = "#prixProduit";
-            code_combinaison = "#code_combinaison_produit";
-        }
-        else if(formulaire_actif == "modifier")
-        {
-            prix_a_modifier = "#prixProduitLigne";
-            code_combinaison = "#code_combinaison_produit_modifier";
-            produit_actuel = $("#referenceProduitLigne").val();
-
-            for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
-            {
-                if(produit_actuel == produits_sans_prix_speciaux[i].numero_produit && produits_sans_prix_speciaux[i].code_combinaison == "S")
-                {
-                    $("#code_combinaison_produit_modifier").val("S");
-                    break;  
-                }
-            }    
-        }
-
-        $("#formulaireModifierLigneCommande").on('shown.bs.modal', function()
-        {
-            prix_a_modifier = "#prixProduitLigne";
-            code_combinaison = "#code_combinaison_produit_modifier";
-            produit_actuel = $("#referenceProduitLigne").val();
-
-            for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
-            {
-                if(produit_actuel == produits_sans_prix_speciaux[i].numero_produit && produits_sans_prix_speciaux[i].code_combinaison == "S")
-                {
-                    $("#code_combinaison_produit_modifier").val("S");
-                    break;  
-                }
-            }    
-        });
-
-        $("#formulaireAjouterLigneCommande").on('shown.bs.modal', function()
-        {
-            prix_a_modifier = "#prixProduit";
-            code_combinaison = "#code_combinaison_produit";
-        });
+        ma_liste_des_produits = produits;
+        console.log(ma_liste_des_produits);
 
         for(var i = 0; i < produits.length ; i++)
         {
@@ -899,25 +860,59 @@ function obtenirProduits(dossier)
 
         for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
         {
-            $("#suggestion_produit").append("<option value='" + produits_sans_prix_speciaux[i].numero_produit + "'>" + produits_sans_prix_speciaux[i].numero_produit + 
-            " [" + produits_sans_prix_speciaux[i].designation_produit + "]" + "</option>");
+            liste_produits.push(produits_sans_prix_speciaux[i].numero_produit + " [" + produits_sans_prix_speciaux[i].designation_produit + "]");
         }
 
-        $("#referenceProduit").on('input', function() //cette fonction récupere le prix unitaire du produit (dans le tableau associatif produits)
-        {                                            //quand on sélectionne une référence
-            var valeur_input = this.value;
-            if($('datalist').find('option').filter(function()
+        $("#formulaireModifierLigneCommande").on('shown.bs.modal', function()
+        {
+            prix_a_modifier = "#prixProduitLigne";
+            code_combinaison = "#code_combinaison_produit_modifier";
+            produit_actuel = $("#referenceProduitLigne").val();
+    
+            for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
             {
-                return this.value == valeur_input;        
-            }).length) {
-                for(var i = 0; i < produits.length; i++)
+                if(produit_actuel == produits_sans_prix_speciaux[i].numero_produit)
                 {
-                    if(this.value == produits[i].numero_produit)
+                    produit_actuel = produits_sans_prix_speciaux[i];
+                    if(produit_actuel.code_combinaison == "S")
                     {
-                        produit_actuel = produits[i].numero_produit;
-                        $("#prixProduit").val(produits[i].prix_unitaire);
-                        $("#code_combinaison_produit").val(produits[i].code_combinaison);
-                        break;
+                        $(code_combinaison).val("S");
+                        break;  
+                    }
+                }
+            }    
+        });
+    
+        $("#formulaireAjouterLigneCommande").on('shown.bs.modal', function()
+        {
+            prix_a_modifier = "#prixProduit";
+            code_combinaison = "#code_combinaison_produit";
+        });
+
+        new Awesomplete(document.getElementById("referenceProduit"), 
+        {
+            list: liste_produits,
+            maxItems: liste_produits.length,
+            minChars: 1
+        });
+
+        $("#awesomplete_list_1").on('click', function()
+        {
+            console.log($(this))
+            var produit_choisi = $("#referenceProduit").val();
+            produit_choisi = produit_choisi.slice(0, produit_choisi.indexOf("[") - 1);
+            console.log(produit_choisi)
+            $("#referenceProduit").val(produit_choisi);
+
+            for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
+            {
+                if(produit_choisi == produits_sans_prix_speciaux[i].numero_produit)
+                {
+                    produit_actuel = produits_sans_prix_speciaux[i];
+                    $("#prixProduit").val(produit_actuel.prix_unitaire)
+                    if(produit_actuel.code_combinaison == "S")
+                    {
+                        $(code_combinaison).val("S");
                     }
                 }
             }
@@ -926,11 +921,13 @@ function obtenirProduits(dossier)
         $("#quantiteProduit, #quantiteProduitLigne").on('input', function() //cette fonction récupere le prix unitaire du produit (s'il a un code_combinaison == "S")
         {                                                                  //quand on sélectionne la quantité                                            
             var quantite_demande = this.value;
+            console.log(quantite_demande)
+            console.log(code_combinaison)
             if($(code_combinaison).val() == "S")
             {
                 for(var i = 0; i < produits.length; i++)
                 {
-                    if(produit_actuel == produits[i].numero_produit && parseInt(produits[i].quantite) >= quantite_demande)
+                    if(produit_actuel.numero_produit == produits[i].numero_produit && parseInt(produits[i].quantite) >= quantite_demande)
                     {
                         $(prix_a_modifier).val(produits[i].prix_unitaire);
                         break; 
@@ -938,7 +935,6 @@ function obtenirProduits(dossier)
                 }
             }
         });
-        
     }).fail(function(err)
     {
         console.log(err)
@@ -948,6 +944,7 @@ function obtenirProduits(dossier)
 
 function ajouterLigne()
 {
+    var produit_existe = false;
     if($("#pourcentageRemise").val() == '')
     {
         var remise = 0;
@@ -957,11 +954,23 @@ function ajouterLigne()
         var remise = $("#pourcentageRemise").val();
     }
 
-    if($("#referenceProduit").val() == "")
+    if($("#referenceProduit").val() != "")
+    {
+        for( var i = 0; i < ma_liste_des_produits.length; i++)
+        {
+            if($("#referenceProduit").val() == ma_liste_des_produits[i].numero_produit)
+            {
+                produit_existe = true;
+                break;
+            }
+        }
+    }
+    else
     {
         alert("Veuillez saisir un produit valide"); 
     }
-    else if($("#quantiteProduit").val() == "" || $("#quantiteProduit").val() <= 0)
+
+    if($("#quantiteProduit").val() == "" || $("#quantiteProduit").val() <= 0)
     {
         alert("Veuillez saisir une quantité supérieure à 0");
     }
@@ -975,7 +984,7 @@ function ajouterLigne()
     }
     else if(!$.isNumeric(remise))
     {
-        alert("Veuillez saisir un nombre valide");
+        alert("La remise ne doit contenir que des caractères numériques");
     }
     else if(remise < 0)
     {
@@ -984,6 +993,10 @@ function ajouterLigne()
     else if(remise > 100)
     {
         alert("Veuillez choisir une remise inférieure à 100");
+    }
+    else if(produit_existe == false)
+    {
+        alert("Le référence produit n'est pas valide");
     }
     else
     {
@@ -1182,7 +1195,7 @@ function afficherDetailProduit(produit)
         }
         
         $("#referenceProduitAjout").append(listeCellules[0] + " Qte : " + listeCellules[1] + 
-        " Prix unit : " + parseFloat(listeCellules[2]).toFixed(2) + " Stock : " + listeCellules[3] + " (Frn : " + listeCellules[4] + ")");
+        " Prix unit net: " + parseFloat(listeCellules[2]).toFixed(2) + " Stock : " + listeCellules[3] + " (Frn : " + listeCellules[4] + ")");
     }
 
     else
@@ -1341,12 +1354,12 @@ function faireClignoter(element)
     {
         if(afficher_clignoter == true)
         {
-            $("#" + element).show();
+            $(element).show();
             afficher_clignoter = false;
         }
         else
         {
-            $("#" + element).hide();
+            $(element).hide();
             afficher_clignoter = true;
         }
     }, 700);

@@ -16,10 +16,10 @@ return [
     |
     */
     
-    'mailgun' => [
-        'domain' => 'your-mailgun-domain',
-        'secret' => 'your-mailgun-key',
-    ],
+    // 'mailgun' => [
+    //     'domain' => 'mg.sodel.com',
+    //     'secret' => 'pubkey-d4da4486f658874f8796a9d355739fbc',
+    // ],
 
     'driver' => env('MAIL_DRIVER', 'smtp'),
 

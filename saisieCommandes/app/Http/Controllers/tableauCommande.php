@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Mail;
+
 use Illuminate\Http\Request;
 
 class tableauCommande extends Controller
@@ -388,6 +390,17 @@ class tableauCommande extends Controller
         
         return $affichageJson;
     }
+
+    // public function envoyer_email_cloture()
+    // {
+    //     $data = "bonjour";
+    //     Mail::send('mail', ['data' => $data], function($m)
+    //     {
+    //         $m->from('nicolas.lasportes@gmail.com', "Essai envoi d'un mail");
+
+    //         $m->to('tricky730@gmail.com')->cc('fournel@dune-electronic.com')->subject('Essai');
+    //     });
+    // }
 
     //fonction pour la liste des commandes d'un représentant
 

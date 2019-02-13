@@ -8,7 +8,8 @@
         <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../css/dataTables.min.css">
-        <link href="../fontawesome/css/all.css" rel="stylesheet"> 
+        <link href="../fontawesome/css/all.css" rel="stylesheet">
+        <link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.min.css">
     </head>
     <body>
         <div id="entetePageCommande" class="container">
@@ -219,6 +220,7 @@
         </div>
 
         <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.min.js"></script>
         <script type="text/javascript" src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="../js/dataTables.min.js"></script>

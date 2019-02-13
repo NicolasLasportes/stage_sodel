@@ -8,7 +8,8 @@
         <link rel="stylesheet" type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../css/dataTables.min.css">
-        <link href="../fontawesome/css/all.css" rel="stylesheet">    
+        <link href="../fontawesome/css/all.css" rel="stylesheet">   
+        <link rel="stylesheet" type="text/css" href="../awesomplete/awesomplete.css"> 
     </head>
     <body>
         <h3 id="titre_commande"></h3>
@@ -26,7 +27,7 @@
                     <th class="enteteTableauDetailCommande">Référence</th>
                     <th class="enteteTableauDetailCommande">Désignation</th>
                     <th class="enteteTableauDetailCommande">Quantité</th>
-                    <th class="enteteTableauDetailCommande">Prix</th>
+                    <th class="enteteTableauDetailCommande">Prix net</th>
                     <th class="enteteTableauDetailCommande">Stock</th>
                     <!-- <th class="enteteTableauDetailCommande">Gratuit</th> -->
                     <th id="total_detail_commande" class="totalEntete enteteTableauDetailCommande">Total</th>
@@ -44,7 +45,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>Ajouter un produit</h3>
-                        <h4 id="chargementProduits"></h4>
+                        <h4 class="chargementProduits"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
@@ -53,19 +54,18 @@
                         <div class="form-row">
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="referenceProduit">Référence du produit</label>
-                                <input list="suggestion_produit" type="text" class="form-control" id="referenceProduit" placeholder="Chercher un produit par référence ou désignation">
-                                <datalist id="suggestion_produit"></datalist>
+                                <input type="text" class="form-control" id="referenceProduit" placeholder="Chercher un produit par référence ou désignation">
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
                                 <label for="quantiteProduit">Quantité</label>
                                 <input type="number" value="1" class="form-control" id="quantiteProduit" required>
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
-                                <label for="prixProduit">Prix unitaire</label>
+                                <label for="prixProduit">Prix unitaire net</label>
                                 <input type="number" step="0.01" class="form-control" id="prixProduit" placeholder="Facultatif">
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
-                                <label for="pourcentageRemise">Remise</label>
+                                <label for="pourcentageRemise"></label>
                                 <input type="text" step="0.01" class="form-control" maxlength="3" min="O.OO" max="100.00" id="pourcentageRemise">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
@@ -99,6 +99,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2>Modifier une ligne</h2>
+                        <h4 class="chargementProduits"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
@@ -114,11 +115,11 @@
                                 <input type="number" class="form-control" id="quantiteProduitLigne">
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
-                                <label for="prixProduitLigne">Prix unitaire</label>
+                                <label for="prixProduitLigne">Prix unitaire net</label>
                                 <input type="number" step="0.01" class="form-control" id="prixProduitLigne" placeholder="Facultatif">
                             </div>
                             <div class="offset-md-2 col-md-8 form-group">
-                                <label for="pourcentageRemiseLigne">Remise</label>
+                                <label for="pourcentageRemiseLigne"></label>
                                 <input type="text" step="0.01" class="form-control" maxlength="3" min="O.OO" max="100.00" id="pourcentageRemiseLigne">
                             </div>
                             <!-- <div class="offset-md-2 col-md-8">
@@ -135,6 +136,7 @@
             </div>
         </div>
         <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="../awesomplete/awesomplete.js"></script>
         <script type="text/javascript" src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="../js/dataTables.min.js"></script>

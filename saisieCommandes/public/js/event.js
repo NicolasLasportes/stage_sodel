@@ -24,7 +24,7 @@ else if(window.location.href.search("client") != -1)
 else if(window.location.href.search("commande") != -1)
 {
     $("#chargementProduits").append("Chargement du tarif");
-    faireClignoter("chargementProduits");
+    faireClignoter(".chargementProduits");
     if(window.location.href.search("#consulter") != -1)
     {
         page_courante = "consulterCommande";
