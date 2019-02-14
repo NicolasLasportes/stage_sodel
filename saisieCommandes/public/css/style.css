@@ -1,4 +1,4 @@
-#tableauCommande, #tableauDetailCommande, .adresseLivraison
+#tableauCommande, #tableauDetailCommande
 {
     margin-top: 3%;
 }
@@ -192,16 +192,6 @@ table, th, td
     float:right;
 }
 
-#reference, #commandeOuDevis, #notes, #referenceModifier, #commandeOuDevisModifier, #notesModifier
-{
-    width:80% !important;
-}
-
-#adresseLivraison, #adresseLivraisonDeux
-{
-    width:90%;
-}
-
 #parametreLivraisonDefaut, #parametreLivraisonFacultatif, #parametreLivraisonDefautModifier, #parametreLivraisonFacultatifModifier
 {
     background-color: #e1e1e1;
@@ -216,7 +206,7 @@ table, th, td
 
 #fermerPage
 {
-    float:right;
+    float: right;
 }
 
 .nom_commande
@@ -229,8 +219,14 @@ table, th, td
     text-align:center;
 }
 
-#chargementProduits
+.chargementProduits
 {
     margin-left:10%;
     color: red;
+}
+
+.adresseLivraison
+{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }

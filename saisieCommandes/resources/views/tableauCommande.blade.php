@@ -9,7 +9,6 @@
         <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../css/dataTables.min.css">
         <link href="../fontawesome/css/all.css" rel="stylesheet">
-        <link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.min.css">
     </head>
     <body>
         <div id="entetePageCommande" class="container">
@@ -58,14 +57,14 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-row">
-                            <div class="offset-md-1 col-md-4 sectionFormulaire" id="parametreLivraisonDefaut">
+                            <div class="col-md-6 sectionFormulaire" id="parametreLivraisonDefaut">
                                 <h3>Le client</h3>
                                 <div id="identite"></div>
                                 <div id="tel"></div>
                                 <div id="email"></div>
                                 <div id="adresse"></div>   
                             </div>
-                            <div class="offset-md-1 col-md-5 sectionFormulaire" id="parametreCommande">
+                            <div class="col-md-6 sectionFormulaire" id="parametreCommande">
                                 <h3>La commande</h3>
                                 <label for="reference">Référence</label>       
                                 <input type="text" maxlength="25" id="reference" class="form-control" placeholder="Référence de la commande">
@@ -75,7 +74,7 @@
                                     <option value="DEV">Devis</option>
                                 </select>
                                 <div class="note">Notes</div>
-                                <textarea class="form-control" name="notes" id="notes"></textarea>
+                                <textarea class="form-control" name="notes" id="notes" maxlength="110"></textarea>
                             </div>
                         </div>
                         <div id="parametreClient">
@@ -87,37 +86,45 @@
                                 <div class="offset-md-1 col-md-10 sectionFormulaire">
                                     <h3>Livraison</h3>
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 form-group">
                                     <label for="nomLivraison">Nom du destinataire</label>
                                     <input class="form-control" maxlength="40" type="text" id="nomLivraison">
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label for="prenomLivraison">Prénom</label>
                                     <input class="form-control" maxlength="40" type="text" id="prenomLivraison">
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 form-group">
                                     <label for="emailLivraison">Email</label>
                                     <input class="form-control" type="email" maxlength="80" id="emailLivraison">
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label for="telephoneLivraison">Téléphone</label>
                                     <input class="form-control" type="text" maxlength="20" id="telephoneLivraison">
                                 </div>
-                                <div class="offset-md-1 col-md-10 adresseLivraison form-group">
+                            </div>
+                            <div class="form_row">
+                                <div class="col-md-12 adresseLivraison form-group">
                                     <label for="adresseLivraison">Adresse de livraison</label>
                                     <input class="form-control" type="text" maxlength="30" id="adresseLivraison">
                                 </div>
-                                <div class="offset-md-1 col-md-10 adresseLivraisonDeux form-group">
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 adresseLivraisonDeux form-group">
                                     <label for="adresseLivraisonDeux">Complément d'adresse</label>
                                     <input class="form-control" type="text" maxlength="30" id="adresseLivraisonDeux" placeholder="facultatif">
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="offset-md-1 col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label for="codePostalLivraison">Code Postal</label>
                                     <input type="text" class="form-control" maxlength="5" id="codePostalLivraison">
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label for="villeLivraison">Ville</label>
                                     <input type="text" class="form-control" maxlength="26" id="villeLivraison">
                                 </div>
@@ -144,7 +151,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-row">
-                            <div class="offset-md-1 col-md-4 sectionFormulaire" id="parametreLivraisonDefautModifier">
+                            <div class="col-md-6 sectionFormulaire" id="parametreLivraisonDefautModifier">
                                 <h3>Le client</h3>
                                 <div id="identiteModifier"></div>
                                 <div id="telModifier"></div>
@@ -156,7 +163,7 @@
                                     <div class="offset-md-1 col-md-4" id="villeModifier"></div>
                                 </div>  
                             </div>
-                            <div class="offset-md-1 col-md-5 sectionFormulaire" id="parametreCommande">
+                            <div class="col-md-6 sectionFormulaire" id="parametreCommande">
                                 <h3>La commande</h3>
                                 <label for="referenceModifier">Référence</label>       
                                 <input type="text" id="referenceModifier" class="form-control" placeholder="Référence de la commande">
@@ -166,7 +173,7 @@
                                     <option value="DEV">Devis</option>
                                 </select>
                                 <div class="noteModifier">Notes</div>
-                                <textarea class="form-control" name="notes" id="notesModifier"></textarea>
+                                <textarea class="form-control" name="notes" id="notesModifier" maxlength="110"></textarea>
                                 <div class="invisible" id="numero_commande"></div>
                             </div>
                         </div>
@@ -220,7 +227,6 @@
         </div>
 
         <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.min.js"></script>
         <script type="text/javascript" src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="../js/dataTables.min.js"></script>

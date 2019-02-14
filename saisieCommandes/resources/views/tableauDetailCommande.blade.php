@@ -17,7 +17,7 @@
         <div class="boutonsDetailCommande">
             <button id="afficherFormAjoutProduit" class="btn ajouterProduit" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter un produit</button>
             <a href="{{ url()->previous() }}" id="retourCommandes"class="btn retourCommandes">Retour aux commandes</a>
-            <a href="{{ url()->previous() }}" id="cloturerCommande" class="btn cloturerCommande">Clôturer cette commande</a>
+            <a id="cloturerCommande" class="btn cloturerCommande">Clôturer</a>
         </div>
 
         <table id="tableauDetailCommande" class="table">

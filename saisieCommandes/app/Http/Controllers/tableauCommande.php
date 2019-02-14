@@ -391,16 +391,38 @@ class tableauCommande extends Controller
         return $affichageJson;
     }
 
-    // public function envoyer_email_cloture()
-    // {
-    //     $data = "bonjour";
-    //     Mail::send('mail', ['data' => $data], function($m)
-    //     {
-    //         $m->from('nicolas.lasportes@gmail.com', "Essai envoi d'un mail");
+    public function envoyer_email_cloture(Request $request)
+    {
+        include '../../include/connexion.php';
+        $donnees = array_values($request->all());
+        $numero_commande = $donnees[0];
 
-    //         $m->to('tricky730@gmail.com')->cc('fournel@dune-electronic.com')->subject('Essai');
-    //     });
-    // }
+        $recuperer_code_representant = "SELECT SONREP FROM FILCOMSOD.ENTSODP1 WHERE SONCDE = '$numero_commande'";
+
+        $resultat_code_representant = odbc_Exec($conn, $recuperer_code_representant);
+        $code_representant = trim(odbc_result($resultat_code_representant, 'SONREP'));
+
+        $recuperer_email_representant = "SELECT SRADR2 FROM FILCOMSOD.REPFICP1 WHERE SRCREP = '$code_representant'";
+
+        $resultat_email_representant = odbc_exec($conn, $recuperer_email_representant);
+        $email_representant = trim(odbc_result($resultat_email_representant, 'SRADR2'));
+
+        $parametre2 = str_repeat('0', 9 - strlen($numero_commande)) . $numero_commande;
+        $requete = "SBMJOB CMD(CALL PGM(SODJF/JFTM110) PARM(''" . $email_representant . "'' ''" . $parametre2 . "'' '''' ''000001''))";
+        $taille_requete = strlen($requete) - 8;
+        $taille_requete = str_pad($taille_requete, 10, '0', STR_PAD_LEFT);
+        $executer_requete = odbc_exec($conn, "CALL QSYS.QCMDEXC('" . $requete . "'," . $taille_requete . ".00000)");
+
+        $affichageJson = [
+            'donnees' => $donnees,
+            'numero_commande' => $numero_commande,
+            'code_representant' => $code_representant,
+            'email_representant' => $email_representant,
+            'requete' => $requete
+        ];
+
+        return $affichageJson;
+    }
 
     //fonction pour la liste des commandes d'un représentant
 

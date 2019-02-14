@@ -23,7 +23,7 @@ else if(window.location.href.search("client") != -1)
 
 else if(window.location.href.search("commande") != -1)
 {
-    $("#chargementProduits").append("Chargement du tarif");
+    $(".chargementProduits").append("Chargement du tarif");
     faireClignoter(".chargementProduits");
     if(window.location.href.search("#consulter") != -1)
     {
@@ -41,7 +41,7 @@ else if(window.location.href.search("commande") != -1)
     }
 }
 
-$("#ligneOptions").on('click', '#ajouterCommande', function()
+$("#ajouterCommande").on('click', function()
 {
     detailClient(recupererDossierClient(id_inverse));
 });
@@ -144,14 +144,6 @@ $("#tableauCommande").on('click', '.modifier', function()
 $(".modal").on('click', '#validerModificationCommande', function()
 {
     modifierCommande($("#numero_commande").html());
-});
-
-$(".formBtn").on('click', '#cloturerModificationCommande', function()
-{
-    if(confirm("Êtes-vous sûr de vouloir clôturer cette commande ? (Vous ne pourrez ni la supprimer ni la modifier)")) 
-    {
-        cloturerCommande($("#numero_commande").html());
-    }  
 });
 
 $(".modal").on('shown.bs.modal', function()
