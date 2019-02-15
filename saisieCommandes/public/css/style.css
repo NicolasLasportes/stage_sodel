@@ -192,7 +192,8 @@ table, th, td
     float:right;
 }
 
-#parametreLivraisonDefaut, #parametreLivraisonFacultatif, #parametreLivraisonDefautModifier, #parametreLivraisonFacultatifModifier, #parametreCommande, #parametreCommandeModifier
+#parametreLivraisonDefaut, #parametreLivraisonFacultatif, #parametreLivraisonDefautModifier, #parametreLivraisonFacultatifModifier, #parametreCommande, 
+#parametreCommandeModifier
 {
     background-color: #e1e1e1;
     border-style: solid;
@@ -225,7 +226,7 @@ table, th, td
     color: red;
 }
 
-#ajouter_adresse_livraison
+#ajouter_adresse_livraison, #modifier_prix_unitaire, #modifier_remise
 {
     padding-left: 0 !important;
     padding-right: 0 !important;

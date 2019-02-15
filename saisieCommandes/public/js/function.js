@@ -1,3 +1,4 @@
+//déclaration des variables "globales", dont aura besoin tout le long du document
 var id_inverse = [];
 var id_client = "";
 var genererColonneOptions = true;
@@ -14,8 +15,8 @@ var clignoter;
 var afficher_clignoter = false;
 var ma_liste_des_produits = [];
 
-for(var i = url_actuelle.length - 1; i >= 0; i--)
-{
+for(var i = url_actuelle.length - 1; i >= 0; i--) //on récupère les informations dont on a besoin dans l'url (comme le dossier, le: numero de commande
+{                                                                                                                               // ou la clé représentant)
     if(url_actuelle[i] == "/")
     {
         
@@ -32,7 +33,7 @@ for(var i = url_actuelle.length - 1; i >= 0; i--)
     }
 }
 
-function recupererNumCommande(url)
+function recupererNumCommande(url) //prend en paramètre une variable qui contient toutes les informations dans l'url, les tries et retourne le numero de commande
 {
     var numero_commande = [];
     for(var i = url.length -1; i >= 0; i--)
@@ -50,7 +51,7 @@ function recupererNumCommande(url)
     return numero_commande.join('');
 }
 
-function recupererDossierClient(url)
+function recupererDossierClient(url) //prend en paramètre une variable qui contient toutes les informations dans l'url, les tries et retourne le dossier du client
 {
     var dossier = [];
     for(var i = 0; i < url.length; i++)
@@ -74,7 +75,7 @@ function recupererDossierClient(url)
     return (dossier);
 }
 
-function recupererCleCommercial(url)
+function recupererCleCommercial(url) //prend en paramètre une variable qui contient toutes les informations dans l'url, les tries et retourne la clé du commercial
 {
     var tableau_a_remplir = 1;
   
@@ -110,7 +111,7 @@ function recupererCleCommercial(url)
     }
 }
 
-function somme_tableau(tableau)
+function somme_tableau(tableau) //prend en parametre un tableau, additionne tout son contenu, et retourne le résultat avec maximum 2 décimales
 {
     var somme = 0;
 
@@ -122,6 +123,32 @@ function somme_tableau(tableau)
     return somme.toFixed(2);
 }
 
+function faireClignoter(element) //prend en paramètre un élément qu'on souhaite faire clignoter, et le fait clignoter 
+{
+    clignoter = window.setInterval(function()
+    {
+        if(afficher_clignoter == true)
+        {
+            $(element).show();
+            afficher_clignoter = false;
+        }
+        else
+        {
+            $(element).hide();
+            afficher_clignoter = true;
+        }
+    }, 700);
+}
+
+function afficherDate(date) //prend en paramètre une date au format annee/mois/jour et la retourne au format jour/mois/annee
+{
+    jour = date.substring(8, 10);
+    annee = date.substring(0, 4);
+    mois = date.substring(5, 7);
+    return jour + "/" + mois + "/" + annee;
+}
+
+
 /*
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Fonctions pour la page des commandes d'un client 
@@ -129,6 +156,9 @@ Fonctions pour la page des commandes d'un client
 */
 
 
+//Prend en paramètre le dossier du client courant, éxécute une requête ajax qui vas récupérer la liste des commandes passés par ce client
+//si une erreur se produit pendant la requête une erreur s'affiche à l'écran, sinon elle lance la fonction genererTableauCommande si la liste 
+//des commandes n'est pas vide,  
 function obtenirCommandeClient(dossier_client)
 {
     $.ajax({
@@ -172,6 +202,8 @@ function obtenirCommandeClient(dossier_client)
     });
 }
 
+//Prend en premier paramètre la liste des commandes (qui doit être un tableau associatif contenant des tableaux) et en second un nombre qui détermine l'interface
+//à afficher (mon panier ou les commandes d'un client )
 function genererTableauCommande(commandes, interface)
 {
     var cloturer; 
@@ -283,14 +315,7 @@ function genererTableauCommande(commandes, interface)
     }
 }
 
-function afficherDate(date)
-{
-    jour = date.substring(8, 10);
-    annee = date.substring(0, 4);
-    mois = date.substring(5, 7);
-    return jour + "/" + mois + "/" + annee;
-}
-
+//Prend en paramètre le numero d'une commande et la clôture
 function cloturerCommande(numero_commande)
 {
     $.ajax({
@@ -319,9 +344,12 @@ function cloturerCommande(numero_commande)
     });
 }
 
+//Prend en paramètre le dossier client, lance une requête ajax pour récupérer les informations du client et les affiche dans la partie "Le client" et "Livraison" du 
+//formulaire d'ajout d'une commande
 function detailClient(dossier)
 {
-    $.ajax({
+    $.ajax(
+    {
         url: '../detailClient',
         type: 'post',
         dataType: 'json',
@@ -374,6 +402,8 @@ function detailClient(dossier)
     });
 }
 
+//Récupère les valeurs du formulaire d'ajout vérifie qu'elles sont valides et les envoies dans la base de données, redirige ensuite l'utilisateur 
+//dans la page du détail commande
 function ajouterCommande()
 {
     var reference = $("#reference").val();
@@ -495,6 +525,7 @@ function ajouterCommande()
     }
 }
 
+//Prend en paramètre le numéro de commande et le dossier d'un client, supprime la commande correspondante de la base de données et régénère le tableau
 function supprimerCommande(numero_commande, dossier_client)
 {
     $.ajax({
@@ -519,6 +550,8 @@ function supprimerCommande(numero_commande, dossier_client)
     });
 }
 
+//Prend en paramètre le numéro de commande et le dossier du client, récupère les informations de la commande correspondante dans la base de données
+//puis remplis le formulaire de modification avec ces informations
 function afficherDetailCommande(numero_commande, dossier)
 {
     $.ajax({
@@ -561,6 +594,8 @@ function afficherDetailCommande(numero_commande, dossier)
     });
 }
 
+//Prend en paramètre le numéro de commande, vérifie les informations saisies par l'utilisateur dans le formulaire de modidication
+// et si elles sont valides envoie les modifications dans la base de données avant de regénérer le tableau
 function modifierCommande(numero_commande)
 {   
     var reference_commande = $("#referenceModifier").val();
@@ -665,6 +700,9 @@ Fonction pour la page de détail d'une commande
 */
 
 
+//Prend en paramètre le numéro de commande et le dossier du client et récupère toutes les lignes de la commande, ainsi que le nom du client et le type de la commande
+// (commande ou devis), passes la variable qui contient les lignes de la commande a la fonction verifierCommandeCloturer() (et a envoyer_email qui permet de 
+//générer le lien mailTo)
 function obtenirDetailCommande(id_commande, id_client)
 {
     $.ajax({
@@ -701,6 +739,8 @@ function obtenirDetailCommande(id_commande, id_client)
     });
 }
 
+//Prend en paramètre le numéro de la commande ainsi que la détail de cette commande (précédent passé par obtenirDetailCommande), elle vérifie si la commande est
+//clôturé ou non, passe une variable qui contient la réponse (paramètre 2) et le détail de la commande (paramètre 1) a la fonction genererTableauDetailCommande
 function verifierCommandeCloturer(numero_commande, detailCommande)
 {
     $.ajax({
@@ -730,6 +770,7 @@ function verifierCommandeCloturer(numero_commande, detailCommande)
     });
 }
 
+//Prend en paramètre le détail de la commande et la variable cloturer_commande et génère le tableau en fonction des informations reçues
 function genererTableauDetailCommande(detailCommande, cloturer_commande)
 {
     $("#corpsDetailCommande").empty();
@@ -757,7 +798,6 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
     {
         var stock; 
         var totalLigne = detailCommande[i].prix_unitaire * detailCommande[i].quantite;
-        //var gratuit;
 
         if(detailCommande[i].stock01 === undefined && detailCommande[i].stock02 === undefined)
         {
@@ -776,15 +816,6 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
             stock = detailCommande[i].stock01 + " (Frn=" + detailCommande[i].stock02 + ") " + detailCommande[i].commentaire_produit;
         }
 
-        // if(detailCommande[i].prix_unitaire == 0)
-        // {
-        //     gratuit = "Oui";
-        // }
-        // else
-        // {
-        //     gratuit = "";
-        // }
-
         if(cloturer_commande == 'IPAD' || page_courante == "consulterCommande")
         {
             $("#corpsDetailCommande").append(
@@ -795,7 +826,6 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
                     "<td class='" + detailCommande[i].reference_produit + "'>" + parseInt(detailCommande[i].quantite) + "</td>" +
                     "<td class='" + detailCommande[i].reference_produit + "'>" + detailCommande[i].prix_unitaire + "</td>" +
                     "<td class='" + detailCommande[i].reference_produit + "'>" + stock + "</td>" +
-                    //"<td class='" + detailCommande[i].reference_produit + "'>" + gratuit + "</td>" +
                     "<td class='" + detailCommande[i].reference_produit + " total' data-total='" + totalLigne + "'>" + totalLigne.toFixed(2) + "</td>" +
                 "</tr>"
             );
@@ -811,7 +841,6 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + parseInt(detailCommande[i].quantite) + "</td>" +
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + detailCommande[i].prix_unitaire + "</td>" +
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + stock + "</td>" +
-                    //"<td data-produit='" + detailCommande[i].reference_produit + "' class='ligneDetailCommande'>" + gratuit + "</td>" +
                     "<td data-produit='" + detailCommande[i].reference_produit + "' class='total ligneDetailCommande' data-total='" + totalLigne + "'>" + totalLigne.toFixed(2) + "</td>" +
                     "<td class='administrationTableauCommandes'><button class='supprimer' id='" + detailCommande[i].reference_produit + 
                     "supprimer'><img src='../images/corbeille32.png' alt='supprimer'></button></td>"  + 
@@ -831,6 +860,9 @@ function genererTableauDetailCommande(detailCommande, cloturer_commande)
     $('#tableauDetailCommande').DataTable();
 }
 
+//Prend en paramètre le dossier du client et récupère la liste de tous les produits (ainsi que les tarifs, les prix par quantités, les stocks) de ce client
+//crée également les évènements pour que le prix unitaire du produit se rentre automatiquement quand on rentre un référence et se modifie s'il y a un prix
+//par quantité quand on rentre la quantité
 function obtenirProduits(dossier)
 {
     $.ajax({
@@ -984,6 +1016,7 @@ function obtenirProduits(dossier)
     });
 }
 
+//Récupère les valeurs du formulaire d'ajout d'une ligne commande, vérifie qu'elles sont valides, et les insère dans la base de données et regénère le tableau
 function ajouterLigne()
 {
     var produit_existe = false;
@@ -1045,22 +1078,16 @@ function ajouterLigne()
         var reference_produit = $("#referenceProduit").val();
         var quantite = $("#quantiteProduit").val();
         var prix_unitaire = $("#prixProduit").val();
-        //var gratuit = "non";
         var code_combinaison = $("#code_combinaison_produit").val();
         var numero_commande = recupererNumCommande(id_inverse); //la variable numero_commande contient le n° de commande actuel récupéré dans l'url
         var dossier = recupererDossierClient(id_inverse);
         
-        // if ($('#gratuitProduit').prop("checked"))
-        // {
-        //     gratuit = "oui";
-        // }
         prix_unitaire = prix_unitaire - (prix_unitaire * remise / 100);
         
         $("#referenceProduit").val("");
         $('#quantiteProduit').val("1");
         $("#prixProduit").val("");
         $("#pourcentageRemise").val("");
-        //$('#gratuitProduit').prop("checked", false);
 
         $.ajax({
             url: "../ajouterLigneCommande",
@@ -1072,7 +1099,6 @@ function ajouterLigne()
                 quantite: quantite, 
                 prix_unitaire: prix_unitaire,
                 dossier: dossier,
-                //gratuit: gratuit,
                 code_combinaison: code_combinaison
             },
             headers: {
@@ -1092,6 +1118,7 @@ function ajouterLigne()
     }
 }
 
+//Prend en paramètre la référence d'un produit, récupère le numéro de la commande courante et supprime la ligne relative a cette commande et regénère le tableau
 function supprimerLigneCommande(code_produit)
 {
     var numero_commande = recupererNumCommande(id_inverse);
@@ -1116,6 +1143,7 @@ function supprimerLigneCommande(code_produit)
     });
 }
 
+//Prend en paramètre un tableau contenant les valeurs de la ligne sélectionné dans le tableau du détail d'une commande et remplie le formulaire de modification avec
 function formulaireModification(ligneCommande)
 {
     $("#referenceProduitLigne").val();
@@ -1137,6 +1165,7 @@ function formulaireModification(ligneCommande)
     }
 }
 
+//Prend en paramètre le code société du produit, récupère les valeurs du formulaire de modification et les envoie dans la base de données puis regénère le tableau
 function modifierLigneCommande(code_societe)
 {
     var code_produit = $("#referenceProduitLigne").val();
@@ -1150,7 +1179,6 @@ function modifierLigneCommande(code_societe)
     {
         var remise = $("#pourcentageRemiseLigne").val();
     }
-    //var gratuit = $("#gratuitProduitLigne").prop("checked");
 
     if($("#referenceProduitLigne").val() == "")
     {
@@ -1211,6 +1239,7 @@ function modifierLigneCommande(code_societe)
     }
 }
 
+//Prend en paramètre un produit (prix quantite stock reference) et l'affiche en dessous du formulaire d'ajout dans la ligne : "Derniere ligne saisie"
 function afficherDetailProduit(produit)
 {
     if(afficher_dernier_produit == true)
@@ -1247,6 +1276,8 @@ function afficherDetailProduit(produit)
     }
 }
 
+//Prend en paramètre le numéro de commande et le dossier du client et génère le lien mailTo qui permet d'ouvrir la messagerie par défaut et d'avoir un mail
+//prérempli avec les informations de la commande
 function envoyer_email(numero_commande, dossier)
 {
     $.ajax({
@@ -1351,6 +1382,7 @@ function envoyer_email(numero_commande, dossier)
     })
 }
 
+//Prend en paramètre le numéro de commande et envoi un mail quand la commande est cloturée et redirige l'utilisateur à la page précédente
 function envoyer_email_cloture(numero_commande)
 {
     console.log(numero_commande)
@@ -1382,7 +1414,7 @@ Fonction pour la page (mon panier) liste des clients d'un commercial
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 */
 
-
+//Prend en paramètre la clé représentant, récupère toutes les commandes de ce représentant et les passes a la fonction qui génère notre tableau
 function obtenirListeCommandes(cle_representant)
 {
     $.ajax({
@@ -1413,21 +1445,4 @@ function obtenirListeCommandes(cle_representant)
     {
         alert("Une erreur est survenue");
     });
-}
-
-function faireClignoter(element)
-{
-    clignoter = window.setInterval(function()
-    {
-        if(afficher_clignoter == true)
-        {
-            $(element).show();
-            afficher_clignoter = false;
-        }
-        else
-        {
-            $(element).hide();
-            afficher_clignoter = true;
-        }
-    }, 700);
 }

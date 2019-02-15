@@ -11,7 +11,7 @@
         <link href="../fontawesome/css/all.css" rel="stylesheet">
     </head>
     <body>
-        <div id="entetePageCommande" class="container">
+        <div id="entetePageCommande" class="container"> <!-- Cette div contient le titre de la page et le bouton de fermeture -->
             <div class="row">
                 <div class="col-md-10">
                     <h2 id="titre_client"></h2>
@@ -27,7 +27,7 @@
             <button id="ajouterCommande" class="btn" data-toggle="modal" data-target=".bd-example-modal-lg">Ajouter une commande</button>
         </div>
 
-        <table id="tableauCommande" class="table">
+        <table id="tableauCommande" class="table"> <!-- La structure du tableau est générée avec les entêtes de colonnes -->
             <thead>
                 <tr>
                     <th id="enteteTableauModifier" class="enteteTableauCommande"><i class='fas fa-pen-square'></i></th>
@@ -46,25 +46,26 @@
             <tbody id="corpsTableauCommande"></tbody>
         </table>
 
+        <!-- Modale d'ajout d'une commande crée avec les classes de bootstrap -->
         <div class="modal fade bd-example-modal-lg" id="formulaireAjouterCommande" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header"> <!-- Entête de la modale (titre + bouton fermeture) -->
                         <h2>Ajouter une commande</h2>
                         <button class="close" data-dismiss="modal" aria-label="Close">
                             <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="form-row">
-                            <div class="col-md-6 sectionFormulaire" id="parametreLivraisonDefaut">
-                                <h3>Le client</h3>
+                    <div class="modal-body"> <!-- Contenu de la modale -->
+                        <div class="form-row"> 
+                            <div class="col-md-6 sectionFormulaire" id="parametreLivraisonDefaut"> <!-- Informations du client facturé, ici on crée seulement la -->
+                                <h3>Le client</h3>                                                 <!-- structure, on remplira la zone en javascript-->
                                 <div id="identite"></div>
                                 <div id="tel"></div>
                                 <div id="email"></div>
                                 <div id="adresse"></div>   
                             </div>
-                            <div class="col-md-6 sectionFormulaire" id="parametreCommande">
+                            <div class="col-md-6 sectionFormulaire" id="parametreCommande"> <!-- Entête de la commande -->
                                 <h3>La commande</h3>
                                 <label for="reference">Référence</label>       
                                 <input type="text" maxlength="25" id="reference" class="form-control" placeholder="Référence de la commande">
@@ -77,11 +78,11 @@
                                 <textarea class="form-control" name="notes" id="notes" maxlength="110"></textarea>
                             </div>
                         </div>
-                        <div id="parametreClient">
+                        <div id="parametreClient"> <!-- Stockage des informations du commercial en charge du client courant -->
                             <input type="hidden" id="num_representant">
                             <input type="hidden" id="cle_representant">
                         </div>
-                        <div id="parametreLivraisonFacultatif">
+                        <div id="parametreLivraisonFacultatif"> <!-- Informations de livraison (préremplies côté javascript) -->
                             <div class="form-row">
                                 <div class="offset-md-1 col-md-10 sectionFormulaire">
                                     <h3>Livraison</h3>
@@ -138,21 +139,20 @@
             </div>
         </div>
 
-        <!-- Modal modification de l'entete commande -->
-
+        <!-- Modale modification de l'entête commande -->
         <div class="modal modifierCommande fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header"> <!-- Entête de la modale (titre + bouton fermeture) -->
                         <h2>Modifier une commande</h2>
                         <button class="close" data-dismiss="modal" aria-label="Close">
                             <img src="../images/fermer.png" alt="fermer" class="fermerModale">
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body"> <!-- Contenu de la modale -->
                         <div class="form-row">
-                            <div class="col-md-6 sectionFormulaire" id="parametreLivraisonDefautModifier">
-                                <h3>Le client</h3>
+                            <div class="col-md-6 sectionFormulaire" id="parametreLivraisonDefautModifier"> 
+                                <h3>Le client</h3>                              <!-- Informations du client facturé, ici on crée seulement la structure -->
                                 <div id="identiteModifier"></div>
                                 <div id="telModifier"></div>
                                 <div id="emailModifier"></div>
@@ -163,7 +163,7 @@
                                     <div class="col-md-9" id="villeModifier"></div>
                                 </div>  
                             </div>
-                            <div class="col-md-6 sectionFormulaire" id="parametreCommandeModifier">
+                            <div class="col-md-6 sectionFormulaire" id="parametreCommandeModifier">  <!-- Entête de la commande -->
                                 <h3>La commande</h3>
                                 <label for="referenceModifier">Référence</label>       
                                 <input type="text" id="referenceModifier" class="form-control" placeholder="Référence de la commande">
@@ -179,7 +179,7 @@
                         </div>
                         <div id="parametreLivraisonFacultatifModifier">
                             <div class="offset-md-1 col-md-10 sectionFormulaire">
-                                <h3>Livraison</h3>
+                                <h3>Livraison</h3>                                   <!-- Partie livraison -->
                             </div>
                             <div class="form-row">
                                 <div class="col-md-6 form-group">

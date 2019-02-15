@@ -18,7 +18,7 @@ Route::post('/modifierLigneCommande', 'tableauDetailCommande@modifier_ligne');
 
 Route::post('/detailClient', 'tableauCommande@detail_client');
 
-//routes pour les commandes d'un client
+//Routes pour les commandes d'un client
 Route::post('/obtenirClients/{cle_representant}', 'tableauCommande@obtenir_liste_commandes');
 
 Route::post('/commandesClient/{id}', 'tableauCommande@afficher_commande_client');
@@ -39,5 +39,5 @@ Route::post('/verifierCommandeCloturer', 'tableauDetailCommande@verifier_command
 
 Route::post('/envoyer_email', 'tableauDetailCommande@envoyer_email');
 
-//Liste produits
+//Route liste produits
 Route::post('/listeProduits/{dossier}', 'produits@obtenir_produits');
