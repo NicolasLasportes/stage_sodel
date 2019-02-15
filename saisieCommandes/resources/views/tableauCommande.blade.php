@@ -108,7 +108,7 @@
                                 </div>
                             </div>
                             <div class="form_row">
-                                <div class="col-md-12 adresseLivraison form-group">
+                                <div id="ajouter_adresse_livraison" class="col-md-12 adresseLivraison form-group">
                                     <label for="adresseLivraison">Adresse de livraison</label>
                                     <input class="form-control" type="text" maxlength="30" id="adresseLivraison">
                                 </div>
@@ -160,10 +160,10 @@
                                 <div id="complementModifier"></div>
                                 <div class="row">
                                     <div class="col-md-3" id="code_postalModifier"></div>
-                                    <div class="offset-md-1 col-md-4" id="villeModifier"></div>
+                                    <div class="col-md-9" id="villeModifier"></div>
                                 </div>  
                             </div>
-                            <div class="col-md-6 sectionFormulaire" id="parametreCommande">
+                            <div class="col-md-6 sectionFormulaire" id="parametreCommandeModifier">
                                 <h3>La commande</h3>
                                 <label for="referenceModifier">Référence</label>       
                                 <input type="text" id="referenceModifier" class="form-control" placeholder="Référence de la commande">
@@ -178,45 +178,51 @@
                             </div>
                         </div>
                         <div id="parametreLivraisonFacultatifModifier">
+                            <div class="offset-md-1 col-md-10 sectionFormulaire">
+                                <h3>Livraison</h3>
+                            </div>
                             <div class="form-row">
-                                <div class="offset-md-1 col-md-10 sectionFormulaire">
-                                    <h3>Livraison</h3>
-                                </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label for="nomLivraisonModifier">Nom du destinataire</label>
                                     <input class="form-control" type="text" maxlength="40" id="nomLivraisonModifier">
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label for="prenomLivraisonModifier">Prénom</label>
                                     <input class="form-control" type="text" maxlength="40" id="prenomLivraisonModifier" placeholder="facultatif">
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 form-group">
                                     <label for="emailLivraisonModifier">Email</label>
                                     <input class="form-control" type="email" maxlength="80" id="emailLivraisonModifier" placeholder="facultatif">
                                 </div>
-                                <div class="offset-md-1 col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label for="telephoneLivraisonModifier">Téléphone</label>
                                     <input class="form-control" type="text" maxlength="20" id="telephoneLivraisonModifier">
                                 </div>
-                                <div class="offset-md-1 col-md-10 adresseLivraison form-group">
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 adresseLivraison form-group">
                                     <label for="adresseLivraisonModifier">Adresse de livraison</label>
                                     <input class="form-control" type="text" maxlength="30" id="adresseLivraisonModifier">
                                 </div>
-                                <div class="offset-md-1 col-md-10 adresseLivraisonDeux form-group">
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 adresseLivraisonDeux form-group">
                                     <label for="adresseLivraisonDeuxModifier">Adresse de livraison 2</label>
                                     <input class="form-control" type="text" maxlength="30" id="adresseLivraisonDeuxModifier" placeholder="facultatif">
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="offset-md-1 col-md-4 form-group">
-                                    <label for="codePostalLivraisonModifier">Code Postal</label>
-                                    <input type="text" class="form-control" maxlength="5" id="codePostalLivraisonModifier">
-                                </div>
-                                <div class="offset-md-1 col-md-4 form-group">
-                                    <label for="villeLivraisonModifier">Ville</label>
-                                    <input type="text" class="form-control" maxlength="26" id="villeLivraisonModifier">
-                                </div>
+                        <div class="form-row">
+                            <div class="col-md-6 form-group">
+                                <label for="codePostalLivraisonModifier">Code Postal</label>
+                                <input type="text" class="form-control" maxlength="5" id="codePostalLivraisonModifier">
                             </div>
+                            <div class="col-md-6 form-group">
+                                <label for="villeLivraisonModifier">Ville</label>
+                                <input type="text" class="form-control" maxlength="26" id="villeLivraisonModifier">
+                            </div>
+                        </div>
                         </div>                      
                         <div class="formBtn">
                             <button id="validerModificationCommande" class="btnInForm btn">Valider</button>

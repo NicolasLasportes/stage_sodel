@@ -192,7 +192,7 @@ table, th, td
     float:right;
 }
 
-#parametreLivraisonDefaut, #parametreLivraisonFacultatif, #parametreLivraisonDefautModifier, #parametreLivraisonFacultatifModifier
+#parametreLivraisonDefaut, #parametreLivraisonFacultatif, #parametreLivraisonDefautModifier, #parametreLivraisonFacultatifModifier, #parametreCommande, #parametreCommandeModifier
 {
     background-color: #e1e1e1;
     border-style: solid;
@@ -225,7 +225,7 @@ table, th, td
     color: red;
 }
 
-.adresseLivraison
+#ajouter_adresse_livraison
 {
     padding-left: 0 !important;
     padding-right: 0 !important;

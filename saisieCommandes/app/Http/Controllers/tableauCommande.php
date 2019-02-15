@@ -8,19 +8,23 @@ use Illuminate\Http\Request;
 
 class tableauCommande extends Controller
 {
-    public function afficherTableauCommandes()
+    //affiche la page tableauCommande
+    public function afficher_tableau_commandes()
     {
         return view("tableauCommande");
     }
 
-    public function afficherCommandeClient($dossier_client)
+    //récupère les informations toutes les commandes d'un client (prend en paramètre le dossier du client fournis dans l'url)
+    //et récupère également le nom du client
+    public function afficher_commande_client($dossier_client)
     {
         include '../../include/connexion.php';
         $toutesLesCommandes = [];
         
         $total = [];
 
-        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF, SOVALI FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$dossier_client' AND SOCTRA <> 'LIVRAISON'";
+        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF, SOVALI FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$dossier_client' 
+        AND SOCTRA <> 'LIVRAISON'";
        
         $commandes = odbc_Exec($conn, $sql);
 
@@ -72,7 +76,9 @@ class tableauCommande extends Controller
         return $toutesLesCommandes;
     }
 
-    public function cloturerCommande(Request $request)
+    //prend en paramètre le numéro de la commande et la cloture
+    //retourne le numéro de la commande cloturé
+    public function cloturer_commande(Request $request)
     {
         include '../../include/connexion.php';
         $commande_a_cloturer = array_values($request->all());
@@ -88,7 +94,8 @@ class tableauCommande extends Controller
         return $affichageJson;
     }
 
-    public function detailClient(Request $request)
+    //prend en parametre le dossier d'un client (son id) et retourne ses informations de facturation ainsi que la clé et le numéro du commercial qui s'en occupe
+    public function detail_client(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -125,7 +132,9 @@ class tableauCommande extends Controller
         return $affichageJson;
     }
 
-    public function ajouterCommande(Request $request)
+    //prend en paramètre les informations de facturation et de livraison du client ainsi que son dossier, les informations du représentant et celles de la commande
+    //insère tout ca dans la base de données après les avoir converti en iso-8859-1 (encodage de la base de données)et retourne tout ce qui a été inséré
+    public function ajouter_commande(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -247,7 +256,9 @@ class tableauCommande extends Controller
         return $affichageJson;
     }
 
-    public function supprimerCommande(Request $request)
+    //prend en paramètre le numéro de la commande et la supprime de la base de données
+    //retourne le numéro de la commande
+    public function supprimer_commande(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -267,7 +278,9 @@ class tableauCommande extends Controller
         return $affichageJson;
     }
 
-    public function modifierCommande(Request $request)
+    //prend en paramètre les informations de livraison du client ainsi que les informations d'entête de la commande et modifie les informations dans la base de données
+    //avec celles-ci, retourne les informations passées en paramètre  
+    public function modifier_commande(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -332,7 +345,8 @@ class tableauCommande extends Controller
         return $reponse;
     }
 
-    public function detailClientModification(Request $request)
+    //prend en paramètre le numéro de commande et le dossier client et retourne les informations de facturation, de livraison et l'entête de la commande
+    public function detail_client_modification(Request $request)
     {   
         include '../../include/connexion.php';
 
@@ -391,6 +405,8 @@ class tableauCommande extends Controller
         return $affichageJson;
     }
 
+    //prend en parametre le numéro de commande et l'envoie au serveur avec l'email du représentant pour qu'il puisse envoyer un mail quand
+    // une commande est cloturé
     public function envoyer_email_cloture(Request $request)
     {
         include '../../include/connexion.php';
@@ -424,9 +440,9 @@ class tableauCommande extends Controller
         return $affichageJson;
     }
 
-    //fonction pour la liste des commandes d'un représentant
-
-    public function obtenirListeCommandes($cle_representant, Request $request)
+    //récupère les informations des commandes d'un représentant, la clé d'un représentant étant fournie en paramètre
+    //récupère toutes les commandes de tous les représentants si la requête viens d'un membre de la direction
+    public function obtenir_liste_commandes($cle_representant, Request $request)
     {
         include '../../include/connexion.php';
 

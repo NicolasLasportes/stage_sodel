@@ -6,12 +6,15 @@ use Illuminate\Http\Request;
 
 class tableauDetailCommande extends Controller
 {
-    public function afficherDetailCommande()
+    //affiche la page tableauDetailCommande
+    public function afficher_detail_commande()
     {
         return view('tableauDetailCommande');
     }
 
-    public function obtenirProduixCommande($id_commande, $id_client)
+    //prend en paramètres le numero d'une commande et le dossier client (fournis dans l'url)
+    //retourne le nom du client, le type de commande (commande ou devis), les informations de tous les produits de la commande
+    public function obtenir_produix_commande($id_commande, $id_client)
     {
         include '../../include/connexion.php';
 
@@ -92,7 +95,9 @@ class tableauDetailCommande extends Controller
         return $liste_commande;
     }
 
-    public function ajouterLigneCommande(Request $request)
+    //prend en paramètre le numero de commande et les informations du produit a ajouter, et insère le tout dans la base de données
+    //retourne le produit ajouté ainsi que le numéro de la commande et le dossier du client
+    public function ajouter_ligne_commande(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -103,60 +108,16 @@ class tableauDetailCommande extends Controller
         $quantite = $produitAjouter[2];
         $prix_unitaire = $produitAjouter[3];
         $dossier = $produitAjouter[4];
-        //$gratuit = $produitAjouter[5];
         $code_combinaison = $produitAjouter[5];
         $affichageFinal = [];
         $prix_speciaux = [];
         $plus_grande_quantite = 0;
 
-        // if($code_combinaison == "S")
-        // {
-        //     $recuperer_prix_quantite = "SELECT A0SOCI, WWPRNE, F1QTE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' 
-        //     AND F1QTE <= '$quantite'";
-
-        //     $result = odbc_exec($conn, $recuperer_prix_quantite);
-
-        //     while(odbc_fetch_row($result))
-        //     {
-        //         $code_societe = trim(odbc_result($result, 'A0SOCI'));
-        //         $prix_unitaire_produit = trim(odbc_result($result, 'WWPRNE'));
-        //         $quantite_prix = trim(odbc_result($result, 'F1QTE'));
-    
-        //         $produit = [$prix_unitaire_produit, $quantite_prix, $code_societe];
-    
-        //         array_push($prix_speciaux, $produit);
-        //     }
-
-        //     foreach($prix_speciaux as $cle)
-        //     {
-        //         if($cle[1] > $plus_grande_quantite)
-        //         {
-        //             $plus_grande_quantite = $cle[1];
-        //             $prix_par_quantite_final = $cle;
-        //         }
-        //     }
-        //     $code_societe = $prix_par_quantite_final[2];
-        //     $prix_unitaire_produit = $prix_par_quantite_final[0];
-        // }
-        // else
-        // {
-        $recuperer_prix_quantite = "SELECT A0SOCI/*, WWPRNE, F1QTE*/ FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' /*AND F1QTE = 1*/";
+        $recuperer_prix_quantite = "SELECT A0SOCI FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier'";
         
         $result = odbc_Exec($conn, $recuperer_prix_quantite);
 
         $code_societe = trim(odbc_result($result, 'A0SOCI'));
-        // $prix_unitaire_produit = trim(odbc_result($result, 'WWPRNE'));
-        // $quantite_prix = trim(odbc_result($result, 'F1QTE'));
-        //}
-        
-        // if($gratuit == "oui")
-        // {
-        //     $prix_unitaire = 0;
-        // }
-        // if($prix_unitaire == 0)
-        // {
-        //     $prix_unitaire = $prix_unitaire_produit;
-        // }
         
         $sql = "INSERT INTO FILCOMSOD.LIGSODP1 VALUES ('$numero_commande', '$code_societe', '$reference_produit', '$quantite', '$prix_unitaire')";
 
@@ -177,8 +138,6 @@ class tableauDetailCommande extends Controller
             'reference_produit' => $reference_produit,
             'quantite' => $quantite,
             'prix_unitaire' => $prix_unitaire,
-            //'prix_unitaire_final' => $prix_unitaire_produit,
-            //'gratuit' => $gratuit,
             'stock01' => $stock01,
             'stock02' => $stock02,
             'commentaire' => $commentaire
@@ -189,7 +148,9 @@ class tableauDetailCommande extends Controller
         return $affichageFinal;
     }
 
-    public function supprimerLigne(Request $request)
+    //prend en paramètre le numéro de commande et la référence du produit a supprimer et le supprime dans la bases de données
+    //retourne le numéro de commande et le produit supprimé
+    public function supprimer_ligne(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -210,7 +171,9 @@ class tableauDetailCommande extends Controller
         return $affichageJson;
     }
 
-    public function modifierLigne(Request $request)
+    //prend en paramètre le numéro de commande, le dossier client et les informations de la ligne commande à modifier
+    //retourne les informations de la lignes après l'avoir modifié dans la base de données
+    public function modifier_ligne(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -221,22 +184,7 @@ class tableauDetailCommande extends Controller
         $reference_produit = $ligneAModifier[2];
         $quantite = $ligneAModifier[3];
         $prix_unitaire = $ligneAModifier[4];
-        //$gratuit = $ligneAModifier[5];
         $dossier = $ligneAModifier[5];
-     
-        // if($gratuit === "true")
-        // {
-        //     $prix_unitaire = 0;
-        // }
-
-        // if($gratuit === "false" && $prix_unitaire == 0)
-        // {
-        //     $recuperer_prix_unitaire = "SELECT WWPRNE FROM FILCOMSOD.PRINETP1 WHERE A0PROD = '$reference_produit' AND DOSSIER = '$dossier' FETCH FIRST 1 ROWS ONLY";
-            
-        //     $result = odbc_Exec($conn, $recuperer_prix_unitaire);
-            
-        //     $prix_unitaire = trim(odbc_result($result, 'WWPRNE'));
-        // }
 
         $sql = "UPDATE FILCOMSOD.LIGSODP1 SET LOQTEE = '$quantite', LOPRIX = '$prix_unitaire' WHERE LONCDE = '$numero_commande' AND LOSOCI = '$code_societe' 
         AND CDPROD = '$reference_produit'";
@@ -249,14 +197,15 @@ class tableauDetailCommande extends Controller
             'reference_produit' => $reference_produit,
             'quantite' => $quantite,
             'prix_unitaire' => $prix_unitaire,
-            //'gratuit' => $gratuit,
             'dossier' => $dossier
         ];
 
         return $affichageJson;
     }
 
-    public function verifierCommandeCloturer(Request $request)
+    //prend en paramètre le numéro de commande et vérifie qu'elle est cloturé (ou non) 
+    //retourne le numéro de commande et 'IPAD' si elle est cloturé, '' si elle ne l'est pas
+    public function verifier_commande_cloturer(Request $request)
     {
         include '../../include/connexion.php';
 
@@ -277,6 +226,8 @@ class tableauDetailCommande extends Controller
         return $affichageJson;
     }
 
+    //prend en paramètre le numéro de commande et le dossier client
+    //retourne les informations de l'entête et toutes les lignes produit
     public function envoyer_email(Request $request)
     {
         include '../../include/connexion.php';

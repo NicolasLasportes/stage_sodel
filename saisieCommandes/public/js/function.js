@@ -875,8 +875,37 @@ function obtenirProduits(dossier)
             " [Mir: " + produits_sans_prix_speciaux[i].stock01 + ", Frn: " + produits_sans_prix_speciaux[i].stock02 + "]");
         }
 
+        if($("#formulaireAjouterLigneCommande").is(":visible"))
+        {
+            console.log("je suis visible")
+            prix_a_modifier = "#prixProduit";
+            code_combinaison = "#code_combinaison_produit";
+        }
+        
+        else if ($("#formulaireModifierLigneCommande").is(":visible"))
+        {
+            console.log("modification visible")
+            prix_a_modifier = "#prixProduitLigne";
+            code_combinaison = "#code_combinaison_produit_modifier";
+            produit_actuel = $("#referenceProduitLigne").val();
+    
+            for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
+            {
+                if(produit_actuel == produits_sans_prix_speciaux[i].numero_produit)
+                {
+                    produit_actuel = produits_sans_prix_speciaux[i];
+                    if(produit_actuel.code_combinaison == "S")
+                    {
+                        $(code_combinaison).val("S");
+                        break;
+                    }
+                }
+            }
+        }
+
         $("#formulaireModifierLigneCommande").on('shown.bs.modal', function()
         {
+            console.log("formulaire modification")
             prix_a_modifier = "#prixProduitLigne";
             code_combinaison = "#code_combinaison_produit_modifier";
             produit_actuel = $("#referenceProduitLigne").val();
@@ -897,6 +926,7 @@ function obtenirProduits(dossier)
     
         $("#formulaireAjouterLigneCommande").on('shown.bs.modal', function()
         {
+            console.log("frmulaire ajout")
             prix_a_modifier = "#prixProduit";
             code_combinaison = "#code_combinaison_produit";
         });

@@ -1,46 +1,43 @@
 <?php
 
 //Routes affichage des pages
-Route::get('/client/{id}', 'tableauCommande@afficherTableauCommandes');
+Route::get('/client/{id}', 'tableauCommande@afficher_tableau_commandes');
 
-Route::get('/commande/{id}', 'tableauDetailCommande@afficherDetailCommande');
+Route::get('/commande/{id}', 'tableauDetailCommande@afficher_detail_commande');
 
-Route::get('/clients/{id_representant}', 'tableauCommande@afficherTableauCommandes');
+Route::get('/clients/{id_representant}', 'tableauCommande@afficher_tableau_commandes');
 
-//Routes pour les lignes d'une commande
-Route::post('/detailCommandeClient/{id_commande}&{id_client}', 'tableauDetailCommande@obtenirProduixCommande');
+//Routes pour le détail d'une commande
+Route::post('/detailCommandeClient/{id_commande}&{id_client}', 'tableauDetailCommande@obtenir_produix_commande');
 
-Route::post('/ajouterLigneCommande', 'tableauDetailCommande@ajouterLigneCommande');
+Route::post('/ajouterLigneCommande', 'tableauDetailCommande@ajouter_ligne_commande');
 
-Route::post('/supprimerLigneCommande', 'tableauDetailCommande@supprimerLigne');
+Route::post('/supprimerLigneCommande', 'tableauDetailCommande@supprimer_ligne');
 
-Route::post('/modifierLigneCommande', 'tableauDetailCommande@modifierLigne');
+Route::post('/modifierLigneCommande', 'tableauDetailCommande@modifier_ligne');
 
-Route::post('/detailClient', 'tableauCommande@detailClient');
+Route::post('/detailClient', 'tableauCommande@detail_client');
 
-//routes entete commande
-Route::post('/obtenirClients/{cle_representant}', 'tableauCommande@obtenirListeCommandes');
+//routes pour les commandes d'un client
+Route::post('/obtenirClients/{cle_representant}', 'tableauCommande@obtenir_liste_commandes');
 
-Route::post('/commandesClient/{id}', 'tableauCommande@afficherCommandeClient');
+Route::post('/commandesClient/{id}', 'tableauCommande@afficher_commande_client');
 
-Route::post('/ajouterCommande', 'tableauCommande@ajouterCommande');
+Route::post('/ajouterCommande', 'tableauCommande@ajouter_commande');
 
-Route::post('/supprimerCommande', 'tableauCommande@supprimerCommande');
+Route::post('/supprimerCommande', 'tableauCommande@supprimer_commande');
 
-Route::post('/modifierCommande', 'tableauCommande@modifierCommande');
+Route::post('/modifierCommande', 'tableauCommande@modifier_commande');
 
-Route::post('/detailClientModification', 'tableauCommande@detailClientModification');
+Route::post('/detailClientModification', 'tableauCommande@detail_client_modification');
 
-Route::post('/cloturerCommande', 'tableauCommande@cloturerCommande');
+Route::post('/cloturerCommande', 'tableauCommande@cloturer_commande');
 
 Route::post('/envoyer_email_cloture', 'tableauCommande@envoyer_email_cloture');
 
-Route::post('/verifierCommandeCloturer', 'tableauDetailCommande@verifierCommandeCloturer');
+Route::post('/verifierCommandeCloturer', 'tableauDetailCommande@verifier_commande_cloturer');
 
 Route::post('/envoyer_email', 'tableauDetailCommande@envoyer_email');
 
 //Liste produits
-Route::post('/listeProduits/{dossier}', 'produits@obtenirProduits');
-
-//Route::get('produits', 'produits@produits');
-//Route::get('/send_email', 'tableauDetailCommande@send_email');
+Route::post('/listeProduits/{dossier}', 'produits@obtenir_produits');
