@@ -107,7 +107,7 @@ fwrite($f, $zone);
 				</tr>
 			</thead>
 <?php 
-	$sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP2 
+	$sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP3
 	WHERE PRREPR = '$ID' and PRCLEE = '$cl' ORDER by PRDCDE desc" ;
 	$result = odbc_Exec($conn, $sql);
 
@@ -126,24 +126,44 @@ fwrite($f, $zone);
 		$CETTTI = odbc_result($result, "CETTTI"); 
 		$CECREF = odbc_result($result, "CECREF"); 
 		$PRDCDE = date_create(odbc_result($result, "PRDCDE"));
-		$jourspasses = $jourspasses + 3 ; 
+
+		$recupererDetailProforma = "SELECT SUDATD, SUDATP, SUCOMM, SUDATC, SUDATA, SUCOMC, SUCOMA FROM FILWEBSOD.SUIPRFP1 WHERE SUSOCI = '$CESOCI' AND SUNCDE = '$CENCDE'";
+		$resultatDetailProforma = odbc_Exec($conn, $recupererDetailProforma);
+
+		$archiver = odbc_result($resultatDetailProforma, "SUDATA");
+		$cloturer = odbc_result($resultatDetailProforma, "SUDATC");
+		$prochaineAction = odbc_result($resultatDetailProforma, "SUDATP");
+		$derniereModification = odbc_result($resultatDetailProforma, "SUDATD");
+		$commentaire = odbc_result($resultatDetailProforma, "SUCOMM");
+		echo $commentaire;
 ?>
 			<tr>
 				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php echo $PRREPR ; ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php echo $CESOCI ; ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><A Href="<?php echo $PRLIE2 ; ?>" target="_blank" style="color:blue"><?php echo $CENTIE ; ?></font></div></td>
+				<td class="celluleTableauProformas codeSociete"><div align="center"><font size=2 ><?php echo $CESOCI ; ?></font></div></td>
+				<td class="celluleTableauProformas numeroClient"><div align="center"><font size=2 ><A Href="<?php echo $PRLIE2 ; ?>" target="_blank" style="color:blue"><?php echo $CENTIE ; ?></font></div></td>
 				<td class="celluleTableauProformas raisonSociale"><div align="center"><font size=2 ><?php echo $PRRAIS ; ?></font></div></td>
 				<td class="celluleTableauProformas"><div align="center"><font size=2 >20<?php echo date_format($PRDCDE,"y/m/d"); ?></font></div></td>
 				<td class="celluleTableauProformas"><div align="center"><font size=1 ><?php echo $CETYC ; ?></font></div></td>
 				<td class="celluleTableauProformas numeroProforma"><div align="center"><font size=2 ><A Href="<?php echo $PRLIE1 ; ?>" target="_blank" style="color:blue"><img src="images/iconepdf.png" width="20" height="20"><?php echo $CENCDE ; ?></font></div></td>
 				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php echo number_format($CETHTI, 2,',', '.') ; ?></font></div></td>
 				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php echo $CECREF ; ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php if ($CESOCI == '07') {echo 'O' ;}  ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php echo 'O' ;  ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php if ($CESOCI <> '07') {echo $jourspasses ;} ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php if ($CENTIE > 5729) {echo date_format($PRDCDE,"d/m/20") ;} ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php echo '' ;  ?></font></div></td>
-				<td class="celluleTableauProformas"><div align="center"><font size=2 ><?php if ($CENTIE > 5729) {echo 'A revoir chez '. $PRRAIS ;} ?></font></div></td>
+				<td class="celluleTableauProformas archiverProforma"><div align="center"><font size=2 ><?php echo $archiver;  ?></font></div></td>
+				<td class="celluleTableauProformas cloturerProforma"><div align="center"><font size=2 ><?php echo $cloturer;  ?></font></div></td>
+				<td class="celluleTableauProformas joursInaction">
+					<div align="center">
+						<font size=2 >
+							<?php 
+								if($derniereModification == "")
+								{
+									$joursInactivite = date("Y-m-d");
+								} 
+							?>
+						</font>
+					</div>
+				</td>
+				<td class="celluleTableauProformas prochaineAction"><div align="center"><font size=2 ><?php echo $prochaineAction; ?></font></div></td>
+				<td class="celluleTableauProformas dateCommentaire"><div align="center"><font size=2 ><?php echo $derniereModification;  ?></font></div></td>
+				<td class="celluleTableauProformas commentaire"><div align="center"><font size=2 ><?php echo $commentaire; ?></font></div></td>
 			</tr>
 <?php
 	}
@@ -168,7 +188,7 @@ fwrite($f, $zone);
 							<div class="container">
 								<div class="form-group">
 									<label id="modificationCommentaire">Modifié le :</label>
-									<textarea id="commentaireProforma" class="form-control" rows="5" placeholder="Commentaire"></textarea>
+									<textarea id="commentaireProforma" name="commentaireProforma" class="form-control" rows="5" placeholder="Commentaire"></textarea>
 								</div>
 								<div class="form-group">
 									<div class="form-row">
@@ -182,7 +202,7 @@ fwrite($f, $zone);
 											jours --->
 										</div>
 										<div class="col-md-4">
-											<input type="date" class="form-control" id="dateProchaineAction" required>
+											<input type="date" class="form-control" id="dateProchaineAction" name="dateProchaineAction">
 										</div>
 									</div>
 								</div>
@@ -191,11 +211,12 @@ fwrite($f, $zone);
 										<div class="col-md-2">
 											<label for="cloture">
 												Clôturer
-												<input id="cloturerProforma" type="checkbox" checked>
+												<input id="cloturerProforma" name="cloturerProforma" type="checkbox" checked>
 											</label>	
 										</div>
 										<div class="col-md-10">
-											<input type="text" id="pourquoiCloturerProforma" class="form-control" placeholder="Pourquoi ? zone obligatoire si clôturé">
+											<input type="text" id="pourquoiCloturerProforma" name="pourquoiCloturerProforma" class="form-control"
+											placeholder="Pourquoi ? zone obligatoire si clôturé">
 										</div>
 									</div>
 								</div>
@@ -204,13 +225,20 @@ fwrite($f, $zone);
 										<div class="col-md-2">
 											<label for="archiverProforma">
 												Archiver
-												<input id="archiverProforma" type="checkbox">
+												<input id="archiverProforma" name="archiverProforma" type="checkbox">
 											</label>	
 										</div>
 										<div class="col-md-10">
-											<input type="text" class="form-control" id="commentaireArchiverProforma" placeholder="Commentaire">
+											<input type="text" class="form-control" id="commentaireArchiverProforma" name="commentaireArchiverProforma" 
+											placeholder="Commentaire">
 										</div>
 									</div>
+								</div>
+								<div class="form-group">
+									<input type="hidden" name="codeSociete" id="codeSociete">
+									<input type="hidden" name="numeroClient" id="numeroClient">
+									<input type="hidden" name="numeroPiece" id="numeroPiece">
+									<input type="hidden" name="ajouterOuModifier" id="ajouterOuModifier">
 								</div>
 								<div>
 									<button class="btn btn-success" name="enregistrerProforma" id="enregistrerProforma">Enregistrer</button>
@@ -227,12 +255,47 @@ fwrite($f, $zone);
 <?php
 	if(isset($_POST['enregistrerProforma']))
 	{
-		$commentaire = $_POST[''];
-		$dateDerniereModification = $_POST[''];
-		$dateProchaineAction = $_POST[''];
-		$cloturerProforma = $_POST[''];
-		$pourquoiCloturerProforma = $_POST[''];
-		$archiverProforma = $_POST[''];
-		$commentaireArchiverProforma = $_POST[''];
+		$codeSociete = $_POST['codeSociete'];
+		$numeroPiece = intval($_POST['numeroPiece']);
+		$numeroClient = intval($_POST['numeroClient']);
+		$codeSociete . $numeroClient . $numeroPiece;
+		$commentaire = $_POST['commentaireProforma'];
+		$dateDerniereModification = date("Y-m-d");
+		$dateProchaineAction = $_POST['dateProchaineAction'];
+		echo $dateProchaineAction;
+		$pourquoiCloturerProforma = $_POST['pourquoiCloturerProforma'];
+		$commentaireArchiverProforma = $_POST['commentaireArchiverProforma'];
+		
+		if(isset($_POST['cloturerProforma']))
+		{
+			$cloturerProforma = date("Y-m-d");
+		}
+		else
+		{
+			$cloturerProforma = "";
+		}
+		if(isset($_POST['archiverProforma']))
+		{
+			$archiverProforma = date("Y-m-d");
+		}
+		else
+		{
+			$archiverProforma = "";
+		}
+		$ajouter = $_POST['ajouterOuModifier'];
+
+		if($ajouter == true)
+		{
+			$requeteDetailProforma = "INSERT INTO FILWEBSOD.SUIPRFP1 VALUES ('$codeSociete', '$numeroPiece', '$numeroClient', '', '$dateDerniereModification', '$dateProchaineAction', 
+			'$commentaire', '$cloturerProforma', '$archiverProforma', '$pourquoiCloturerProforma', '$commentaireArchiverProforma')";
+		}
+
+		else if($ajouter == false)
+		{
+			$requeteDetailProforma = "UPDATE FILWEBSOD.SUIPRFP1 SET SUDATD = '$dateDerniereModification', SUDATP = '$dateProchaineAction', SUCOMM = '$commentaire', SUDATC = '$cloturerProforma', 
+			SUDATA = '$archiverProforma', SUCOMC = '$pourquoiCloturerProforma', SUCOMA = '$commentaireArchiverProforma' WHERE SUSOCI = '$codeSociete' AND SUNCDE = '$numeroPiece' AND SUNTIE = '$numeroClient'";
+		}
+		echo $requeteDetailProforma;
+		odbc_Exec($conn, $requeteDetailProforma);
 	}
 ?>

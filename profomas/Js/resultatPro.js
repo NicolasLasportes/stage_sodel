@@ -13,6 +13,29 @@ $(document).ready(function()
                
             }
 
+            if($(this).hasClass("codeSociete"))
+            {
+                $("#codeSociete").val($(this).text());
+            }
+
+            if($(this).hasClass("numeroProforma"))
+            {
+                $("#numeroPiece").val($(this).text());
+            }
+
+            if($(this).hasClass("numeroClient"))
+            {
+                $("#numeroClient").val($(this).text());
+            }
+
+            if($(this).hasClass("archiverProforma") || $(this).hasClass("cloturerProforma") || $(this).hasClass("joursInaction") || $(this).hasClass("prochaineAction") || $(this).hasClass("dateCommentaire") || $(this).hasClass("commentaire")) 
+            {
+                if($(this).text() != "")
+                {
+                    ajouter = false;
+                }
+            }
+
             if($(this).hasClass("numeroProforma"))
             {
                 numeroProforma = $(this).text();
@@ -36,7 +59,7 @@ $(document).ready(function()
         {
             alert("Le commentaire ne peut comporter que 300 caractères maximum.");
         }
-        else if($("#nombreDeJours").val() <= 0 && $("#dateProchaineAction").val() == "")
+        else if($("#nombreDeJours").val() <= 0 && $("#dateProchaineAction").val() == "" && $("#cloturerProforma").prop("checked") == false && $("#archiverProforma").prop("checked") == false)
         {
             alert("Veuillez rentrer ou un nombre de jours ou la date de la prochaine action");
             return false;
@@ -46,12 +69,12 @@ $(document).ready(function()
             alert("Le commentaire de clôture ne peut comporter que 100 caractères maximum");
             return false;
         }
-        else if($("#commentaireArchive").val().length > 100)
+        else if($("#commentaireArchiverProforma").val().length > 100)
         {
             alert("Le commentaire d'archive ne peut comporter que 100 caractères maximum");
             return false;
         }
-        else if($("#commentaireArchive").val() != "" && $("#archive").prop("checked") === false)
+        else if($("#commentaireArchiverProforma").val() != "" && $("#archive").prop("checked") === false)
         {
             alert("Vous ne pouvez pas rentrer de commentaire d'archive si vous ne cochez pas la case 'Archiver'");
             return false;
@@ -63,7 +86,7 @@ $(document).ready(function()
         }
         else
         {
-            alert("Form submitted")
+            $("#ajouterOuModifier").val(ajouter);
             $("#detailProforma").submit(function()
             {
                 alert("form submitted")
@@ -117,3 +140,4 @@ var nomClient = "";
 var numeroProforma = "";
 var nombreDeJoursActuel = 0;
 var dateDuJour = new Date();
+var ajouter = true;
