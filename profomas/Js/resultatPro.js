@@ -1,5 +1,21 @@
 $(document).ready(function()
 {
+    // $('#example').DataTable( 
+    // {
+    //         "language": 
+    //         {
+    //                 "decimal": ",",
+    //                 "thousands": "."
+    //         }
+    // });
+    $('#formulaireSuiviProformas').modal('show');
+    recupererProformas();
+
+    $("#boutonFermeture").on('click', function()
+    {
+        windows.close();
+    });
+
     $("#modificationCommentaire").append(" " + dateDuJour.toLocaleDateString());
  
     $("tr").delegate('.celluleTableauProformas', 'click', function()
@@ -89,7 +105,7 @@ $(document).ready(function()
             $("#ajouterOuModifier").val(ajouter);
             $("#detailProforma").submit(function()
             {
-                alert("form submitted")
+                console.log("donnees envoyées");
             });
         }
     });
@@ -136,8 +152,43 @@ function remplirEnteteFormulaire(nomClient, numeroProforma)
     $("#titreFormulaireSuiviProformas").css("font-size", "16px");
 }
 
+function recupererInformationsCommercial(url)
+{
+    var informationsCommercial = [];
+    for(var i = url.length - 1; i > 0 ; i--) 
+    {
+        if(url[i] != "?")
+        {
+            informationsCommercial.push(url[i]);
+        }
+        else
+        {
+            break;
+        }
+    }
+    return informationsCommercial.reverse().join('');
+}
+
+function recupererProformas()
+{
+    $.ajax({
+        url: "http://" + $(location).prop("hostname") + "/Projet20/api/proforma.php" + $(location).prop('search'),
+        type: "get",
+        dataType: "json",
+    }).done(function(reponse)
+    {
+        console.log(reponse);
+    }).fail(function(err)
+    {
+        console.log(err);
+    });
+}
+
 var nomClient = "";
 var numeroProforma = "";
 var nombreDeJoursActuel = 0;
 var dateDuJour = new Date();
 var ajouter = true;
+var url = window.location.href.split('');
+console.log("http://" + $(location).prop("hostname") + "/Projet20/api/proforma.php" + $(location).prop('search'));
+console.log("http://192.168.1.8/Projet20/api/proforma.php")
