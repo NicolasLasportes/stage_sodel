@@ -1,10 +1,11 @@
 <?php
     header("Content-Type: application/json; charset=UTF-8");
-
+    ini_set('display_errors', '1');
     include '../include/connexion.php' ;
-    $cl = $_GET['cl'] ;
-    $ID = $_GET['ID'] ;
-    $intitule = $_GET['intitule'] ;
+    $cl = $_GET['cl'];
+    $ID = $_GET['ID'];
+    $intitule = $_GET['intitule'];
+    $proformasArchives = $_POST['archive'];
     $jourspasses = 0 ; 
     // Ecriture Log
     $adresse_ip=$_SERVER['REMOTE_ADDR'];
@@ -35,35 +36,62 @@
 		$CECREF = odbc_result($result, "CECREF"); 
 		$PRDCDE = date_create(odbc_result($result, "PRDCDE"));
 
-		// $recupererDetailProforma = "SELECT SUDATD, SUDATP, SUCOMM, SUDATC, SUDATA, SUCOMC, SUCOMA FROM FILWEBSOD.SUIPRFP1 WHERE SUSOCI = '$CESOCI' 
-        // AND SUNCDE = '$CENCDE'";
-		// $resultatDetailProforma = odbc_Exec($conn, $recupererDetailProforma);
+		$recupererDetailProforma = "SELECT SUDATD, SUDATP, SUCOMM, SUDATC, SUDATA, SUCOMC, SUCOMA FROM FILWEBSOD.SUIPRFP1 WHERE SUSOCI = '$CESOCI' 
+        AND SUNCDE = '$CENCDE'";
+		$resultatDetailProforma = odbc_Exec($conn, $recupererDetailProforma);
 
-		// $archiver = odbc_result($resultatDetailProforma, "SUDATA");
-		// $cloturer = odbc_result($resultatDetailProforma, "SUDATC");
-		// $prochaineAction = odbc_result($resultatDetailProforma, "SUDATP");
-		// $derniereModification = odbc_result($resultatDetailProforma, "SUDATD");
-        // $commentaire = odbc_result($resultatDetailProforma, "SUCOMM");
+		$archiver = odbc_result($resultatDetailProforma, "SUDATA");
+		$cloturer = odbc_result($resultatDetailProforma, "SUDATC");
+		$prochaineAction = odbc_result($resultatDetailProforma, "SUDATP");
+		$derniereModification = odbc_result($resultatDetailProforma, "SUDATD");
+        $commentaire = odbc_result($resultatDetailProforma, "SUCOMM");
 
-        $affichageJson = [
-            "numeroRepresentant" => $PRREPR,
-            "codeSociete" => $CESOCI,
-            "numeroClient" => $CENTIE,
-            "raisonSociale" => $PRLIE2,
-            "date" => $PRRAIS,
-            "type" => $CETYC,
-            "numeroProforma" => $PRLIE1,
-            "horsTaxes" => $CENCDE,
-            "reference" => $CETHTI
-            // "archive" => $archiver,
-            // "cloture" => $cloturer,
-            // "dateCree" => $PRDCDE,
-            // "prochaineAction" => $prochaineAction,
-            // "derniereModification" => $derniereModification,
-            // "commentaire" => $commentaire
-        ];
+        if($proformasArchives == "false" && $archiver == false)
+        {
+            $affichageJson = [
+                "numeroRepresentant" => $PRREPR,
+                "codeSociete" => $CESOCI,
+                "numeroClient" => $CENTIE,
+                "raisonSociale" => utf8_encode($PRRAIS),
+                "type" => $CETYC,
+                "lienPdf" => $PRLIE1,
+                "lienClient" => $PRLIE2,
+                "numeroProforma" => $CENCDE,
+                "horsTaxes" => $CETHTI,
+                "total" => $CETTTI,
+                "reference" => utf8_encode($CECREF),
+                "archive" => $archiver,
+                "cloture" => $cloturer,
+                "dateCreation" => $PRDCDE,
+                "prochaineAction" => $prochaineAction,
+                "derniereModification" => $derniereModification,
+                "commentaire" => $commentaire
+            ];
+        }
+        elseif($proformasArchives == "true" && $archiver != false)
+        {
+            $affichageJson = [
+                "numeroRepresentant" => $PRREPR,
+                "codeSociete" => $CESOCI,
+                "numeroClient" => $CENTIE,
+                "raisonSociale" => utf8_encode($PRRAIS),
+                "type" => $CETYC,
+                "lienPdf" => $PRLIE1,
+                "lienClient" => $PRLIE2,
+                "numeroProforma" => $CENCDE,
+                "horsTaxes" => $CETHTI,
+                "total" => $CETTTI,
+                "reference" => utf8_encode($CECREF),
+                "archive" => $archiver,
+                "cloture" => $cloturer,
+                "dateCreation" => $PRDCDE,
+                "prochaineAction" => $prochaineAction,
+                "derniereModification" => $derniereModification,
+                "commentaire" => $commentaire
+            ];
+        }
+
         array_push($listeProformas, $affichageJson);
     }
-    
     echo json_encode($listeProformas);
 ?>

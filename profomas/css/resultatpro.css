@@ -1,5 +1,7 @@
 td {
-    line-height: 1.45;
+	line-height: 1.45;
+	font-size: 80%;
+	text-align:center;
 }
 
 body {
@@ -10,14 +12,16 @@ body {
 img {
     max-width: 100%;
 }
-#monacor {
+#monacor 
+{
 	 width : 410px; 
 	 height: 85px;
-	}
-#dune {
+}
+#dune 
+{
 	 width: 410px;
 	 height: 85px;
-	}
+}
 /* fin d'initialisation des images */	
 
 /* initialisation de la taille du tableau */
@@ -29,7 +33,7 @@ img {
 #tdHeader4 {max-width:15%; }
 #tdHeader5 {max-width:7%; }
 #tdHeader6 {max-width:3%; }
-#tdHeader7 {max-width:6%; }
+#tdHeader7 {max-width:6; }
 #tdHeader8 {max-width:6%; }
 #tdHeader9 {max-width:15%; }
 #tdHeader10 {max-width:2%; }
@@ -37,7 +41,7 @@ img {
 #tdHeader12 {max-width:3%; }
 #tdHeader13 {max-width:7%; }
 #tdHeader14 {max-width:7%; }
-#tdHeader15 {max-width:15%; }
+#tdHeader15 {max-width:17%; }
 }
 /* fin d'initialisation de la taille du tableau */
 
@@ -54,67 +58,9 @@ img {
 	background-color:#749bff;
 	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
 	border-style: solid;
-	font-weight:normal;
-}
-/* #tdHeader2 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid;
-	font-weight:normal;
-	}
-#tdHeader3 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	}
-#tdHeader4 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	}
-#tdHeader5 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	}
-#tdHeader6 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	}
-#tdHeader7 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	}
-#tdHeader8 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	}
-#tdHeader9 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	}
-#tdHeader10 {
-	background-color:#749bff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
-	border-style: solid; 
-	font-weight:normal;
-	} */
-
-.celluleTableauProformas 
-{
-	background-color:#b7cdff;
-	font-family : Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
+	font-weight: normal;
+	margin-right: 0;
+	margin-left: 0;
 }
 
 /*fin d'initialisation du style du tableau*/
@@ -165,4 +111,22 @@ table.dataTable thead .sorting_desc_disabled{cursor:pointer;*cursor:hand;backgro
 #numeroProforma, #nomClient
 {
 	float:left;
+}
+
+.imgPdf
+{
+	width: 50%;
+	height: 50%;
+}
+
+th
+{
+	font-weight: bold;
+	text-align: center;
+}
+
+#example tr.bodyRows > *
+{
+	background-color:#b7cdff;
+	font-family: Arial,Helvetica,Geneva,Swiss,SunSans-Regular ;
 }
