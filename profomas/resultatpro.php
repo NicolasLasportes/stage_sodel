@@ -22,12 +22,12 @@
 					<button name="button">
 						<font size="6">
 							<font color="blue">
-							Les dernières Proformas
+								Les dernières Proformas
+							</font>
 						</font>
-					</font>
-				</button>
-			</b>
-		</font>
+					</button>
+				</b>
+			</font>
 				
 		<div align="right">
 			<input type="image" id="boutonFermeture" src="/images/off.jpg" width="30" height="30">
@@ -113,8 +113,8 @@
 				</div>
 			</div>
 		</div>
-		<!-- On lie tous les fichiers javascript a cette page -->
 
+		<!-- On lie tous les fichiers javascript a cette page -->
 		<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
 		<script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
 		<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>

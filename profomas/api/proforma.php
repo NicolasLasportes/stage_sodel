@@ -6,7 +6,6 @@
     $ID = $_GET['ID'];
     $intitule = $_GET['intitule'];
     $proformasArchives = $_POST['archive'];
-    $jourspasses = 0 ; 
     // Ecriture Log
     $adresse_ip=$_SERVER['REMOTE_ADDR'];
     $today = date("d-m-Y H:i:s");
@@ -40,13 +39,12 @@
         AND SUNCDE = '$CENCDE'";
 		$resultatDetailProforma = odbc_Exec($conn, $recupererDetailProforma);
 
-		$archiver = odbc_result($resultatDetailProforma, "SUDATA");
-		$cloturer = odbc_result($resultatDetailProforma, "SUDATC");
-		$prochaineAction = odbc_result($resultatDetailProforma, "SUDATP");
-		$derniereModification = odbc_result($resultatDetailProforma, "SUDATD");
-        $commentaire = odbc_result($resultatDetailProforma, "SUCOMM");
-
-        if($proformasArchives == "false" && $archiver == false)
+		$archiver = trim(odbc_result($resultatDetailProforma, "SUDATA"));
+		$cloturer = trim(odbc_result($resultatDetailProforma, "SUDATC"));
+		$prochaineAction = trim(odbc_result($resultatDetailProforma, "SUDATP"));
+		$derniereModification = trim(odbc_result($resultatDetailProforma, "SUDATD"));
+        $commentaire = trim(odbc_result($resultatDetailProforma, "SUCOMM"));
+        if($proformasArchives == "false" && $archiver == "0001-01-01" || $proformasArchives == "false" && $archiver == "")
         {
             $affichageJson = [
                 "numeroRepresentant" => $PRREPR,
@@ -67,8 +65,9 @@
                 "derniereModification" => $derniereModification,
                 "commentaire" => $commentaire
             ];
+            array_push($listeProformas, $affichageJson);
         }
-        elseif($proformasArchives == "true" && $archiver != false)
+        elseif($proformasArchives == "true" && $archiver != "0001-01-01" && $archiver != false && $archiver != "")
         {
             $affichageJson = [
                 "numeroRepresentant" => $PRREPR,
@@ -89,9 +88,8 @@
                 "derniereModification" => $derniereModification,
                 "commentaire" => $commentaire
             ];
+            array_push($listeProformas, $affichageJson);
         }
-
-        array_push($listeProformas, $affichageJson);
     }
     echo json_encode($listeProformas);
 ?>
