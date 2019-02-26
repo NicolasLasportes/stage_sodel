@@ -12,46 +12,43 @@ $(document).ready(function()
     $("#example").delegate('.celluleTableauProformas', 'click', function()
     {
         $('#formulaireSuiviProformas').modal('show');
-        $(this).parent().find('td').each(function()
-        {
-            if($(this).hasClass("raisonSociale"))
+        $.when(
+            $(this).parent().find('td').each(function()
             {
-                nomClient = $(this).text();
-            }
-            
-            if($(this).hasClass("codeSociete"))
-            {
-                $("#codeSociete").val($(this).text());
-            }
-            
-            if($(this).hasClass("numeroProforma"))
-            {
-                $("#numeroPiece").val($(this).text());
-                informationsContact("77O3yi9p5MMO4l5m9LOOOgwoFf0", $(this).text());
-            }
-
-            if($(this).hasClass("numeroClient"))
-            {
-                $("#numeroClient").val($(this).text());
-            }
-
-            if($(this).hasClass("archiverProforma") || $(this).hasClass("cloturerProforma") || $(this).hasClass("prochaineAction") || $(this).hasClass("dateCommentaire") || $(this).hasClass("commentaire")) 
-            {
-                if($(this).text() != "")
+                if($(this).hasClass("raisonSociale"))
                 {
-                    ajouter = false;
+                    nomClient = $(this).text();
                 }
-            }
-
-            if($(this).hasClass("numeroProforma"))
-            {
-                numeroProforma = $(this).text();
-            }
-            
-            if(nomClient != "" && numeroProforma != "")
-            {
-                remplirEnteteFormulaire(nomClient, numeroProforma);
-            }
+                
+                if($(this).hasClass("codeSociete"))
+                {
+                    $("#codeSociete").val($(this).text());
+                }
+                
+                if($(this).hasClass("numeroProforma"))
+                {
+                    numeroProforma = $(this).text();
+                    $("#numeroPiece").val($(this).text());
+                }
+                
+                if($(this).hasClass("numeroClient"))
+                {
+                    numeroClient = $(this).text();
+                    $("#numeroClient").val($(this).text());
+                }
+                
+                if($(this).hasClass("archiverProforma") || $(this).hasClass("cloturerProforma") || $(this).hasClass("prochaineAction") || $(this).hasClass("dateCommentaire") || $(this).hasClass("commentaire")) 
+                {
+                    if($(this).text() != "")
+                    {
+                        ajouter = false;
+                    }
+                }
+                
+            })
+        ).then(function()
+        {
+            informationsContact(numeroClient, numeroProforma);
         });
     });
 
@@ -141,33 +138,36 @@ function ajouterNombreJour(date, nbrJours)
     return dateProchaineAction;
 }
 
-function remplirEnteteFormulaire(nomClient, numeroProforma)
+function remplirFormulaire(nomClient, numeroProforma, informations)
 {
     $("#titreFormulaireSuiviProformas").empty().append("<div id='nomClient'>" + nomClient + "</div><br>");
-    $("#titreFormulaireSuiviProformas").append("<div id='numeroProforma'>Devis n°" + numeroProforma + "</div>");
-    $("#titreFormulaireSuiviProformas").css("font-size", "16px");
-}
-
-function recupererInformationsCommercial(url)
-{
-    var informationsCommercial = [];
-    for(var i = url.length - 1; i > 0 ; i--) 
+    $("#titreFormulaireSuiviProformas").append("<div id='numeroProforma'>Devis n°" + numeroProforma + "</div><br>");
+    $("#titreFormulaireSuiviProformas").append("<div id='nomContact'>" + informations.nomContact + "</div>");
+    $("#titreFormulaireSuiviProformas").append("<div id='telephoneContact'>" + informations.telephoneContact + "</div>");
+    $("#dateProchaineAction").val(informations.prochaineAction);
+    $("#dateDeniereModification").empty().append("Modifié le : " + informations.derniereModification);
+    if(informations.cloture != "0001-01-01" && informations.cloture != "")
     {
-        if(url[i] != "?")
-        {
-            informationsCommercial.push(url[i]);
-        }
-        else
-        {
-            break;
-        }
+        $("#cloturerProforma").prop("checked", true);
+        $("#pourquoiCloturerProforma").val(informations.commentaireCloture);
     }
-    return informationsCommercial.reverse().join('');
+    else
+    {
+        $("#cloturerProforma").prop("checked", false);
+    }
+    $("#titreFormulaireSuiviProformas").css("font-size", "16px");
+    $("#listeAnciensCommentaires").val(informations.commentaire);
+    anciensCommentaires = afficherCommentaires(informations.commentaire).reverse();
+    var listeCommentaires = "";
+    for(var i = 0; i < anciensCommentaires.length; i++)
+    {
+        listeCommentaires = listeCommentaires.concat("", anciensCommentaires[i] + "\n")
+    }
+    $("#ancienCommentaireProforma").val(listeCommentaires);
 }
 
 function recupererProformas(archive)
 {
-    //console.log(archive)
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/proforma.php" + $(location).prop('search'),
         type: "post",
@@ -184,7 +184,7 @@ function recupererProformas(archive)
             genererTableau(reponse);
             $('#example').DataTable(
             {
-                "order": [[ 1, "desc" ]]
+                "order": [[ 5, "desc" ]]
             });
             
             generationTableauPremiereFois = false;
@@ -193,11 +193,14 @@ function recupererProformas(archive)
         {
             $('#example').DataTable().destroy();
             genererTableau(reponse);
-            $('#example').DataTable();
+            $('#example').DataTable(
+            {
+                "order": [[ 5, "desc" ]]
+            });
         }
     }).fail(function(err)
     {
-        //console.log(err);
+        console.log(err);
     });
 }
 
@@ -217,8 +220,8 @@ function genererTableau(proformas)
             "<th class='tableHeader' id='tdHeader7'>N° de pièce</th>" +
             "<th class='tableHeader' id='tdHeader8'>H.T</th>" +
             "<th class='tableHeader' id='tdHeader9'>Référence</th>" +
-            "<th class='tableHeader' id='tdHeader10'>Archivé</th>" +
-            "<th class='tableHeader' id='tdHeader11'>Clôturé</th>" +
+            "<th class='tableHeader' id='tdHeader10'>&nbsp;Archivé&nbsp;</th>" +
+            "<th class='tableHeader' id='tdHeader11'>&nbsp;Clôturé&nbsp;</th>" +
             "<th class='tableHeader' id='tdHeader12'>Nbre Jours d'inaction</th>" +	
             "<th class='tableHeader' id='tdHeader13'>Prochaine action</th>" +
             "<th class='tableHeader' id='tdHeader14'>Date derniere modif </th>" +				
@@ -229,7 +232,7 @@ function genererTableau(proformas)
     for(var i = 0; i < proformas.length; i++)
     {
         //console.log(proformas[i].archive);
-        if(proformas[i].archive == "0001-01-01"|| proformas[i].archive == false)
+        if(proformas[i].archive == "0001-01-01" || proformas[i].archive == false)
         {
             archive = "";
         }
@@ -271,7 +274,7 @@ function genererTableau(proformas)
         }
         else
         {
-            commentaire = proformas[i].commentaire;
+            commentaire = proformas[i].commentaire.slice(proformas[i].commentaire.lastIndexOf("( Enreg : ") + 23);
         }        
 
         if(derniereModification == "" && prochaineAction == "")
@@ -280,12 +283,29 @@ function genererTableau(proformas)
         }
         else if(derniereModification != "" && prochaineAction == "")
         {
-            joursInaction = differenceEntreDates(dateDuJour, Date.parse(stringToDate(derniereModification)));
+            joursInaction = differenceEntreDates(dateDuJour, stringToDate(derniereModification));
         }
         else if(derniereModification == "" && prochaineAction != "")
         {
-            joursInaction = differenceEntreDates(dateDuJour, Date.parse(stringToDate(prochaineAction)));
+            joursInaction = differenceEntreDates(dateDuJour, stringToDate(prochaineAction));
         }
+        else
+        {
+            if(stringToDate(derniereModification) > stringToDate(prochaineAction))
+            {
+                joursInaction = differenceEntreDates(dateDuJour, stringToDate(derniereModification));
+            }
+            else
+            {
+                joursInaction = differenceEntreDates(dateDuJour, stringToDate(prochaineAction));
+            }
+        }
+
+        if(joursInaction < 0)
+        {
+            joursInaction = 0;
+        }
+
 
         $("#corpsTableauProformas").append(
         "<tr class='bodyRows'>" + 
@@ -296,8 +316,8 @@ function genererTableau(proformas)
             "<td class='celluleTableauProformas'>" + formaterDate(proformas[i].dateCreation.date) + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].type + "</td>" +
             "<td class='numeroProforma'>" +
-                "<a href='" + proformas[i].lienPdf + "' target='_blank'><img class='imgPdf' src='images/iconepdf.png'>" + proformas[i].numeroProforma 
-            + "</td>" +
+                "<a href='" + proformas[i].lienPdf + "' target='_blank'><img class='imgPdf' src='images/iconepdf.png'>" + proformas[i].numeroProforma + 
+            "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].horsTaxes + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].reference + "</td>" +
             "<td class='celluleTableauProformas archiverProforma'>" + archive + "</td>" +
@@ -321,29 +341,29 @@ function formaterDate(date)
 function stringToDate(date)
 {
     var jour = date.substring(0, 2);
-    var annee = date.substring(3, 5);
-    var mois = date.substring(6, 10);
-    console.log(new Date(annee, mois, jour))
-    return new Date(annee, mois, jour);
+    var mois = date.substring(3, 5);
+    var annee = date.substring(6, 10);
+    return new Date(annee, mois - 1, jour);
 }
 
-function informationsContact(dossier, numeroProforma)
+function informationsContact(numeroClient, numeroProforma)
 {
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/informationsContact.php",
         data:
         {
-            dossier: dossier,
+            numeroClient: numeroClient,
             numeroProforma: numeroProforma
         },
         dataType: 'json',
         type: 'post'
     }).done(function(rep)
     {
-        //console.log(rep)
+        console.log(rep)
+        remplirFormulaire(nomClient, numeroProforma, rep);
     }).fail(function(err)
     {
-        //console.log(err);
+        console.log(err);
     });
 }
 
@@ -377,21 +397,20 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
     }
     
     var dateDerniereModification = dateFormatBdd;
-    var commentaire = $("#commentaireProforma").val();
+    var anciensCommentaires = $("#listeAnciensCommentaires").val();
+    if(anciensCommentaires != "")
+    {
+        var commentaire = anciensCommentaires + " ( Enreg : " + dateFormatBdd + " ) " + $("#commentaireProforma").val();
+    }
+    else
+    {
+        commentaire = " ( Enreg : " + dateFormatBdd + " ) " + $("#commentaireProforma").val();
+    }
     var commentaireCloture = $('#pourquoiCloturerProforma').val();
     var commentaireArchive = $('#commentaireArchiverProforma').val();
-    
-    console.log(dateCloture);
-    console.log(dateArchive);
-    console.log(dateDerniereModification);
-    console.log(dateProchaineAction);
+
     console.log(commentaire);
-    console.log(commentaireCloture);
-    console.log(commentaireArchive);
-    console.log(ajouterOuModifier);
-    console.log(codeSociete);
-    console.log(numeroClient);
-    console.log(numeroProforma);
+    console.log(anciensCommentaires);
     
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/ajouterDetailProforma.php",
@@ -423,12 +442,43 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
 }
 
 // prend 2 paramètres, des objets de type date, fais la soustraction du premier et du deuxième
-//et retourne le nombre de jours de différence
+// et retourne le nombre de jours de différence
 function differenceEntreDates(date1, date2) 
 {
     var date1FormatUtc = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
     var date2FormatUtc = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
     return Math.floor((date1FormatUtc - date2FormatUtc) / millisecondesParJour);
+}
+
+function afficherCommentaires(commentaires)
+{
+    var tableauCommentaires = [];
+    var nombreIterations = commentaires.match(/\( Enreg :/g);
+    if(commentaires != "")
+    {
+        for(var i = 0; i < nombreIterations.length; i++)
+        {
+            var date;
+            commentaires = commentaires.replace("( Enreg : ", "");
+            date = commentaires.slice(0, 10);
+
+            commentaires = commentaires.replace(date + " ) ", "");
+
+            if(commentaires.indexOf("( Enreg :") == -1)
+            {
+                var commentaireUtilisateur = commentaires;
+            }
+            else
+            {
+                var commentaireUtilisateur = commentaires.slice(0, commentaires.indexOf("( Enreg :"));
+            }
+
+            commentaires = commentaires.replace(commentaireUtilisateur, "");
+            tableauCommentaires.push(date + " : " + commentaireUtilisateur.trim())
+
+        }
+    }
+    return tableauCommentaires;
 }
 
 var nomClient = "";
@@ -440,8 +490,5 @@ var ajouter = true;
 var url = window.location.href.split('');
 var millisecondesParJour = 86400000;
 var generationTableauPremiereFois = true;
-// console.log($(location).prop("origin") + "/Projet20/api/proforma.php" + $(location).prop('search'))
-// console.log($(location).prop('protocol'));
-// console.log($(location).prop('origin'));
-// console.log($(location).prop("hostname"));
+var listeAnciensCommentaires;
 

@@ -2,12 +2,12 @@
     include "../include/connexion.php";
     header("Content-Type: application/json; charset=UTF-8");
 
-    $dossierClient = $_POST['dossier'];
+    $numeroClient = $_POST['numeroClient'];
     $numeroProforma = $_POST['numeroProforma'];
-    // $sql = "SELECT TITNOM, TITELE FROM FILCOMSOD.TIEWEBP1 WHERE DOSSIER = '$dossierClient'";
-    // $resultat = odbc_Exec($conn, $sql);
-    // $nomContact = trim(odbc_result($resultat, 'TITNOM'));
-    // $telephoneContact = trim(odbc_result($resultat, "TITELE")); 
+    $sql = "SELECT TIINTR, TITELE FROM FILCOMSOD.TIEWEBP1 WHERE TINCLI = '$numeroClient'";
+    $resultat = odbc_Exec($conn, $sql);
+    $nomContact = trim(odbc_result($resultat, 'TIINTR'));
+    $telephoneContact = trim(odbc_result($resultat, "TITELE")); 
     
     $requeteInformationsSuiviProforma = "SELECT SUDATD, SUDATP, SUCOMM, SUDATC, SUDATA, SUCOMA, SUCOMC FROM FILWEBSOD.SUIPRFP1 WHERE SUNCDE = '$numeroProforma'";
     $resultatInformationsSuiviProforma = odbc_Exec($conn, $requeteInformationsSuiviProforma);
@@ -21,8 +21,8 @@
     $commentaireCloture = trim(odbc_result($resultatInformationsSuiviProforma, "SUCOMC"));
     
     $informationsClient = [
-        // "nomClient" => $nomContact,
-        // "telephoneContact" => $telephoneContact,
+        "nomContact" => $nomContact,
+        "telephoneContact" => $telephoneContact,
         "derniereModification" => $derniereModification,
         "prochaineAction" => $prochaineAction,
         "commentaire" => $commentaire,

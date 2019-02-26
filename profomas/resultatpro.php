@@ -17,17 +17,17 @@
 			</p>
 		</div>
 			
-			<font face="Arial,Helvetica,Geneva,Swiss,SunSans-Regular" size="5">
-				<b>
-					<button name="button">
-						<font size="6">
-							<font color="blue">
-								Les dernières Proformas
-							</font>
+		<font face="Arial,Helvetica,Geneva,Swiss,SunSans-Regular" size="5">
+			<b>
+				<button name="button">
+					<font size="6">
+						<font color="blue">
+							Les dernières Proformas
 						</font>
-					</button>
-				</b>
-			</font>
+					</font>
+				</button>
+			</b>
+		</font>
 				
 		<div align="right">
 			<input type="image" id="boutonFermeture" src="/images/off.jpg" width="30" height="30">
@@ -43,15 +43,19 @@
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h2 id="titreFormulaireSuiviProformas"></h2>
+						<div id="titreFormulaireSuiviProformas"></div>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<img src="images/fermer.png" alt="fermer" class="fermerModale">
 						</button>
 					</div>
 					<div class="modal-body">
 						<div class="container">
+						<div class="form-group">
+								<label for="ancienCommentaireProforma">Ancien commentaires</label>
+								<textarea readonly id="ancienCommentaireProforma" name="commentaireProforma" class="form-control" rows="5"></textarea>
+							</div>
 							<div class="form-group">
-								<label id="modificationCommentaire">Modifié le :</label>
+								<label id="dateDeniereModification" for="commentaireProforma">Modifié le :</label>
 								<textarea id="commentaireProforma" name="commentaireProforma" class="form-control" rows="5" placeholder="Commentaire"></textarea>
 							</div>
 							<div class="form-group">
@@ -99,13 +103,14 @@
 								</div>
 							</div>
 							<div class="form-group">
+								<input type="hidden" id="listeAnciensCommentaires">
 								<input type="hidden" name="codeSociete" id="codeSociete">
 								<input type="hidden" name="numeroClient" id="numeroClient">
 								<input type="hidden" name="numeroPiece" id="numeroPiece">
 								<input type="hidden" id="codeUtilisateur">
 								<input type="hidden" name="ajouterOuModifier" id="ajouterOuModifier">
 							</div>
-							<div>
+							<div id="boutonEnregistrer">
 								<button class="btn btn-success" name="enregistrerProforma" id="enregistrerProforma">Enregistrer</button>
 							</div>
 						</div>
