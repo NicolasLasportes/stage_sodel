@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-    recupererProformas(false);
+    recupererProformas(direction);
 
     $("#boutonFermeture").on('click', function()
     {
@@ -105,11 +105,6 @@ $(document).ready(function()
         dateProchaineAction = formatDateValide(dateProchaineAction).replace(/\//g, "-")
         $("#dateProchaineAction").val(dateProchaineAction);
     });
-
-    $("#afficherProformasArchives").on('click', function()
-    {
-        recupererProformas(true);
-    });
 });
 
 function formatDateValide(date)
@@ -144,7 +139,6 @@ function remplirFormulaire(nomClient, numeroProforma, informations)
     $("#titreFormulaireSuiviProformas").append("<div id='numeroProforma'>Devis n°" + numeroProforma + "</div><br>");
     $("#titreFormulaireSuiviProformas").append("<div id='nomContact'>" + informations.nomContact + "</div>");
     $("#titreFormulaireSuiviProformas").append("<div id='telephoneContact'>" + informations.telephoneContact + "</div>");
-    $("#dateProchaineAction").val(informations.prochaineAction);
     $("#dateDeniereModification").empty().append("Modifié le : " + informations.derniereModification);
     if(informations.cloture != "0001-01-01" && informations.cloture != "")
     {
@@ -166,7 +160,7 @@ function remplirFormulaire(nomClient, numeroProforma, informations)
     $("#ancienCommentaireProforma").val(listeCommentaires);
 }
 
-function recupererProformas(archive)
+function recupererProformas(direction)
 {
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/proforma.php" + $(location).prop('search'),
@@ -174,11 +168,10 @@ function recupererProformas(archive)
         dataType: "json",
         data:
         {
-            archive: archive
+            direction: direction
         }
     }).done(function(reponse)
     {
-        //console.log(reponse);
         if(generationTableauPremiereFois == true)
         {
             genererTableau(reponse);
@@ -206,9 +199,15 @@ function recupererProformas(archive)
 
 function genererTableau(proformas)
 {
-    //console.log(proformas)
     var joursInaction = 0;
-    //console.log(dateDuJour)
+    if(direction === "&code=T")
+    {
+        var enteteArchive = "<th class='tableHeader' id='tdHeader10'>Archivé</th>";
+    }
+    else
+    {
+        enteteArchive = "";
+    }
     $("#enteteTableauProformas").empty().append(
         "<tr>" +
             "<th class='tableHeader' id='tdHeader1'>Rep</th>" +
@@ -220,7 +219,7 @@ function genererTableau(proformas)
             "<th class='tableHeader' id='tdHeader7'>N° de pièce</th>" +
             "<th class='tableHeader' id='tdHeader8'>H.T</th>" +
             "<th class='tableHeader' id='tdHeader9'>Référence</th>" +
-            "<th class='tableHeader' id='tdHeader10'>&nbsp;Archivé&nbsp;</th>" +
+            enteteArchive +
             "<th class='tableHeader' id='tdHeader11'>&nbsp;Clôturé&nbsp;</th>" +
             "<th class='tableHeader' id='tdHeader12'>Nbre Jours d'inaction</th>" +	
             "<th class='tableHeader' id='tdHeader13'>Prochaine action</th>" +
@@ -231,7 +230,6 @@ function genererTableau(proformas)
     $("#corpsTableauProformas").empty();
     for(var i = 0; i < proformas.length; i++)
     {
-        //console.log(proformas[i].archive);
         if(proformas[i].archive == "0001-01-01" || proformas[i].archive == false)
         {
             archive = "";
@@ -279,7 +277,9 @@ function genererTableau(proformas)
 
         if(derniereModification == "" && prochaineAction == "")
         {
-            joursInaction = differenceEntreDates(dateDuJour, new Date(proformas[i].dateCreation.date));
+            var date = proformas[i].dateCreation.date.slice(0, 10);
+            date = new Date(date);
+            joursInaction = differenceEntreDates(dateDuJour, date);
         }
         else if(derniereModification != "" && prochaineAction == "")
         {
@@ -301,11 +301,19 @@ function genererTableau(proformas)
             }
         }
 
-        if(joursInaction < 0)
+        if(joursInaction <= 0)
         {
-            joursInaction = 0;
+            joursInaction = "";
         }
 
+        if(direction === "&code=T")
+        {
+            var celluleArchive = "<td class='celluleTableauProformas archiverProforma'>" + archive + "</td>";
+        }
+        else
+        {
+            var celluleArchive = "";
+        }
 
         $("#corpsTableauProformas").append(
         "<tr class='bodyRows'>" + 
@@ -316,11 +324,11 @@ function genererTableau(proformas)
             "<td class='celluleTableauProformas'>" + formaterDate(proformas[i].dateCreation.date) + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].type + "</td>" +
             "<td class='numeroProforma'>" +
-                "<a href='" + proformas[i].lienPdf + "' target='_blank'><img class='imgPdf' src='images/iconepdf.png'>" + proformas[i].numeroProforma + 
+                "<a href='" + proformas[i].lienPdf + "' target='_blank'><img class='imgPdf' src='images/iconepdf.png'><br>" + proformas[i].numeroProforma + 
             "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].horsTaxes + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].reference + "</td>" +
-            "<td class='celluleTableauProformas archiverProforma'>" + archive + "</td>" +
+            celluleArchive +
             "<td class='celluleTableauProformas cloturerProforma'>" + cloture + "</td>" +
             "<td class='celluleTableauProformas joursInaction'>" + joursInaction + "</td>" +
             "<td class='celluleTableauProformas prochaineAction'>" + prochaineAction + "</td>" +
@@ -398,7 +406,11 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
     
     var dateDerniereModification = dateFormatBdd;
     var anciensCommentaires = $("#listeAnciensCommentaires").val();
-    if(anciensCommentaires != "")
+    if($("#commentaireProforma").val() === "")
+    {
+        var commentaire = "";
+    }
+    else if(anciensCommentaires != "")
     {
         var commentaire = anciensCommentaires + " ( Enreg : " + dateFormatBdd + " ) " + $("#commentaireProforma").val();
     }
@@ -408,9 +420,6 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
     }
     var commentaireCloture = $('#pourquoiCloturerProforma').val();
     var commentaireArchive = $('#commentaireArchiverProforma').val();
-
-    console.log(commentaire);
-    console.log(anciensCommentaires);
     
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/ajouterDetailProforma.php",
@@ -434,7 +443,7 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
     }).done(function(rep)
     {
         console.log(rep)
-        recupererProformas(false);
+        recupererProformas(direction);
     }).fail(function(err)
     {
         console.log(err)
@@ -491,4 +500,15 @@ var url = window.location.href.split('');
 var millisecondesParJour = 86400000;
 var generationTableauPremiereFois = true;
 var listeAnciensCommentaires;
+var direction = $(location).prop('search').slice($(location).prop('search').indexOf("&code=T"), $(location).prop('search').indexOf("&code=T") + 7);
 
+if(direction != "&code=T")
+{
+    $("#archiver").css('display', 'none');
+}
+
+// var width = $(window).width(); 
+// var height = $(window).height(); 
+// alert(width)
+// alert(height)
+// alert($( document ).width())

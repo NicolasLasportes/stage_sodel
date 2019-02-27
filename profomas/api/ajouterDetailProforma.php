@@ -18,8 +18,17 @@
 
     if($ajouterOuModifier == "true")
     {
-        $requeteAjouterSuiviProforma = "INSERT INTO FILWEBSOD.SUIPRFP1 VALUES ('$codeSociete', '$numeroProforma', '$numeroClient', '$codeUtilisateur', 
-        '$dateDerniereModification', '$dateProchaineAction', '$commentaire', '$dateCloture', '$dateArchive', '$commentaireCloture', '$commentaireArchive')";
+        if($commentaire === "")
+        {
+            $requeteAjouterSuiviProforma = "INSERT INTO FILWEBSOD.SUIPRFP1 VALUES ('$codeSociete', '$numeroProforma', '$numeroClient', '$codeUtilisateur', 
+            '$dateDerniereModification', '$dateProchaineAction', '', '$dateCloture', '$dateArchive', '$commentaireCloture', '$commentaireArchive')";
+        }
+        else
+        {
+            $requeteAjouterSuiviProforma = "INSERT INTO FILWEBSOD.SUIPRFP1 VALUES ('$codeSociete', '$numeroProforma', '$numeroClient', '$codeUtilisateur', 
+            '$dateDerniereModification', '$dateProchaineAction', '$commentaire', '$dateCloture', '$dateArchive', '$commentaireCloture', '$commentaireArchive')";
+        }
+        
         $resultatAjouterSuiviProforma = odbc_Exec($conn, $requeteAjouterSuiviProforma);
         
         $reponse = [
@@ -32,9 +41,18 @@
 
     else
     {
-        $requeteModifierSuiviProforma = "UPDATE FILWEBSOD.SUIPRFP1 SET SUDATD = '$dateDerniereModification', SUDATP = '$dateProchaineAction', 
-        SUCOMM = '$commentaire', SUDATC = '$dateCloture', SUDATA = '$dateArchive', SUCOMC = '$commentaireCloture', SUCOMA = '$commentaireArchive'
-        WHERE SUNCDE = '$numeroProforma'";
+        if($commentaire === "")
+        {
+            $requeteModifierSuiviProforma = "UPDATE FILWEBSOD.SUIPRFP1 SET SUDATD = '$dateDerniereModification', SUDATP = '$dateProchaineAction', 
+            SUDATC = '$dateCloture', SUDATA = '$dateArchive', SUCOMC = '$commentaireCloture', SUCOMA = '$commentaireArchive' WHERE SUNCDE = '$numeroProforma'";
+        }
+        else
+        {
+            $requeteModifierSuiviProforma = "UPDATE FILWEBSOD.SUIPRFP1 SET SUDATD = '$dateDerniereModification', SUDATP = '$dateProchaineAction', 
+            SUCOMM = '$commentaire', SUDATC = '$dateCloture', SUDATA = '$dateArchive', SUCOMC = '$commentaireCloture', SUCOMA = '$commentaireArchive'
+            WHERE SUNCDE = '$numeroProforma'";
+        }
+
         $resultatAjouterSuiviProforma = odbc_Exec($conn, $requeteModifierSuiviProforma);
     
         $reponse = [
@@ -44,4 +62,3 @@
         echo json_encode($reponse);
     }
 ?>
-

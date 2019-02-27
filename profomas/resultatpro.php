@@ -33,8 +33,7 @@
 			<input type="image" id="boutonFermeture" src="/images/off.jpg" width="30" height="30">
 		</div>
 
-		<button id="afficherProformasArchives" class="btn btn-primary">Afficher les proformas archivés</button>
-		<table id="example" class="tablesorter" cellpadding="0" cellspacing="1">
+		<table id="example" class="table tablesorter" cellpadding="0" cellspacing="1">
 			<thead id="enteteTableauProformas"></thead>
 			<tbody id="corpsTableauProformas"></tbody>
 		</table>
@@ -88,7 +87,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" id="archiver">
 								<div class="form-row">
 									<div class="col-md-2">
 										<label for="archiverProforma">
