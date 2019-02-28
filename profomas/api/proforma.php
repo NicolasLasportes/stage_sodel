@@ -18,8 +18,8 @@
 
     if($direction == "&code=T")
     {
-        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP2
-        ORDER by PRDCDE desc";
+        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP2 
+        WHERE CESOCI <> '35' ORDER by PRDCDE desc";
     }
     else
     {
@@ -47,12 +47,12 @@
         if($direction == "&code=T")
         {
             $recupererDetailProforma = "SELECT SUDATD, SUDATP, SUCOMM, SUDATC, SUDATA, SUCOMC, SUCOMA FROM FILWEBSOD.SUIPRFP1 WHERE SUSOCI = '$CESOCI' 
-            AND SUNCDE = '$CENCDE'";
+            AND SUNCDE = '$CENCDE' FETCH FIRST 1 ROWS ONLY";
         }
         else
         {
             $recupererDetailProforma = "SELECT SUDATD, SUDATP, SUCOMM, SUDATC, SUDATA, SUCOMC, SUCOMA FROM FILWEBSOD.SUIPRFP1 WHERE SUSOCI = '$CESOCI' 
-            AND SUNCDE = '$CENCDE' AND ( SUDATA = '0001-01-01' OR SUDATA = '')";
+            AND SUNCDE = '$CENCDE' AND ( SUDATA = '0001-01-01' OR SUDATA = '') FETCH FIRST 1 ROWS ONLY";
         }
 
 		$resultatDetailProforma = odbc_Exec($conn, $recupererDetailProforma);

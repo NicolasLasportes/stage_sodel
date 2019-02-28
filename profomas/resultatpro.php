@@ -1,12 +1,12 @@
 <html>
 	<head>
 		<title>Consultation Pro-formas</title>
-		<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="css/resultatpro.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<meta name="viewport" content="width=device-width, maximum-scale=1, target-densitydpi=device-dpi">
 		<meta charset="UTF-8">
 		<meta name="site-config-URL" content="http://127.0.0.1/">
+		<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/fontawesome/css/all.css">
+		<link rel="stylesheet" type="text/css" href="css/resultatpro.css">
 	</head>
 
 	<body>		
@@ -15,20 +15,20 @@
 				<img class="monacor" src="images/monacor_international_logo%5B1%5D.gif">
 				<img class="dune" src="/logo-dune.png">
 			</p>
-		</div>
 			
-		<font face="Arial,Helvetica,Geneva,Swiss,SunSans-Regular" size="5">
-			<b>
-				<button name="button">
-					<font size="6">
-						<font color="blue">
-							Les dernières Proformas
+			<font face="Arial,Helvetica,Geneva,Swiss,SunSans-Regular" size="5">
+				<b>
+					<button name="button">
+						<font size="6">
+							<font color="blue">
+								Les Proformas
+							</font>
 						</font>
-					</font>
-				</button>
-			</b>
-		</font>
-				
+					</button>
+				</b>
+			</font>
+		</div>
+		<div id="informationsChargement">Chargement des proformas en cours</div>
 		<div align="right">
 			<input type="image" id="boutonFermeture" src="/images/off.jpg" width="30" height="30">
 		</div>
@@ -50,8 +50,8 @@
 					<div class="modal-body">
 						<div class="container">
 						<div class="form-group">
-								<label for="ancienCommentaireProforma">Ancien commentaires</label>
-								<textarea readonly id="ancienCommentaireProforma" name="commentaireProforma" class="form-control" rows="5"></textarea>
+								<label for="ancienCommentaireProforma">Anciens commentaires</label>
+								<textarea readonly id="ancienCommentaireProforma" name="ancienCommentaireProforma" class="form-control" rows="5"></textarea>
 							</div>
 							<div class="form-group">
 								<label id="dateDeniereModification" for="commentaireProforma">Modifié le :</label>

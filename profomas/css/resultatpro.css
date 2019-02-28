@@ -33,14 +33,14 @@ img
 /* fin d'initialisation des images */	
 
 /* initialisation de la taille du tableau */
-@media screen and (max-width:100%) { /*sers pour le responsive web design */
+@media screen and (max-width:100%) { sers pour le responsive web design
 	#tdHeader1 {max-width:1%; }
 	#tdHeader2 {max-width:1%; }
 	#tdHeader3 {max-width:2%; }
 	#tdHeader4 {max-width:18%; }
 	#tdHeader5 {max-width:7%; }
 	#tdHeader6 {max-width:3%; }
-	#tdHeader7 {max-width:7%; }
+	#tdHeader7 {max-width:4%; }
 	#tdHeader8 {max-width:6%; }
 	#tdHeader9 {max-width:15%; }
 	#tdHeader10 {max-width:4%; }
@@ -48,7 +48,7 @@ img
 	#tdHeader12 {max-width:1%; }
 	#tdHeader13 {max-width:7%; }
 	#tdHeader14 {max-width:7%; }
-	#tdHeader15 {max-width:17%; }
+	#tdHeader15 {max-width:17%; } 
 }
 
 .cloturerProforma, .archiverProforma, .prochaineAction, .dateCommentaire
@@ -82,7 +82,7 @@ table.dataTable thead .sorting_desc_disabled{cursor:pointer;*cursor:hand;backgro
 
 
 /*partie style de la pagination */
-/* .dataTables_wrapper .dataTables_paginate{float:right;text-align:right;padding-top:0.25em}
+.dataTables_wrapper .dataTables_paginate{float:right;text-align:right;padding-top:0.25em}
 .dataTables_wrapper .dataTables_paginate 
 .paginate_button{box-sizing:border-box;display:inline-block;min-width:1.5em;padding:0.5em 1em;margin-left:2px;text-align:center;text-decoration:none 
 !important;cursor:pointer;*cursor:hand;color:#333 
@@ -102,7 +102,7 @@ table.dataTable thead .sorting_desc_disabled{cursor:pointer;*cursor:hand;backgro
 .dataTables_wrapper:after{visibility:hidden;display:block;content:"";clear:both;height:0}@media screen and (max-width: 767px){.dataTables_wrapper .dataTables_info,
 .dataTables_wrapper .dataTables_paginate{float:none;text-align:center}
 .dataTables_wrapper .dataTables_paginate{margin-top:0.5em}}@media screen and (max-width: 640px){.dataTables_wrapper .dataTables_length,.dataTables_wrapper .dataTables_filter{float:none;text-align:center}
-.dataTables_wrapper .dataTables_filter{margin-top:0.5em}} */
+.dataTables_wrapper .dataTables_filter{margin-top:0.5em}}
 
 .fermerModale
 {
@@ -121,8 +121,8 @@ table.dataTable thead .sorting_desc_disabled{cursor:pointer;*cursor:hand;backgro
 
 .imgPdf
 {
-	width: 80%;
-	height: 17%;
+	width: 100%;
+	/*height: 20%;*/
 }
 
 th
@@ -140,4 +140,24 @@ th
 #boutonEnregistrer
 {
 	text-align:center;
+}
+
+table 
+{
+	max-width:100%
+}
+.table td, .table th
+{
+	vertical-align: middle !important;
+}
+
+#informationsChargement
+{
+	color:red;
+	text-align:center;
+}
+
+#cliquezIci
+{
+	color:red;
 }

@@ -4,7 +4,7 @@ $(document).ready(function()
 
     $("#boutonFermeture").on('click', function()
     {
-        windows.close();
+        window.close();
     });
 
     $("#modificationCommentaire").append(" " + dateFormatBdd);
@@ -94,7 +94,20 @@ $(document).ready(function()
             var codeSociete = $("#codeSociete").val();
             var numeroClient = $("#numeroClient").val();
             var numeroProforma = $("#numeroPiece").val();
-            ajouterOuModifier(ajouter, codeSociete, numeroClient, numeroProforma, "")
+            ajouterOuModifier(ajouter, codeSociete, numeroClient, numeroProforma, "");
+            ajouterOuModifierProforma = setInterval(function()
+            {
+                if($("#informationsChargement").is(":visible"))
+                {
+                    console.log("nuit")
+                    $("#informationsChargement").hide();
+                }
+                else
+                {
+                    console.log("jour")
+                    $("#informationsChargement").show();
+                }
+            }, 700);
         }
     });
 
@@ -135,19 +148,37 @@ function ajouterNombreJour(date, nbrJours)
 
 function remplirFormulaire(nomClient, numeroProforma, informations)
 {
+    console.log(informations)
     $("#titreFormulaireSuiviProformas").empty().append("<div id='nomClient'>" + nomClient + "</div><br>");
     $("#titreFormulaireSuiviProformas").append("<div id='numeroProforma'>Devis n°" + numeroProforma + "</div><br>");
     $("#titreFormulaireSuiviProformas").append("<div id='nomContact'>" + informations.nomContact + "</div>");
     $("#titreFormulaireSuiviProformas").append("<div id='telephoneContact'>" + informations.telephoneContact + "</div>");
     $("#dateDeniereModification").empty().append("Modifié le : " + informations.derniereModification);
+    $("#commentaireProforma").val("");
+    $("#nombreDeJours").val("");
+    $("#dateProchaineAction").val(informations.prochaineAction);
     if(informations.cloture != "0001-01-01" && informations.cloture != "")
     {
         $("#cloturerProforma").prop("checked", true);
-        $("#pourquoiCloturerProforma").val(informations.commentaireCloture);
+        $("#commentaireArchiverProforma").val(informations.commentaireArchive);
     }
     else
     {
         $("#cloturerProforma").prop("checked", false);
+        $("#pourquoiCloturerProforma").val("");
+    }
+    if(direction === "&code=T")
+    {
+        if(informations.archive != "0001-01-01" && informations.archive != "")
+        {
+            $("#archiverProforma").prop("checked", true);
+            $("#commentaireArchiverProforma").val(informations.commentaireArchive);
+        }
+        else
+        {
+            $("#archiverProforma").prop("checked", false);
+            $("#commentaireArchiverProforma").val("");
+        }
     }
     $("#titreFormulaireSuiviProformas").css("font-size", "16px");
     $("#listeAnciensCommentaires").val(informations.commentaire);
@@ -174,26 +205,25 @@ function recupererProformas(direction)
     {
         if(generationTableauPremiereFois == true)
         {
-            genererTableau(reponse);
-            $('#example').DataTable(
+            clearInterval(chargementDesProformas);
+            console.log(chargementDesProformas)
+            if($("#informationsChargement").is(":hidden"))
             {
-                "order": [[ 5, "desc" ]]
-            });
-            
+                $("#informationsChargement").show();
+            }
+            genererTableau(reponse);
             generationTableauPremiereFois = false;
         }
         else
         {
+            clearInterval(ajouterOuModifierProforma);
             $('#example').DataTable().destroy();
             genererTableau(reponse);
-            $('#example').DataTable(
-            {
-                "order": [[ 5, "desc" ]]
-            });
         }
     }).fail(function(err)
     {
-        console.log(err);
+        $("#informationsChargement").append("Impossible de récupérer les proformas");
+        console.log(err)
     });
 }
 
@@ -203,10 +233,12 @@ function genererTableau(proformas)
     if(direction === "&code=T")
     {
         var enteteArchive = "<th class='tableHeader' id='tdHeader10'>Archivé</th>";
+        var nombreDeColonnes = 11;
     }
     else
     {
         enteteArchive = "";
+        var nombreDeColonnes = 10;
     }
     $("#enteteTableauProformas").empty().append(
         "<tr>" +
@@ -221,12 +253,13 @@ function genererTableau(proformas)
             "<th class='tableHeader' id='tdHeader9'>Référence</th>" +
             enteteArchive +
             "<th class='tableHeader' id='tdHeader11'>&nbsp;Clôturé&nbsp;</th>" +
-            "<th class='tableHeader' id='tdHeader12'>Nbre Jours d'inaction</th>" +	
+            "<th class='tableHeader' id='tdHeader12'>Nbre Jours d'inaction <div id='cliquezIci'>cliquez-ici</div></th>" +	
             "<th class='tableHeader' id='tdHeader13'>Prochaine action</th>" +
             "<th class='tableHeader' id='tdHeader14'>Date derniere modif </th>" +				
             "<th class='tableHeader' id='tdHeader15'>Commentaire</th>" +
         "</tr>"
     );
+
     $("#corpsTableauProformas").empty();
     for(var i = 0; i < proformas.length; i++)
     {
@@ -248,7 +281,7 @@ function genererTableau(proformas)
             cloture = proformas[i].cloture;
         }
 
-        if(proformas[i].prochaineAction == false)
+        if(proformas[i].prochaineAction == false || proformas[i].prochaineAction == "0001-01-01")
         {
             prochaineAction = "";
         }
@@ -324,7 +357,7 @@ function genererTableau(proformas)
             "<td class='celluleTableauProformas'>" + formaterDate(proformas[i].dateCreation.date) + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].type + "</td>" +
             "<td class='numeroProforma'>" +
-                "<a href='" + proformas[i].lienPdf + "' target='_blank'><img class='imgPdf' src='images/iconepdf.png'><br>" + proformas[i].numeroProforma + 
+                "<a href='" + proformas[i].lienPdf + "' target='_blank'><i class='fas fa-file-pdf fa-3x'></i><br>" + proformas[i].numeroProforma + 
             "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].horsTaxes + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].reference + "</td>" +
@@ -336,6 +369,16 @@ function genererTableau(proformas)
             "<td class='celluleTableauProformas commentaire'>" + commentaire + "</td>" + 
         "</tr>");
     }
+
+    $('#example').DataTable(
+    {
+        "order": [[ 5, "desc" ]],
+        "autoWidth": false,
+        "columnDefs": [
+            { "orderSequence": [ "desc", "asc" ], "targets": [ nombreDeColonnes ] }
+        ]
+    });
+    $("#informationsChargement").hide();
 }
 
 function formaterDate(date)
@@ -443,10 +486,14 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
     }).done(function(rep)
     {
         console.log(rep)
+        $("#formulaireSuiviProformas").modal('hide');
+
         recupererProformas(direction);
-    }).fail(function(err)
+    }).fail(function(xhr)
     {
-        console.log(err)
+        alert(xhr.status)
+        alert(xhr.responseText)
+        //console.log(err)
     })
 }
 
@@ -500,15 +547,26 @@ var url = window.location.href.split('');
 var millisecondesParJour = 86400000;
 var generationTableauPremiereFois = true;
 var listeAnciensCommentaires;
+var ajouterOuModifierProforma;
 var direction = $(location).prop('search').slice($(location).prop('search').indexOf("&code=T"), $(location).prop('search').indexOf("&code=T") + 7);
+console.log($("#informationsChargement").text())
+var chargementDesProformas = setInterval(function()
+{
+    if($("#informationsChargement").is(":visible"))
+    {
+        console.log("nuit")
+        $("#informationsChargement").hide();
+    }
+    else
+    {
+        console.log("jour")
+        $("#informationsChargement").show();
+    }
+}, 700);
 
+console.log(chargementDesProformas)
 if(direction != "&code=T")
 {
     $("#archiver").css('display', 'none');
 }
 
-// var width = $(window).width(); 
-// var height = $(window).height(); 
-// alert(width)
-// alert(height)
-// alert($( document ).width())
