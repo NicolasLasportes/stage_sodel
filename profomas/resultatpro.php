@@ -3,30 +3,27 @@
 		<title>Consultation Pro-formas</title>
 		<meta name="viewport" content="width=device-width, maximum-scale=1, target-densitydpi=device-dpi">
 		<meta charset="UTF-8">
-		<meta name="site-config-URL" content="http://127.0.0.1/">
+		<!-- <meta name="site-config-URL" content="http://127.0.0.1/"> -->
 		<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/fontawesome/css/all.css">
 		<link rel="stylesheet" type="text/css" href="css/resultatpro.css">
 	</head>
-
 	<body>		
 		<div align="center">
 			<p align="center">
 				<img class="monacor" src="images/monacor_international_logo%5B1%5D.gif">
 				<img class="dune" src="/logo-dune.png">
 			</p>
-			
-			<font face="Arial,Helvetica,Geneva,Swiss,SunSans-Regular" size="5">
-				<b>
-					<button name="button">
-						<font size="6">
-							<font color="blue">
-								Les Proformas
-							</font>
-						</font>
-					</button>
-				</b>
-			</font>
+	
+			<h1 id="titreProformas">
+				Les Proformas
+			</h1>
+			<div>
+				Historique sur 
+				<input value="0" max="100" id="dernieresProformas" type="number">
+				mois
+				<button id="rechargerProformas" class="btn btn-success">Valider</button>
+			</div>
 		</div>
 		<div id="informationsChargement">Chargement des proformas en cours</div>
 		<div align="right">

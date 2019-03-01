@@ -1,6 +1,11 @@
 $(document).ready(function()
 {
-    recupererProformas(direction);
+    recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
+
+    $("#rechargerProformas").on("click", function()
+    {
+        recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
+    });
 
     $("#boutonFermeture").on('click', function()
     {
@@ -99,12 +104,10 @@ $(document).ready(function()
             {
                 if($("#informationsChargement").is(":visible"))
                 {
-                    console.log("nuit")
                     $("#informationsChargement").hide();
                 }
                 else
                 {
-                    console.log("jour")
                     $("#informationsChargement").show();
                 }
             }, 700);
@@ -191,7 +194,7 @@ function remplirFormulaire(nomClient, numeroProforma, informations)
     $("#ancienCommentaireProforma").val(listeCommentaires);
 }
 
-function recupererProformas(direction)
+function recupererProformas(direction, dateLimite)
 {
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/proforma.php" + $(location).prop('search'),
@@ -199,14 +202,15 @@ function recupererProformas(direction)
         dataType: "json",
         data:
         {
-            direction: direction
+            direction: direction,
+            dateLimite: dateLimite
         }
     }).done(function(reponse)
     {
+        console.log(reponse)
         if(generationTableauPremiereFois == true)
         {
             clearInterval(chargementDesProformas);
-            console.log(chargementDesProformas)
             if($("#informationsChargement").is(":hidden"))
             {
                 $("#informationsChargement").show();
@@ -217,7 +221,7 @@ function recupererProformas(direction)
         else
         {
             clearInterval(ajouterOuModifierProforma);
-            $('#example').DataTable().destroy();
+            $('#example').DataTable().ajax.reload();
             genererTableau(reponse);
         }
     }).fail(function(err)
@@ -233,12 +237,12 @@ function genererTableau(proformas)
     if(direction === "&code=T")
     {
         var enteteArchive = "<th class='tableHeader' id='tdHeader10'>Archivé</th>";
-        var nombreDeColonnes = 11;
+        var colonneJoursInaction = 11;
     }
     else
     {
         enteteArchive = "";
-        var nombreDeColonnes = 10;
+        var colonneJoursInaction = 10;
     }
     $("#enteteTableauProformas").empty().append(
         "<tr>" +
@@ -372,10 +376,10 @@ function genererTableau(proformas)
 
     $('#example').DataTable(
     {
-        "order": [[ 5, "desc" ]],
+        //"order": [[ 4, "desc" ]],
         "autoWidth": false,
         "columnDefs": [
-            { "orderSequence": [ "desc", "asc" ], "targets": [ nombreDeColonnes ] }
+            { "orderSequence": [ "desc", "asc" ], "targets": [ colonneJoursInaction ] }
         ]
     });
     $("#informationsChargement").hide();
@@ -488,7 +492,7 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
         console.log(rep)
         $("#formulaireSuiviProformas").modal('hide');
 
-        recupererProformas(direction);
+        recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
     }).fail(function(xhr)
     {
         alert(xhr.status)
@@ -537,6 +541,13 @@ function afficherCommentaires(commentaires)
     return tableauCommentaires;
 }
 
+function soustraireDate(dateInitiale, mois) 
+{
+    var date = new Date(dateInitiale);
+    date.setMonth(date.getMonth() - mois);
+    return date;
+}
+
 var nomClient = "";
 var numeroProforma = "";
 var nombreDeJoursActuel = 0;
@@ -549,24 +560,19 @@ var generationTableauPremiereFois = true;
 var listeAnciensCommentaires;
 var ajouterOuModifierProforma;
 var direction = $(location).prop('search').slice($(location).prop('search').indexOf("&code=T"), $(location).prop('search').indexOf("&code=T") + 7);
-console.log($("#informationsChargement").text())
 var chargementDesProformas = setInterval(function()
 {
     if($("#informationsChargement").is(":visible"))
     {
-        console.log("nuit")
         $("#informationsChargement").hide();
     }
     else
     {
-        console.log("jour")
         $("#informationsChargement").show();
     }
 }, 700);
 
-console.log(chargementDesProformas)
 if(direction != "&code=T")
 {
     $("#archiver").css('display', 'none');
 }
-

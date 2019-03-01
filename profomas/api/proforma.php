@@ -1,11 +1,13 @@
 <?php
     header("Content-Type: application/json; charset=UTF-8");
     ini_set('display_errors', '1');
-    include '../include/connexion.php' ;
+    include '../include/connexion.php';
     $cl = $_GET['cl'];
     $ID = $_GET['ID'];
     $intitule = $_GET['intitule'];
     $direction = $_POST['direction'];
+    $dateLimite = $_POST['dateLimite'];
+    $objetDateLimite = new DateTime($dateLimite);
     // Ecriture Log
     $adresse_ip=$_SERVER['REMOTE_ADDR'];
     $today = date("d-m-Y H:i:s");
@@ -19,12 +21,12 @@
     if($direction == "&code=T")
     {
         $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP2 
-        WHERE CESOCI <> '35' ORDER by PRDCDE desc";
+        WHERE CESOCI <> '35' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
     }
     else
     {
         $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP2
-        WHERE PRREPR = '$ID' and PRCLEE = '$cl' ORDER by PRDCDE desc";
+        WHERE PRREPR = '$ID' AND PRCLEE = '$cl' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
     }
     
     $result = odbc_Exec($conn, $sql);
@@ -80,7 +82,8 @@
             "dateCreation" => $PRDCDE,
             "prochaineAction" => $prochaineAction,
             "derniereModification" => $derniereModification,
-            "commentaire" => $commentaire
+            "commentaire" => $commentaire,
+            "Date limite" => $dateLimite
         ];
         array_push($listeProformas, $affichageJson);
         
