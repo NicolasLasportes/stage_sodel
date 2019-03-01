@@ -1,13 +1,12 @@
 <?php
-    header("Content-Type: application/json; charset=UTF-8");
-    ini_set('display_errors', '1');
     include '../include/connexion.php';
+    header("Content-Type: application/json; charset=UTF-8");
     $cl = $_GET['cl'];
     $ID = $_GET['ID'];
     $intitule = $_GET['intitule'];
     $direction = $_POST['direction'];
     $dateLimite = $_POST['dateLimite'];
-    $objetDateLimite = new DateTime($dateLimite);
+
     // Ecriture Log
     $adresse_ip=$_SERVER['REMOTE_ADDR'];
     $today = date("d-m-Y H:i:s");
@@ -58,35 +57,42 @@
         }
 
 		$resultatDetailProforma = odbc_Exec($conn, $recupererDetailProforma);
-
+        
 		$archiver = trim(odbc_result($resultatDetailProforma, "SUDATA"));
 		$cloturer = trim(odbc_result($resultatDetailProforma, "SUDATC"));
 		$prochaineAction = trim(odbc_result($resultatDetailProforma, "SUDATP"));
 		$derniereModification = trim(odbc_result($resultatDetailProforma, "SUDATD"));
         $commentaire = trim(odbc_result($resultatDetailProforma, "SUCOMM"));
+        $commentaireCloture = trim(odbc_result($resultatDetailProforma, "SUCOMC"));
 
-        $affichageJson = [
-            "numeroRepresentant" => $PRREPR,
-            "codeSociete" => $CESOCI,
-            "numeroClient" => $CENTIE,
-            "raisonSociale" => utf8_encode($PRRAIS),
-            "type" => $CETYC,
-            "lienPdf" => $PRLIE1,
-            "lienClient" => $PRLIE2,
-            "numeroProforma" => $CENCDE,
-            "horsTaxes" => $CETHTI,
-            "total" => $CETTTI,
-            "reference" => utf8_encode($CECREF),
-            "archive" => $archiver,
-            "cloture" => $cloturer,
-            "dateCreation" => $PRDCDE,
-            "prochaineAction" => $prochaineAction,
-            "derniereModification" => $derniereModification,
-            "commentaire" => $commentaire,
-            "Date limite" => $dateLimite
-        ];
-        array_push($listeProformas, $affichageJson);
-        
+        if($direction != "&code=T" && $cloturer == "0001-01-01" || $direction != "&code=T" && $cloturer == "" ||$direction != "&code=T" && $cloturer == "false" || $direction =="&code=T")
+        {
+            if($archiver == "0001-01-01" || $archiver == "" || $archiver == false )
+            {
+                $affichageJson = [
+                    "numeroRepresentant" => $PRREPR,
+                    "codeSociete" => $CESOCI,
+                    "numeroClient" => $CENTIE,
+                    "raisonSociale" => utf8_encode($PRRAIS),
+                    "type" => $CETYC,
+                    "lienPdf" => $PRLIE1,
+                    "lienClient" => $PRLIE2,
+                    "numeroProforma" => $CENCDE,
+                    "horsTaxes" => $CETHTI,
+                    "total" => $CETTTI,
+                    "reference" => utf8_encode($CECREF),
+                    "archive" => $archiver,
+                    "cloture" => $cloturer,
+                    "dateCreation" => $PRDCDE,
+                    "prochaineAction" => $prochaineAction,
+                    "derniereModification" => $derniereModification,
+                    "commentaire" => $commentaire,
+                    "commentaireCloture" => $commentaireCloture
+                ];
+                array_push($listeProformas, $affichageJson);
+            }
+        }
+
     }
     echo json_encode($listeProformas);
 ?>

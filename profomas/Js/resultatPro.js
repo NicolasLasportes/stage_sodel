@@ -4,6 +4,11 @@ $(document).ready(function()
 
     $("#rechargerProformas").on("click", function()
     {
+        console.log($(this).val());
+        // if(typeof($(this).val()) != "number" )
+        // {
+        //     alert("Veuillez saisir uniquement des chiffres");
+        // }
         recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
     });
 
@@ -118,7 +123,7 @@ $(document).ready(function()
     {
         nombreDeJoursSaisis = $(this).val();
         var dateProchaineAction = ajouterNombreJour(dateDuJour, nombreDeJoursSaisis);
-        dateProchaineAction = formatDateValide(dateProchaineAction).replace(/\//g, "-")
+        dateProchaineAction = formatDateValide(dateProchaineAction);
         $("#dateProchaineAction").val(dateProchaineAction);
     });
 });
@@ -136,7 +141,7 @@ function formatDateValide(date)
         mois = "0" + mois;
     }
     var annee = date.getFullYear();
-    var dateDuJour = annee + "/" + mois + "/" + jour;
+    var dateDuJour = annee + "-" + mois + "-" + jour;
     return dateDuJour;
 }
 
@@ -159,11 +164,19 @@ function remplirFormulaire(nomClient, numeroProforma, informations)
     $("#dateDeniereModification").empty().append("Modifié le : " + informations.derniereModification);
     $("#commentaireProforma").val("");
     $("#nombreDeJours").val("");
-    $("#dateProchaineAction").val(informations.prochaineAction);
+    if(informations.prochaineAction != "0001-01-01")
+    {
+        $("#dateProchaineAction").val(informations.prochaineAction);
+    }
+    else
+    {
+        $("#dateProchaineAction").val("");
+    }
+
     if(informations.cloture != "0001-01-01" && informations.cloture != "")
     {
         $("#cloturerProforma").prop("checked", true);
-        $("#commentaireArchiverProforma").val(informations.commentaireArchive);
+        $("#pourquoiCloturerProforma").val(informations.commentaireCloture);
     }
     else
     {
@@ -221,13 +234,12 @@ function recupererProformas(direction, dateLimite)
         else
         {
             clearInterval(ajouterOuModifierProforma);
-            $('#example').DataTable().ajax.reload();
+            $('#example').DataTable().destroy();
             genererTableau(reponse);
         }
-    }).fail(function(err)
+    }).fail(function()
     {
-        $("#informationsChargement").append("Impossible de récupérer les proformas");
-        console.log(err)
+        $("#informationsChargement").empty().append("Impossible de récupérer les proformas");
     });
 }
 
@@ -236,13 +248,11 @@ function genererTableau(proformas)
     var joursInaction = 0;
     if(direction === "&code=T")
     {
-        var enteteArchive = "<th class='tableHeader' id='tdHeader10'>Archivé</th>";
-        var colonneJoursInaction = 11;
+        var enteteCloture = "<th class='tableHeader' id='tdHeader10'>Cloturé</th>";
     }
     else
     {
-        enteteArchive = "";
-        var colonneJoursInaction = 10;
+        enteteCloture = "";
     }
     $("#enteteTableauProformas").empty().append(
         "<tr>" +
@@ -255,8 +265,7 @@ function genererTableau(proformas)
             "<th class='tableHeader' id='tdHeader7'>N° de pièce</th>" +
             "<th class='tableHeader' id='tdHeader8'>H.T</th>" +
             "<th class='tableHeader' id='tdHeader9'>Référence</th>" +
-            enteteArchive +
-            "<th class='tableHeader' id='tdHeader11'>&nbsp;Clôturé&nbsp;</th>" +
+            enteteCloture +
             "<th class='tableHeader' id='tdHeader12'>Nbre Jours d'inaction <div id='cliquezIci'>cliquez-ici</div></th>" +	
             "<th class='tableHeader' id='tdHeader13'>Prochaine action</th>" +
             "<th class='tableHeader' id='tdHeader14'>Date derniere modif </th>" +				
@@ -267,22 +276,17 @@ function genererTableau(proformas)
     $("#corpsTableauProformas").empty();
     for(var i = 0; i < proformas.length; i++)
     {
-        if(proformas[i].archive == "0001-01-01" || proformas[i].archive == false)
-        {
-            archive = "";
-        }
-        else
-        {
-            archive = proformas[i].archive;
-        }
-
-        if(proformas[i].cloture == "0001-01-01" || proformas[i].cloture == false)
+        if(direction != "&code=T")
         {
             cloture = "";
         }
+        else if(proformas[i].cloture != "0001-01-01" && proformas[i].cloture != false)
+        {
+            cloture = "<td class='celluleTableauProformas cloturerProforma'>" + proformas[i].cloture + "</td>";
+        }
         else
         {
-            cloture = proformas[i].cloture;
+            cloture = "<td class='celluleTableauProformas cloturerProforma'></td>";
         }
 
         if(proformas[i].prochaineAction == false || proformas[i].prochaineAction == "0001-01-01")
@@ -307,6 +311,10 @@ function genererTableau(proformas)
         {
             commentaire = "";
         }
+        else if(proformas[i].commentaireCloture != "" || proformas[i].commentaireCloture != false)
+        {
+            commentaire = proformas[i].commentaireCloture;
+        }
         else
         {
             commentaire = proformas[i].commentaire.slice(proformas[i].commentaire.lastIndexOf("( Enreg : ") + 23);
@@ -320,36 +328,27 @@ function genererTableau(proformas)
         }
         else if(derniereModification != "" && prochaineAction == "")
         {
-            joursInaction = differenceEntreDates(dateDuJour, stringToDate(derniereModification));
+            joursInaction = differenceEntreDates(dateDuJour, new Date(derniereModification));
         }
         else if(derniereModification == "" && prochaineAction != "")
         {
-            joursInaction = differenceEntreDates(dateDuJour, stringToDate(prochaineAction));
+            joursInaction = differenceEntreDates(dateDuJour, new Date(prochaineAction));
         }
         else
         {
-            if(stringToDate(derniereModification) > stringToDate(prochaineAction))
+            if(new Date(derniereModification) > new Date(prochaineAction))
             {
-                joursInaction = differenceEntreDates(dateDuJour, stringToDate(derniereModification));
+                joursInaction = differenceEntreDates(dateDuJour, new Date(derniereModification));
             }
             else
             {
-                joursInaction = differenceEntreDates(dateDuJour, stringToDate(prochaineAction));
+                joursInaction = differenceEntreDates(dateDuJour, new Date(prochaineAction));
             }
         }
 
         if(joursInaction <= 0)
         {
             joursInaction = "";
-        }
-
-        if(direction === "&code=T")
-        {
-            var celluleArchive = "<td class='celluleTableauProformas archiverProforma'>" + archive + "</td>";
-        }
-        else
-        {
-            var celluleArchive = "";
         }
 
         $("#corpsTableauProformas").append(
@@ -365,8 +364,7 @@ function genererTableau(proformas)
             "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].horsTaxes + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].reference + "</td>" +
-            celluleArchive +
-            "<td class='celluleTableauProformas cloturerProforma'>" + cloture + "</td>" +
+            cloture +
             "<td class='celluleTableauProformas joursInaction'>" + joursInaction + "</td>" +
             "<td class='celluleTableauProformas prochaineAction'>" + prochaineAction + "</td>" +
             "<td class='celluleTableauProformas dateCommentaire'>" + derniereModification + "</td>" +
@@ -374,14 +372,30 @@ function genererTableau(proformas)
         "</tr>");
     }
 
-    $('#example').DataTable(
+    console.log(generationTableauPremiereFois)
+    if(generationTableauPremiereFois === true)
     {
-        //"order": [[ 4, "desc" ]],
-        "autoWidth": false,
-        "columnDefs": [
-            { "orderSequence": [ "desc", "asc" ], "targets": [ colonneJoursInaction ] }
-        ]
-    });
+        $('#example').DataTable(
+        {
+            "order": [[ 4, "desc" ]],
+            "autoWidth": false,
+            "columnDefs": [
+                { "orderSequence": [ "desc", "asc" ], "targets": [ 10 ] }
+            ],
+            stateSave: true
+        });
+    }
+    else
+    {
+        $('#example').DataTable(
+        {
+            "autoWidth": false,
+            "columnDefs": [
+                { "orderSequence": [ "desc", "asc" ], "targets": [ 10 ] }
+            ],
+            stateSave: true
+        });
+    }
     $("#informationsChargement").hide();
 }
 
@@ -390,15 +404,7 @@ function formaterDate(date)
     var jour = date.substring(8, 10);
     var annee = date.substring(0, 4);
     var mois = date.substring(5, 7);
-    return jour + "/" + mois + "/" + annee;
-}
-
-function stringToDate(date)
-{
-    var jour = date.substring(0, 2);
-    var mois = date.substring(3, 5);
-    var annee = date.substring(6, 10);
-    return new Date(annee, mois - 1, jour);
+    return annee + "-" + mois + "-" + jour;
 }
 
 function informationsContact(numeroClient, numeroProforma)
@@ -495,9 +501,8 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
         recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
     }).fail(function(xhr)
     {
-        alert(xhr.status)
-        alert(xhr.responseText)
-        //console.log(err)
+        alert("Impossible d'ajouter ou de modifier le suivi de cette proforma");
+        console.log(xhr);
     })
 }
 
@@ -552,7 +557,7 @@ var nomClient = "";
 var numeroProforma = "";
 var nombreDeJoursActuel = 0;
 var dateDuJour = new Date();
-var dateFormatBdd = formatDateValide(dateDuJour).replace(/\//g, "-"); //stocke dans cette variable la date du jour au format : yyyy-mm-dd
+var dateFormatBdd = formatDateValide(dateDuJour); //stocke dans cette variable la date du jour au format : yyyy-mm-dd
 var ajouter = true;
 var url = window.location.href.split('');
 var millisecondesParJour = 86400000;
@@ -574,5 +579,5 @@ var chargementDesProformas = setInterval(function()
 
 if(direction != "&code=T")
 {
-    $("#archiver").css('display', 'none');
+    $("#archiver").hide();
 }

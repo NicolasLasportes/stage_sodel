@@ -4,8 +4,10 @@
 
     $numeroClient = $_POST['numeroClient'];
     $numeroProforma = $_POST['numeroProforma'];
+
     $sql = "SELECT TIINTR, TITELE FROM FILCOMSOD.TIEWEBP1 WHERE TINCLI = '$numeroClient'";
     $resultat = odbc_Exec($conn, $sql);
+    
     $nomContact = trim(odbc_result($resultat, 'TIINTR'));
     $telephoneContact = trim(odbc_result($resultat, "TITELE")); 
     

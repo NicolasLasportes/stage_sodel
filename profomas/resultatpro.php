@@ -20,15 +20,14 @@
 			</h1>
 			<div>
 				Historique sur 
-				<input value="0" max="100" id="dernieresProformas" type="number">
+				<input value="5" max="100" id="dernieresProformas" type="number">
 				mois
 				<button id="rechargerProformas" class="btn btn-success">Valider</button>
 			</div>
 		</div>
 		<div id="informationsChargement">Chargement des proformas en cours</div>
-		<div align="right">
-			<input type="image" id="boutonFermeture" src="/images/off.jpg" width="30" height="30">
-		</div>
+			
+		<input type="image" id="boutonFermeture" src="/images/off.jpg" width="30" height="30">
 
 		<table id="example" class="table tablesorter" cellpadding="0" cellspacing="1">
 			<thead id="enteteTableauProformas"></thead>

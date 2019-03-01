@@ -33,7 +33,6 @@
         
         $reponse = [
             "reponse" => "suivi proforma ajouté !"
-            
         ];
     
         echo json_encode($reponse);
