@@ -16,11 +16,11 @@
     
     $derniereModification = trim(odbc_result($resultatInformationsSuiviProforma, 'SUDATD'));
     $prochaineAction = trim(odbc_result($resultatInformationsSuiviProforma, "SUDATP"));    
-    $commentaire = trim(odbc_result($resultatInformationsSuiviProforma, 'SUCOMM'));
+    $commentaire = trim(mb_convert_encoding(odbc_result($resultatInformationsSuiviProforma, 'SUCOMM'), "UTF-8", "ISO-8859-1"));
     $cloture = trim(odbc_result($resultatInformationsSuiviProforma, "SUDATC"));    
     $archive = trim(odbc_result($resultatInformationsSuiviProforma, 'SUDATA'));
-    $commentaireArchive = trim(odbc_result($resultatInformationsSuiviProforma, "SUCOMA"));
-    $commentaireCloture = trim(odbc_result($resultatInformationsSuiviProforma, "SUCOMC"));
+    $commentaireArchive = trim(mb_convert_encoding(odbc_result($resultatInformationsSuiviProforma, "SUCOMA"), "UTF-8", "ISO-8859-1"));
+    $commentaireCloture = trim(mb_convert_encoding(odbc_result($resultatInformationsSuiviProforma, "SUCOMC"),"UTF-8", "ISO-8859-1"));
     
     $informationsClient = [
         "nomContact" => $nomContact,

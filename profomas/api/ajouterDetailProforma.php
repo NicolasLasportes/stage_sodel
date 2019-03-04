@@ -8,11 +8,11 @@
     $codeUtilisateur = '';
     $dateDerniereModification = $_POST['dateDerniereModification'];
     $dateProchaineAction = $_POST['dateProchaineAction'];
-    $commentaire = $_POST['commentaire'];
+    $commentaire = mb_convert_encoding($_POST['commentaire'], "ISO-8859-1", "UTF-8");
     $dateCloture = $_POST['dateCloture'];
     $dateArchive = $_POST['dateArchive'];
-    $commentaireCloture = $_POST['commentaireCloture'];
-    $commentaireArchive = $_POST['commentaireArchive'];
+    $commentaireCloture = mb_convert_encoding($_POST['commentaireCloture'], "ISO-8859-1", "UTF-8");
+    $commentaireArchive = mb_convert_encoding($_POST['commentaireArchive'], "ISO-8859-1", "UTF-8");
     $numeroProforma = $_POST['numeroProforma'];
     $ajouterOuModifier = $_POST['ajouterOuModifier'];
 

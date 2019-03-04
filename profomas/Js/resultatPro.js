@@ -2,23 +2,23 @@ $(document).ready(function()
 {
     recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
 
+    //au clic sur le bouton avec l'id = rechargerProformas, on lance la fonction recupererProformas();
     $("#rechargerProformas").on("click", function()
     {
-        console.log($(this).val());
-        // if(typeof($(this).val()) != "number" )
-        // {
-        //     alert("Veuillez saisir uniquement des chiffres");
-        // }
         recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
     });
 
+    //au clic sur le bouton d'id = boutonFermeture, ferme l'onglet courante
     $("#boutonFermeture").on('click', function()
     {
         window.close();
     });
 
-    $("#modificationCommentaire").append(" " + dateFormatBdd);
+    //$("#modificationCommentaire").append(" " + dateFormatBdd);
  
+    //au clic sur une cellule du tableau, récupère le nom du client, le numero de la proforma, le code societe, le numero du client, et verifie si un suivi
+    //pour cette proforma existe ou pas
+    //et une fois tout cela fait, lance la fonction informationsContact() avec en paramètrele numero de client et le numero de proforma
     $("#example").delegate('.celluleTableauProformas', 'click', function()
     {
         $('#formulaireSuiviProformas').modal('show');
@@ -62,6 +62,10 @@ $(document).ready(function()
         });
     });
 
+    /*
+    au clic sur le bouton d'id = enregistrerProforma, vérifie toutes les valeurs saisies dans le formulaire,
+    une fois les tests passés, lance la fonction ajouterOuModifier() et lui passe en paramètre les informations récupérés précédement
+    */
     $("#enregistrerProforma").on('click', function()
     {
         if($("#cloturerProforma").is(":checked") && $("#pourquoiCloturerProforma").val() == "" || $("#cloturerProforma").is(":checked") && $("#pourquoiCloturerProforma").val() == " ")
@@ -119,6 +123,10 @@ $(document).ready(function()
         }
     });
 
+    /*
+    récupère le nombre saisie a chaque changement dans l'input d'id = nombreDeJours, et calcule la date de prochaine action grace a la fonction
+    ajouterNombreDeJour, cette date est convertie au format yyyy-mm-dd et affiché dans l'input correspondant    
+    */
     $("#nombreDeJours").on('input', function()
     {
         nombreDeJoursSaisis = $(this).val();
@@ -128,6 +136,7 @@ $(document).ready(function()
     });
 });
 
+//prend en parametre un objet date et retourne une date au format yyyy-mm-dd
 function formatDateValide(date)
 {
     var jour = date.getDate();
@@ -145,6 +154,7 @@ function formatDateValide(date)
     return dateDuJour;
 }
 
+//prend en parametres une date et un nombre de jours, ajoute les 2, et retourne la date obtenu
 function ajouterNombreJour(date, nbrJours)
 {
     nbrJoursMilliSecondes = 86400000 * nbrJours;
@@ -154,9 +164,9 @@ function ajouterNombreJour(date, nbrJours)
     return dateProchaineAction;
 }
 
+//prend en parametre le nom du client, le numero de proforma et les informations récupérées
 function remplirFormulaire(nomClient, numeroProforma, informations)
 {
-    console.log(informations)
     $("#titreFormulaireSuiviProformas").empty().append("<div id='nomClient'>" + nomClient + "</div><br>");
     $("#titreFormulaireSuiviProformas").append("<div id='numeroProforma'>Devis n°" + numeroProforma + "</div><br>");
     $("#titreFormulaireSuiviProformas").append("<div id='nomContact'>" + informations.nomContact + "</div>");
@@ -207,8 +217,16 @@ function remplirFormulaire(nomClient, numeroProforma, informations)
     $("#ancienCommentaireProforma").val(listeCommentaires);
 }
 
+/*
+Prend en parametre une chaine de caractères qui contient l'information si l'utilisateur est un membre de la direction ou non
+et en deuxième paramètre une chaine de caractère qui contient une date au format yyyy-mm-dd
+la fonction envoie ces 2 paramètres a un api php a l'aide d'une requete ajax
+et retourne la liste des proformas (en fonction des paramètres fournis)
+*/
 function recupererProformas(direction, dateLimite)
 {
+    console.log(direction)
+    console.log(dateLimite)
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/proforma.php" + $(location).prop('search'),
         type: "post",
@@ -237,12 +255,17 @@ function recupererProformas(direction, dateLimite)
             $('#example').DataTable().destroy();
             genererTableau(reponse);
         }
-    }).fail(function()
+    }).fail(function(err)
     {
+        console.log(err)
         $("#informationsChargement").empty().append("Impossible de récupérer les proformas");
     });
 }
 
+/*
+Prend en paramètre un tableau d'objets contenant la liste des proformas récupérés par la fonction recupererProformas() et génère le tableau en fonction
+des informations reçues
+*/
 function genererTableau(proformas)
 {
     var joursInaction = 0;
@@ -351,16 +374,26 @@ function genererTableau(proformas)
             joursInaction = "";
         }
 
+        if(direction === "&code=T")
+        {
+            var representant = "<td class='celluleTableauProformas'>" + proformas[i].nomRepresentant + "</td>";
+            var colonneNbrJoursInaction = 10;
+        }
+        else
+        {
+            var representant = "<td class='celluleTableauProformas'>" + proformas[i].numeroRepresentant + "</td>";
+            var colonneNbrJoursInaction = 9;
+        }
         $("#corpsTableauProformas").append(
         "<tr class='bodyRows'>" + 
-            "<td class='celluleTableauProformas'>" + proformas[i].numeroRepresentant + "</td>" +
+            representant +
             "<td class='celluleTableauProformas codeSociete'>" + proformas[i].codeSociete + "</td>" +
             "<td class='numeroClient'>" + "<a href='" + proformas[i].lienClient + "' target='_blank' style='color:blue'>" + proformas[i].numeroClient + "</td>" +
-            "<td class='celluleTableauProformas raisonSociale'>" + proformas[i].raisonSociale + "</td>" +
+            "<td class='celluleTableauProformas raisonSociale'>" + proformas[i].raisonSociale + "<i class='fas fa-search-plus fa-1x'></i></td>" +
             "<td class='celluleTableauProformas'>" + formaterDate(proformas[i].dateCreation.date) + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].type + "</td>" +
             "<td class='numeroProforma'>" +
-                "<a href='" + proformas[i].lienPdf + "' target='_blank'><i class='fas fa-file-pdf fa-3x'></i><br>" + proformas[i].numeroProforma + 
+                "<a href='" + proformas[i].lienPdf + "' target='_blank'><i class='fas fa-file-pdf fa-3x'></i><br>" + proformas[i].numeroProforma +
             "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].horsTaxes + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].reference + "</td>" +
@@ -380,9 +413,9 @@ function genererTableau(proformas)
             "order": [[ 4, "desc" ]],
             "autoWidth": false,
             "columnDefs": [
-                { "orderSequence": [ "desc", "asc" ], "targets": [ 10 ] }
+                { "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ] }
             ],
-            stateSave: true
+            stateSave: false
         });
     }
     else
@@ -391,14 +424,15 @@ function genererTableau(proformas)
         {
             "autoWidth": false,
             "columnDefs": [
-                { "orderSequence": [ "desc", "asc" ], "targets": [ 10 ] }
+                { "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ] }
             ],
-            stateSave: true
+            stateSave: false
         });
     }
     $("#informationsChargement").hide();
 }
 
+// prend en parametre une date sous forme de chaine caracteres "yyyy/mm/dd" et la retourne au format : "yyyy-mm-dd"
 function formaterDate(date)
 {
     var jour = date.substring(8, 10);
@@ -407,6 +441,8 @@ function formaterDate(date)
     return annee + "-" + mois + "-" + jour;
 }
 
+//prend en paramètres le numéro de client ainsi que le numéro de proforma, et récupère les informations nécessaires pour remplir le formulaire et les passes
+//a la fonction remplirFormulaire
 function informationsContact(numeroClient, numeroProforma)
 {
     $.ajax({
@@ -428,6 +464,11 @@ function informationsContact(numeroClient, numeroProforma)
     });
 }
 
+//prend en parametre : 
+// 1 : un booléen, s'il est true on ajoute le suivi proforma si il est false on modifie le suivi de la proforma
+// 2, 3 et 4 sont des chaines de caractères qui contiennent respectivement le code société, le numéro du client et le numéro de la proforma
+// 5 : chaine de caractères contenant le code utilisateur (pour l'instant c'est une chaine de caractères vide)
+// cette fonction récupère les informations du formulaire, et les envoies (avec les paramètres) via une requete ajax au fichier ajouterDetailProforma.php
 function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroProforma, codeUtilisateur)
 {
     if($("#cloturerProforma").is(":checked"))
@@ -515,6 +556,8 @@ function differenceEntreDates(date1, date2)
     return Math.floor((date1FormatUtc - date2FormatUtc) / millisecondesParJour);
 }
 
+//prend en parametre la liste des commentaires du suivi d'une proforma, enleve les "( Enreg : )" et retourne un tableau
+//contenant le commentaire précédé de sa date de saisie
 function afficherCommentaires(commentaires)
 {
     var tableauCommentaires = [];
@@ -546,6 +589,7 @@ function afficherCommentaires(commentaires)
     return tableauCommentaires;
 }
 
+//prend un objet de type date en paramètre et un nombre de mois, soustrait le nombre de mois a la date et retourne le résultat
 function soustraireDate(dateInitiale, mois) 
 {
     var date = new Date(dateInitiale);
@@ -556,16 +600,21 @@ function soustraireDate(dateInitiale, mois)
 var nomClient = "";
 var numeroProforma = "";
 var nombreDeJoursActuel = 0;
-var dateDuJour = new Date();
+var dateDuJour = new Date(); //crée un objet date a partir de la date actuelle
 var dateFormatBdd = formatDateValide(dateDuJour); //stocke dans cette variable la date du jour au format : yyyy-mm-dd
 var ajouter = true;
-var url = window.location.href.split('');
+var url = window.location.href.split(''); //un tableau contenant chaque caractere de l'url
 var millisecondesParJour = 86400000;
 var generationTableauPremiereFois = true;
 var listeAnciensCommentaires;
 var ajouterOuModifierProforma;
+//recupere code=T si il y est 
 var direction = $(location).prop('search').slice($(location).prop('search').indexOf("&code=T"), $(location).prop('search').indexOf("&code=T") + 7);
-var chargementDesProformas = setInterval(function()
+//verifie toutes les 0,7sec si la ligne contenant "Chargement des proformas en cours" est affichée ou cachée
+//(permet de créer l'effet de clignotement)
+//si elle est affichée, on la cache
+//si elle est cachée, on l'affiche
+var chargementDesProformas = setInterval(function() 
 {
     if($("#informationsChargement").is(":visible"))
     {
@@ -577,7 +626,7 @@ var chargementDesProformas = setInterval(function()
     }
 }, 700);
 
-if(direction != "&code=T")
+if(direction != "&code=T") //si l'utilisateur ne fait pas partie de la direction, on cache la zone qui permet d'archiver une proforma
 {
     $("#archiver").hide();
 }

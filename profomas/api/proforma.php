@@ -19,12 +19,12 @@
 
     if($direction == "&code=T")
     {
-        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP2 
+        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE, PRNOM FROM FILCOMSOD.ENTPRFP2 
         WHERE CESOCI <> '35' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
     }
     else
     {
-        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE FROM FILCOMSOD.ENTPRFP2
+        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE, PRNOM FROM FILCOMSOD.ENTPRFP2
         WHERE PRREPR = '$ID' AND PRCLEE = '$cl' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
     }
     
@@ -43,7 +43,8 @@
 		$CETHTI = odbc_result($result, "CETHTI"); 
 		$CETTTI = odbc_result($result, "CETTTI"); 
 		$CECREF = odbc_result($result, "CECREF"); 
-		$PRDCDE = date_create(odbc_result($result, "PRDCDE"));
+        $PRDCDE = date_create(odbc_result($result, "PRDCDE"));
+        $nomRepresentant = odbc_result($result, "PRNOM");
 
         if($direction == "&code=T")
         {
@@ -71,6 +72,7 @@
             {
                 $affichageJson = [
                     "numeroRepresentant" => $PRREPR,
+                    "nomRepresentant" => utf8_encode($nomRepresentant),
                     "codeSociete" => $CESOCI,
                     "numeroClient" => $CENTIE,
                     "raisonSociale" => utf8_encode($PRRAIS),
@@ -86,13 +88,12 @@
                     "dateCreation" => $PRDCDE,
                     "prochaineAction" => $prochaineAction,
                     "derniereModification" => $derniereModification,
-                    "commentaire" => $commentaire,
-                    "commentaireCloture" => $commentaireCloture
+                    "commentaire" => utf8_encode($commentaire),
+                    "commentaireCloture" => utf8_encode($commentaireCloture)
                 ];
                 array_push($listeProformas, $affichageJson);
             }
         }
-
     }
     echo json_encode($listeProformas);
 ?>
