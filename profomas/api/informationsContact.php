@@ -1,5 +1,6 @@
 <?php
     include "../include/connexion.php";
+    include "functions.php";
     header("Content-Type: application/json; charset=UTF-8");
 
     $numeroClient = $_POST['numeroClient'];

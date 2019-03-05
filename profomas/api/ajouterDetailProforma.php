@@ -1,21 +1,21 @@
 <?php
     include '../include/connexion.php';
+    include 'functions.php';
     header("Content-Type: application/json; charset=UTF-8");
-
+   
     $codeSociete = $_POST['codeSociete'];
     $numeroClient = $_POST['numeroClient'];
     $numeroProforma = $_POST['numeroProforma'];
     $codeUtilisateur = '';
     $dateDerniereModification = $_POST['dateDerniereModification'];
     $dateProchaineAction = $_POST['dateProchaineAction'];
-    $commentaire = mb_convert_encoding($_POST['commentaire'], "ISO-8859-1", "UTF-8");
+    $commentaire = mb_convert_encoding(echappementChaineCaracteres($_POST['commentaire']), "ISO-8859-1", "UTF-8");
     $dateCloture = $_POST['dateCloture'];
     $dateArchive = $_POST['dateArchive'];
-    $commentaireCloture = mb_convert_encoding($_POST['commentaireCloture'], "ISO-8859-1", "UTF-8");
-    $commentaireArchive = mb_convert_encoding($_POST['commentaireArchive'], "ISO-8859-1", "UTF-8");
-    $numeroProforma = $_POST['numeroProforma'];
+    $commentaireCloture = mb_convert_encoding(echappementChaineCaracteres($_POST['commentaireCloture']), "ISO-8859-1", "UTF-8");
+    $commentaireArchive = mb_convert_encoding(echappementChaineCaracteres($_POST['commentaireArchive']), "ISO-8859-1", "UTF-8");
     $ajouterOuModifier = $_POST['ajouterOuModifier'];
-
+    
     if($ajouterOuModifier == "true")
     {
         if($commentaire === "")
@@ -29,7 +29,7 @@
             '$dateDerniereModification', '$dateProchaineAction', '$commentaire', '$dateCloture', '$dateArchive', '$commentaireCloture', '$commentaireArchive')";
         }
         
-        $resultatAjouterSuiviProforma = odbc_Exec($conn, $requeteAjouterSuiviProforma);
+        odbc_Exec($conn, $requeteAjouterSuiviProforma);
         
         $reponse = [
             "reponse" => "suivi proforma ajouté !"
@@ -52,12 +52,12 @@
             WHERE SUNCDE = '$numeroProforma'";
         }
 
-        $resultatAjouterSuiviProforma = odbc_Exec($conn, $requeteModifierSuiviProforma);
+        odbc_Exec($conn, $requeteModifierSuiviProforma);
     
         $reponse = [
             "reponse" => "suivi proforma mis à jour !"
         ];
     
         echo json_encode($reponse);
-    }
+    }  
 ?>

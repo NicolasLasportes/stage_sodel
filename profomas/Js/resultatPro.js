@@ -109,17 +109,6 @@ $(document).ready(function()
             var numeroClient = $("#numeroClient").val();
             var numeroProforma = $("#numeroPiece").val();
             ajouterOuModifier(ajouter, codeSociete, numeroClient, numeroProforma, "");
-            ajouterOuModifierProforma = setInterval(function()
-            {
-                if($("#informationsChargement").is(":visible"))
-                {
-                    $("#informationsChargement").hide();
-                }
-                else
-                {
-                    $("#informationsChargement").show();
-                }
-            }, 700);
         }
     });
 
@@ -225,8 +214,22 @@ et retourne la liste des proformas (en fonction des paramètres fournis)
 */
 function recupererProformas(direction, dateLimite)
 {
-    console.log(direction)
-    console.log(dateLimite)
+    //verifie toutes les 0,7sec si la ligne contenant "Chargement des proformas en cours" est affichée ou cachée
+    //(permet de créer l'effet de clignotement)
+    //si elle est affichée, on la cache
+    //si elle est cachée, on l'affiche
+    var chargementDesProformas = setInterval(function() 
+    {
+        if($("#informationsChargement").is(":visible"))
+        {
+            $("#informationsChargement").hide();
+        }
+        else
+        {
+            $("#informationsChargement").show();
+        }
+    }, 700);
+
     $.ajax({
         url: $(location).prop("origin") + "/Projet20/api/proforma.php" + $(location).prop('search'),
         type: "post",
@@ -251,7 +254,7 @@ function recupererProformas(direction, dateLimite)
         }
         else
         {
-            clearInterval(ajouterOuModifierProforma);
+            clearInterval(chargementDesProformas);
             $('#example').DataTable().destroy();
             genererTableau(reponse);
         }
@@ -334,14 +337,15 @@ function genererTableau(proformas)
         {
             commentaire = "";
         }
-        else if(proformas[i].commentaireCloture != "" || proformas[i].commentaireCloture != false)
-        {
-            commentaire = proformas[i].commentaireCloture;
-        }
         else
         {
             commentaire = proformas[i].commentaire.slice(proformas[i].commentaire.lastIndexOf("( Enreg : ") + 23);
-        }        
+        }  
+
+        if(proformas[i].commentaireCloture != "" && proformas[i].commentaireCloture != false)
+        {
+            commentaire = proformas[i].commentaireCloture;
+        }
 
         if(derniereModification == "" && prochaineAction == "")
         {
@@ -378,11 +382,13 @@ function genererTableau(proformas)
         {
             var representant = "<td class='celluleTableauProformas'>" + proformas[i].nomRepresentant + "</td>";
             var colonneNbrJoursInaction = 10;
+            var colonneDerniereModification = 12;
         }
         else
         {
             var representant = "<td class='celluleTableauProformas'>" + proformas[i].numeroRepresentant + "</td>";
             var colonneNbrJoursInaction = 9;
+            var colonneDerniereModification = 11;
         }
         $("#corpsTableauProformas").append(
         "<tr class='bodyRows'>" + 
@@ -405,7 +411,6 @@ function genererTableau(proformas)
         "</tr>");
     }
 
-    console.log(generationTableauPremiereFois)
     if(generationTableauPremiereFois === true)
     {
         $('#example').DataTable(
@@ -413,8 +418,10 @@ function genererTableau(proformas)
             "order": [[ 4, "desc" ]],
             "autoWidth": false,
             "columnDefs": [
-                { "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ] }
-            ],
+            { 
+                "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ],
+                "orderSequence": [ "desc", "asc" ], "targets": [ colonneDerniereModification ] 
+            }],
             stateSave: false
         });
     }
@@ -424,8 +431,10 @@ function genererTableau(proformas)
         {
             "autoWidth": false,
             "columnDefs": [
-                { "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ] }
-            ],
+            {
+                "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ],
+                "orderSequence": [ "desc", "asc" ], "targets": [ colonneDerniereModification ] 
+            }],
             stateSave: false
         });
     }
@@ -607,24 +616,8 @@ var url = window.location.href.split(''); //un tableau contenant chaque caracter
 var millisecondesParJour = 86400000;
 var generationTableauPremiereFois = true;
 var listeAnciensCommentaires;
-var ajouterOuModifierProforma;
 //recupere code=T si il y est 
 var direction = $(location).prop('search').slice($(location).prop('search').indexOf("&code=T"), $(location).prop('search').indexOf("&code=T") + 7);
-//verifie toutes les 0,7sec si la ligne contenant "Chargement des proformas en cours" est affichée ou cachée
-//(permet de créer l'effet de clignotement)
-//si elle est affichée, on la cache
-//si elle est cachée, on l'affiche
-var chargementDesProformas = setInterval(function() 
-{
-    if($("#informationsChargement").is(":visible"))
-    {
-        $("#informationsChargement").hide();
-    }
-    else
-    {
-        $("#informationsChargement").show();
-    }
-}, 700);
 
 if(direction != "&code=T") //si l'utilisateur ne fait pas partie de la direction, on cache la zone qui permet d'archiver une proforma
 {
