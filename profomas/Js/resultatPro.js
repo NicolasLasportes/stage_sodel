@@ -2,10 +2,18 @@ $(document).ready(function()
 {
     recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
 
+    localStorage.removeItem("DataTablesProformas"); //vide la configuration précédente du tableau stockée dans le navigateur
     //au clic sur le bouton avec l'id = rechargerProformas, on lance la fonction recupererProformas();
     $("#rechargerProformas").on("click", function()
     {
-        recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
+        if($("#dernieresProformas").val() == 0 || $("#dernieresProformas").val() === "")
+        {
+            alert("Veuillez saisir uniquement des nombres, supérieurs à 0")
+        }
+        else
+        {
+            recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
+        }
     });
 
     //au clic sur le bouton d'id = boutonFermeture, ferme l'onglet courante
@@ -13,8 +21,6 @@ $(document).ready(function()
     {
         window.close();
     });
-
-    //$("#modificationCommentaire").append(" " + dateFormatBdd);
  
     //au clic sur une cellule du tableau, récupère le nom du client, le numero de la proforma, le code societe, le numero du client, et verifie si un suivi
     //pour cette proforma existe ou pas
@@ -35,7 +41,7 @@ $(document).ready(function()
                     $("#codeSociete").val($(this).text());
                 }
                 
-                if($(this).hasClass("numeroProforma"))
+                if($(this).hasClass("numeroOrdre"))
                 {
                     numeroProforma = $(this).text();
                     $("#numeroPiece").val($(this).text());
@@ -53,8 +59,7 @@ $(document).ready(function()
                     {
                         ajouter = false;
                     }
-                }
-                
+                }   
             })
         ).then(function()
         {
@@ -71,7 +76,6 @@ $(document).ready(function()
         if($("#cloturerProforma").is(":checked") && $("#pourquoiCloturerProforma").val() == "" || $("#cloturerProforma").is(":checked") && $("#pourquoiCloturerProforma").val() == " ")
         {
             alert("Vous devez remplir le champ 'pourquoi' si vous souhaitez clôturer cette commande");
-            return false;
         }
         else if($("#commentaireProforma").val().length > 300)
         {
@@ -80,27 +84,22 @@ $(document).ready(function()
         else if($("#nombreDeJours").val() <= 0 && $("#dateProchaineAction").val() == "" && $("#cloturerProforma").prop("checked") == false && $("#archiverProforma").prop("checked") == false)
         {
             alert("Veuillez rentrer ou un nombre de jours ou la date de la prochaine action");
-            return false;
         }
         else if($("#pourquoiCloturerProforma").val().length > 100)
         {
             alert("Le commentaire de clôture ne peut comporter que 100 caractères maximum");
-            return false;
         }
         else if($("#commentaireArchiverProforma").val().length > 100)
         {
             alert("Le commentaire d'archive ne peut comporter que 100 caractères maximum");
-            return false;
         }
         else if($("#commentaireArchiverProforma").val() != "" && $("#archive").prop("checked") === false)
         {
             alert("Vous ne pouvez pas rentrer de commentaire d'archive si vous ne cochez pas la case 'Archiver'");
-            return false;
         }
         else if($("#pourquoiCloturerProforma").val() != "" && $("#cloturerProforma").prop("checked") == false)
         {
             alert("Vous ne pouvez pas rentrer de commentaire de clôture si vous ne cochez pas la case 'Clôturer'");
-            return false;
         }
         else
         {
@@ -108,7 +107,7 @@ $(document).ready(function()
             var codeSociete = $("#codeSociete").val();
             var numeroClient = $("#numeroClient").val();
             var numeroProforma = $("#numeroPiece").val();
-            ajouterOuModifier(ajouter, codeSociete, numeroClient, numeroProforma, "");
+            ajouterOuModifier(ajouter, codeSociete, numeroClient, numeroProforma);
         }
     });
 
@@ -231,7 +230,7 @@ function recupererProformas(direction, dateLimite)
     }, 700);
 
     $.ajax({
-        url: $(location).prop("origin") + "/Projet20/api/proforma.php" + $(location).prop('search'),
+        url: $(location).prop("origin") + "/Projet20/api/proforma/proforma.php" + $(location).prop('search'),
         type: "post",
         dataType: "json",
         data:
@@ -347,7 +346,11 @@ function genererTableau(proformas)
             commentaire = proformas[i].commentaireCloture;
         }
 
-        if(derniereModification == "" && prochaineAction == "")
+        if(cloture != "" && cloture != "<td class='celluleTableauProformas cloturerProforma'></td>")
+        {
+            joursInaction = 0;
+        }
+        else if(derniereModification == "" && prochaineAction == "")
         {
             var date = proformas[i].dateCreation.date.slice(0, 10);
             date = new Date(date);
@@ -395,10 +398,10 @@ function genererTableau(proformas)
             representant +
             "<td class='celluleTableauProformas codeSociete'>" + proformas[i].codeSociete + "</td>" +
             "<td class='numeroClient'>" + "<a href='" + proformas[i].lienClient + "' target='_blank' style='color:blue'>" + proformas[i].numeroClient + "</td>" +
-            "<td class='celluleTableauProformas raisonSociale'>" + proformas[i].raisonSociale + "<i class='fas fa-search-plus fa-1x'></i></td>" +
+            "<td class='raisonSociale'>" + proformas[i].raisonSociale + "<i class='fas fa-search-plus fa-1x'></i></td>" +
             "<td class='celluleTableauProformas'>" + formaterDate(proformas[i].dateCreation.date) + "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].type + "</td>" +
-            "<td class='numeroProforma'>" +
+            "<td class='numeroOrdre'>" +
                 "<a href='" + proformas[i].lienPdf + "' target='_blank'><i class='fas fa-file-pdf fa-3x'></i><br>" + proformas[i].numeroProforma +
             "</td>" +
             "<td class='celluleTableauProformas'>" + proformas[i].horsTaxes + "</td>" +
@@ -413,16 +416,23 @@ function genererTableau(proformas)
 
     if(generationTableauPremiereFois === true)
     {
+        localStorage.removeItem("DataTablesProformas");
         $('#example').DataTable(
         {
             "order": [[ 4, "desc" ]],
             "autoWidth": false,
             "columnDefs": [
             { 
-                "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ],
-                "orderSequence": [ "desc", "asc" ], "targets": [ colonneDerniereModification ] 
+                "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction, colonneDerniereModification ]
             }],
-            stateSave: false
+            stateSave: true,
+            stateSaveCallback: function (oSettings, oData) {
+                localStorage.setItem('DataTablesProformas', JSON.stringify(oData));
+            },
+            stateLoadCallback: function (oSettings) {
+                var data = localStorage.getItem('DataTablesProformas');
+                return JSON.parse(data);
+            }
         });
     }
     else
@@ -432,10 +442,16 @@ function genererTableau(proformas)
             "autoWidth": false,
             "columnDefs": [
             {
-                "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction ],
-                "orderSequence": [ "desc", "asc" ], "targets": [ colonneDerniereModification ] 
+                "orderSequence": [ "desc", "asc" ], "targets": [ colonneNbrJoursInaction, colonneDerniereModification ]
             }],
-            stateSave: false
+            stateSave: true,
+            stateSaveCallback: function (oSettings, oData) {
+                localStorage.setItem('DataTablesProformas', JSON.stringify(oData));
+            },
+            stateLoadCallback: function (oSettings) {
+                var data = localStorage.getItem('DataTablesProformas');
+                return JSON.parse(data);
+            }
         });
     }
     $("#informationsChargement").hide();
@@ -455,7 +471,7 @@ function formaterDate(date)
 function informationsContact(numeroClient, numeroProforma)
 {
     $.ajax({
-        url: $(location).prop("origin") + "/Projet20/api/informationsContact.php",
+        url: $(location).prop("origin") + "/Projet20/api/proforma/informationsContact.php",
         data:
         {
             numeroClient: numeroClient,
@@ -478,7 +494,7 @@ function informationsContact(numeroClient, numeroProforma)
 // 2, 3 et 4 sont des chaines de caractères qui contiennent respectivement le code société, le numéro du client et le numéro de la proforma
 // 5 : chaine de caractères contenant le code utilisateur (pour l'instant c'est une chaine de caractères vide)
 // cette fonction récupère les informations du formulaire, et les envoies (avec les paramètres) via une requete ajax au fichier ajouterDetailProforma.php
-function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroProforma, codeUtilisateur)
+function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroProforma)
 {
     if($("#cloturerProforma").is(":checked"))
     {
@@ -525,7 +541,7 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
     var commentaireArchive = $('#commentaireArchiverProforma').val();
     
     $.ajax({
-        url: $(location).prop("origin") + "/Projet20/api/ajouterDetailProforma.php",
+        url: $(location).prop("origin") + "/Projet20/api/proforma/ajouterDetailProforma.php",
         type: "post",
         dataType: "json",
         data:
@@ -533,7 +549,6 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
             codeSociete : codeSociete,
             numeroClient : numeroClient,
             numeroProforma : numeroProforma,
-            codeUtilisateur : codeUtilisateur,
             dateDerniereModification : dateDerniereModification,
             dateProchaineAction : dateProchaineAction,
             commentaire : commentaire,
@@ -543,16 +558,14 @@ function ajouterOuModifier(ajouterOuModifier, codeSociete, numeroClient, numeroP
             commentaireArchive : commentaireArchive,
             ajouterOuModifier : ajouterOuModifier
         }
-    }).done(function(rep)
+    }).done(function()
     {
-        console.log(rep)
         $("#formulaireSuiviProformas").modal('hide');
 
         recupererProformas(direction, soustraireDate(dateFormatBdd, parseInt($("#dernieresProformas").val())).toISOString().slice(0,10));
-    }).fail(function(xhr)
+    }).fail(function()
     {
         alert("Impossible d'ajouter ou de modifier le suivi de cette proforma");
-        console.log(xhr);
     })
 }
 
