@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a42dc66e9e6c051d932533a337a01a7c",
+    "content-hash": "9834b9505b25fa9a361f2de3b9c6099a",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -59,51 +59,6 @@
                 "preload"
             ],
             "time": "2017-12-10T11:40:39+00:00"
-        },
-        {
-            "name": "cooperl/laravel-db2",
-            "version": "2.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cooperl22/laravel-db2.git",
-                "reference": "e26b9b4bcb12a74b198144e16359be5601318c50"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cooperl22/laravel-db2/zipball/e26b9b4bcb12a74b198144e16359be5601318c50",
-                "reference": "e26b9b4bcb12a74b198144e16359be5601318c50",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "~5.0",
-                "illuminate/support": "~5.0",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cooperl\\Database\\DB2\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Maxime Rault",
-                    "role": "Developer"
-                }
-            ],
-            "description": "laravel-db2 is a simple DB2 service provider for Laravel. It provides DB2 Connection by extending the Illuminate Database component of the laravel framework.",
-            "keywords": [
-                "database",
-                "db2",
-                "laravel",
-                "odbc",
-                "pdo"
-            ],
-            "time": "2016-09-08T06:19:46+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1856,6 +1811,43 @@
             "time": "2016-07-26T08:03:56+00:00"
         },
         {
+            "name": "tck/odbc",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bencarter78/odbc.git",
+                "reference": "1bc2ca1628149b054cf13d528f40903be96d9829"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bencarter78/odbc/zipball/1bc2ca1628149b054cf13d528f40903be96d9829",
+                "reference": "1bc2ca1628149b054cf13d528f40903be96d9829",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "TCK\\Odbc": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "tck",
+                    "email": "ben@thecreativekind.co.uk"
+                }
+            ],
+            "description": "ODBC Connector for Laravel",
+            "time": "2016-09-18T08:35:46+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v2.6.1",
             "source": {
@@ -3304,7 +3296,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "tck/odbc": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

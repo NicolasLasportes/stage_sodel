@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class didactitiel extends Model
+class didactp1 extends Model
 {
-    //
+    protected $connection = 'odbc';
 }
