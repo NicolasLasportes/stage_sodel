@@ -3,11 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Laravel</title>
+        <title></title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
-        <link rel="stylesheet" type="text/css" href="node_modules/datatables.net-dt/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="node_modules/datatable/datatable.min.css">
+        <link rel="stylesheet" type="text/css" href="node_modules/fontawesome/css/all.css">
     </head>
     <body>
         <h1 id="titreDeLaPage"></h1>
@@ -57,7 +58,7 @@
 							</div>
 
 							<div id="boutonEnregistrer">
-								<button class="btn btn-success" name="enregistrerProforma" id="enregistrerProforma">Enregistrer</button>
+								<button class="btn btn-success" id="enregistrer">Enregistrer</button>
 							</div>
 						</div>
 					</div>
@@ -68,7 +69,7 @@
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="node_modules/datatables.net-dt/js/datatables.dataTables.min.js"></script>
+        <script type="text/javascript" src="node_modules/datatable/datatable.min.js"></script>
         <script type="text/javascript" src="js/function.js"></script>
     </body>
 </html>

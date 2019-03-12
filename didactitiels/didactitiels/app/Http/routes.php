@@ -11,4 +11,10 @@
 |
 */
 
-Route::get('/{id}', "didactitiel@recupererDidactitiels");
+Route::get('/{id}', "didactitiel@accueil");
+
+Route::get("/api/schemas", "schema@recupererSchemas");
+
+Route::get("/api/didactitiels", "didactitiel@recupererDidactitiels");
+
+Route::get("/api/ajouter/didactitiel", "didactitiel@ajouter");

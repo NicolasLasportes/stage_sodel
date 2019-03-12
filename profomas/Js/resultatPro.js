@@ -339,11 +339,14 @@ function genererTableau(proformas)
         else
         {
             commentaire = proformas[i].commentaire.slice(proformas[i].commentaire.lastIndexOf("( Enreg : ") + 23);
+            console.log(commentaire)
         }  
 
         if(proformas[i].commentaireCloture != "" && proformas[i].commentaireCloture != false)
         {
+            console.log(proformas[i].commentaireCloture)
             commentaire = proformas[i].commentaireCloture;
+            console.log(commentaire)
         }
 
         if(cloture != "" && cloture != "<td class='celluleTableauProformas cloturerProforma'></td>")
