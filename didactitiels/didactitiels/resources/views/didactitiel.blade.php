@@ -18,7 +18,7 @@
                     <button class="btn btn-success" data-toggle="modal" data-target="#formulaireDidactitielOuSchema">Ajouter</button>
                 </div>
                 <div class="offset-md-8 col-md-2">
-                    <button id="fermerPage">
+                    <button id="fermerPage" class="close">
                         <img src="images/fermer.png" alt="fermer" class="fermerModale">
                     </button>
                 </div>
@@ -36,30 +36,33 @@
 					</div>
 					<div class="modal-body">
 						<div class="container">
-                            <div class="form-group">
-								<label for="intitule">Intitulé</label>
-								<input id="intitule" name="intitule" class="form-control" rows="5" placeholder="Intitulé">
-                            </div>
-                            <div class="form-group">
-								<label for="pdf">Pdf</label>
-								<input type="file" id="pdf" name="pdf" class="form-control-file">
-                            </div>
-                            <div class="form-group">
-								<label for="excelOuSchema"></label>
-								<input type="file" id="excelOuSchema" name="excelOuSchema" class="form-control-file">
-                            </div>
-                            <div class="form-group">
-								<label for="excelOuSchema2"></label>
-								<input type="file" id="excelOuSchema2" name="excelOuSchema2" class="form-control-file">
-							</div>
-							<div class="form-group">
-								<label for="commentaire">Commentaire</label>
-								<textarea id="commentaire" name="commentaire" class="form-control" rows="5" placeholder="Commentaire"></textarea>
-							</div>
-
-							<div id="boutonEnregistrer">
-								<button class="btn btn-success" id="enregistrer">Enregistrer</button>
-							</div>
+                            <form id="formulaireDidactitielOuSchema" method="post" action="api/ajouter/didactitiel" enctype=multipart/form-data>
+                                {{ csrf_field() }}
+                                <div class="form-group">
+                                    <label for="intitule">Intitulé</label>
+                                    <input id="intitule" name="intitule" class="form-control" rows="5" placeholder="Intitulé">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pdf">Pdf</label>
+                                    <input type="file" id="pdf" name="pdf" class="form-control-file">
+                                </div>
+                                <div class="form-group">
+                                    <label for="excelOuSchema"></label>
+                                    <input type="file" id="excelOuSchema" name="excelOuSchema" class="form-control-file">
+                                </div>
+                                <div class="form-group">
+                                    <label for="excelOuSchema2"></label>
+                                    <input type="file" id="excelOuSchema2" name="excelOuSchema2" class="form-control-file">
+                                </div>
+                                <div class="form-group">
+                                    <label for="commentaire">Commentaire</label>
+                                    <textarea id="commentaire" name="commentaire" class="form-control" rows="5" placeholder="Commentaire"></textarea>
+                                </div>
+                                <input type="hidden" name="type" id="type">
+                                <div id="boutonEnregistrer">
+                                    <button class="btn btn-success" id="enregistrer">Enregistrer</button>
+                                </div>
+                            </form>
 						</div>
 					</div>
 				</div>
