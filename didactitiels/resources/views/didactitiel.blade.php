@@ -36,14 +36,14 @@
 					</div>
 					<div class="modal-body">
 						<div class="container">
-                            <form id="formulaireDidactitielOuSchema" method="post" action="api/ajouter/didactitiel" enctype=multipart/form-data>
+                            <form id="formulaireAjoutOuModification" method="post" action="api/ajouter/didactitiel" enctype=multipart/form-data>
                                 {{ csrf_field() }}
                                 <div class="form-group">
                                     <label for="intitule">Intitulé</label>
-                                    <input id="intitule" name="intitule" class="form-control" rows="5" placeholder="Intitulé">
+                                    <input id="intitule" name="intitule" class="form-control" placeholder="Intitulé">
                                 </div>
                                 <div class="form-group">
-                                    <label for="pdf">Pdf</label>
+                                    <label for="pdf">PDF</label>
                                     <input type="file" id="pdf" name="pdf" class="form-control-file">
                                 </div>
                                 <div class="form-group">
@@ -53,6 +53,10 @@
                                 <div class="form-group">
                                     <label for="excelOuSchema2"></label>
                                     <input type="file" id="excelOuSchema2" name="excelOuSchema2" class="form-control-file">
+                                </div>
+                                <div class="form-group">
+                                    <label for="numeroDevis">Numéro devis</label>
+                                    <input type="number" id="numeroDevis" name="numeroDevis" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label for="commentaire">Commentaire</label>

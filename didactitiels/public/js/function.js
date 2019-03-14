@@ -1,8 +1,7 @@
 $(document).ready(function()
 {
-    var didactitielOuSchema = window.location.href.slice(window.location.href.indexOf("&type="), window.location.href.indexOf("&type=") + 7);
-    console.log(didactitielOuSchema);
-    if(didactitielOuSchema === "&type=d")
+    var didactitielOuSchema = window.location.href.slice(window.location.href.lastIndexOf("/") + 1, window.location.href.length);
+    if(didactitielOuSchema === "didactitiel")
     {
         $("title").append("Didactitiel");
         page = "didactitiels";
@@ -16,8 +15,10 @@ $(document).ready(function()
                     "<th>Pdf</th>" +
                     "<th>Excel</th>" +
                     "<th>Excel2</th>" +
+                    "<th>Numéro devis</th>" +
                     "<th>Commentaire</th>" +
-                    "<th>Options</th>" +
+                    "<th>Supprimer</th>" +
+                    "<th>Modifier</th>" +
                 "</tr>" +
             "</thead>" +
             "<tbody></tbody>" +
@@ -28,7 +29,7 @@ $(document).ready(function()
         $("label[for=excelOuSchema]").append("Excel");
         $("label[for=excelOuSchema2]").append("Excel 2");
     }
-    else if(didactitielOuSchema === "&type=s")
+    else if(didactitielOuSchema === "schema")
     {
         $("title").append("Schémas")
         page = "schemas";
@@ -42,8 +43,10 @@ $(document).ready(function()
                     "<th>Pdf</th>" +
                     "<th>Schéma</th>" +
                     "<th>Schéma2</th>" +
+                    "<th>Numéro devis</th>" +
                     "<th>Commentaire</th>" +
-                    "<th>Options</th>" +
+                    "<th>Supprimer</th>" +
+                    "<th>Modifier</th>" +
                 "</tr>" +
             "</thead>" +
             "<tbody></tbody>" +
@@ -57,10 +60,23 @@ $(document).ready(function()
 
     $("#enregistrer").on('click', function(e)
     {
-        console.log("j'ai cliqu")
         e.preventDefault();
         verificationValeursSaisies();
     })
+
+    $(".modifier").on('click', function()
+    {
+        console.log("modifier")
+    });
+
+    $(".supprimer").on('click', function()
+    {
+        console.log("tu as cliqué sur la corbeille")
+        $(this).parents('tr').find("td").each(function()
+        {
+            console.log($(this))
+        });
+    });
     recupererSchemaOuDidactitels(page)
 });
 
@@ -68,19 +84,16 @@ var page = "";
 
 function recupererSchemaOuDidactitels(type)
 {
-    if(type === "didactitiels")
-    {
-        var url = "api/didactitiels";
-    }
-    else
-    {
-        var url = "api/schemas";
-    }
+
+    var url = "api/didactitiels";
 
     $.ajax({
         url: url,
         dataType: 'json',
-        type: "get",
+        type: "post",
+        data: {
+            type: type
+        },
         headers: { 
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
@@ -92,7 +105,7 @@ function recupererSchemaOuDidactitels(type)
     {
         console.log(err)
     });
-}
+} 
 
 function genererTableau(didactitielsOuSchemas, type)
 {
@@ -151,7 +164,15 @@ function genererTableau(didactitielsOuSchemas, type)
         {
             fichier2 = fichier2.replace(/\"/g, "&quot;");
         }
-
+        
+        if(didactitielsOuSchemas[i].numeroPdf == 0)
+        {
+            var numeroPdf = "";
+        }
+        else
+        {
+            var numeroPdf = didactitielsOuSchemas[i].numeroPdf;
+        }
         $(idTableau + " > tbody").append(
             "<tr>" +
                 "<td class='id invisible'>" + didactitielsOuSchemas[i].id + "</td>" +
@@ -159,8 +180,10 @@ function genererTableau(didactitielsOuSchemas, type)
                 "<td class='pdf'><a href='files/" + pdf + "' download>" + pdf + "</a></td>" +
                 "<td class='fichier'><a href='files/" + didactitielsOuSchemas[i].fichier + "' download>" + didactitielsOuSchemas[i].fichier + "</a></td>" +
                 "<td class='fichier2'><a href='files/" + didactitielsOuSchemas[i].fichier2  + "' download>" + didactitielsOuSchemas[i].fichier2 + "</a></td>" +
+                "<td class='numeroPdf'>" + numeroPdf + "</td>" +
                 "<td class='commentaire'>" + didactitielsOuSchemas[i].commentaire + "</td>" +
-                "<td><i class='fas fa-trash-alt fa-2x'></i><i class='fas fa-pen fa-2x'></i></td>" +
+                "<td class='supprimer'><i class='fas fa-trash-alt fa-2x'></i></td>" +
+                "<td class='modifier'><i class='fas fa-pen fa-2x'></i></td>" +
             "</tr>"
         );
     }
@@ -173,8 +196,6 @@ function genererTableau(didactitielsOuSchemas, type)
 
 function verificationValeursSaisies()
 {
-    console.log("vérifie que c'est bien saisie")
-    console.log($("#pdf").prop('files'))
     if($("#intitule").val().length > 180)
     {
         alert("L'intitulé ne peut pas dépasser 180 caractères");
@@ -185,22 +206,32 @@ function verificationValeursSaisies()
     }
     else
     {
-        console.log("submit")
-        $("#formulaireDidactitielOuSchema").submit();
+        $("#formulaireAjoutOuModification").submit();
     }
-    //ajouter(page)
+}
+
+function supprimer()
+{
+    $(this).parents('tr').find(td).each(function()
+    {
+        console.log($(this))
+    });
 }
 
 // function ajouter(type)
 // {
-//     var donneesDuFormulaire = new FormData($(this)[0]);
-//     console.log(donneesDuFormulaire)
+//     console.log(type)
+//     var donneesFormulaire = new FormData();
+//     donneesFormulaire.append('pdf', $('input[type=file]')[0].files[0]);
+//     console.log($('input[type=file]')[0].files[0])
+//     donneesFormulaire.append("fichier", $('#pdf').prop("files"));
+//     console.log(donneesFormulaire)
 //     $.ajax({
-//         url: "api/ajouter/didactitiel",
+//         url: "api/ajouter",
 //         type: "post",
 //         data: {
-//             donnees: donneesDuFormulaire,
-//             fichier: $("#pdf").prop('files')
+//             donnees: donneesFormulaire,
+//             type: type
 //         },
 //         headers: { 
 //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

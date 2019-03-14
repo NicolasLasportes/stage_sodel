@@ -16,11 +16,21 @@ class didactitiel extends Controller
         return view('didactitiel');//->with('didactitiels', $didactitiels);
     }
 
-    public function recupererDidactitiels()
+    public function recupererDidactitiels(Request $request)
     {
         include "../../include/connexion.php";
-        $listeDidactitiels = [];
-        $sql = "SELECT * FROM FILWEBSOD.DIDACTP1 WHERE DICODE = 'D'";
+        $type = $request->input('type');
+        if($type === "didactitiels")
+        {
+            $listeDidactitiels = [];
+            $sql = "SELECT * FROM FILWEBSOD.DIDACTP1 WHERE DICODE = 'D'";
+        }
+        else
+        {
+            $listeDidactitiels = [];
+            $sql = "SELECT * FROM FILWEBSOD.DIDACTP1 WHERE DICODE = 'S'";
+        }
+
         $resultat = odbc_Exec($conn, $sql);
 
         while(odbc_fetch_row($resultat))
@@ -30,13 +40,16 @@ class didactitiel extends Controller
             $pdf = trim(odbc_result($resultat, "DINPDF"));
             $excel = trim(odbc_result($resultat, "DINEXL"));
             $excel2 = trim(odbc_result($resultat, "DINEXL2"));
+            $numeroPDF = trim(odbc_result($resultat, "DINUMP"));
             $commentaire = trim(odbc_result($resultat, "DICOMM"));
+            
             $affichageJson = [
                 "id" => $id,
                 "intitule" => utf8_encode($intitule),
                 "pdf" => $pdf,
                 "fichier" => $excel,
                 "fichier2" => $excel2,
+                "numeroPdf" => $numeroPDF,
                 "commentaire" => utf8_encode($commentaire)
             ];
 
@@ -44,6 +57,7 @@ class didactitiel extends Controller
         }
         
         return $listeDidactitiels;
+        
     }
 
     public function ajouter(Request $request)
@@ -53,8 +67,14 @@ class didactitiel extends Controller
         $intitule = $request->input('intitule');
         $commentaire = $request->input('commentaire');
         $type = $request->input('type');
+        $numero = $request->input('numeroDevis');
         //on récupère le pdf
         $pdf = $request->file('pdf');
+        //on récupère le fichier ressource 1
+        $fichier1 = $request->file('excelOuSchema');
+        //on récupère le fichier ressource 2
+        $fichier2 = $request->file('excelOuSchema2');
+
         if($pdf != null)
         {
             $nomPdf =  $pdf->getClientOriginalName();
@@ -67,8 +87,6 @@ class didactitiel extends Controller
             $nomPdf = "";
         }
 
-        //on récupère le fichier ressource 1
-        $fichier1 = $request->file('excelOuSchema');
         if($fichier1 != null)
         {
             $nomFichier1 =  $fichier1->getClientOriginalName();
@@ -81,8 +99,6 @@ class didactitiel extends Controller
             $nomFichier1 = "";
         }
 
-        //on récupère le fichier ressource 2
-        $fichier2 = $request->file('excelOuSchema2');
         if($fichier2 != null)
         {
             $nomFichier2 =  $fichier2->getClientOriginalName();
@@ -94,11 +110,35 @@ class didactitiel extends Controller
         {
             $nomFichier2 = "";
         }
-
-        $sql = "INSERT INTO FILWEBSOD.DIDACTP1 VALUES ('$type', '$intitule', '$nomPdf', '$nomFichier1', '$nomFichier2', '$commentaire', DEFAULT)";
+        $intitule = str_replace("'", "''", $intitule);
+        $commentaire = str_replace("'", "''", $commentaire);
+        $sql = "INSERT INTO FILWEBSOD.DIDACTP1 VALUES ('$type', '$intitule', '$nomPdf', '$nomFichier1', '$nomFichier2', '$commentaire', DEFAULT, '$numero')";
         odbc_Exec($conn, $sql);
+        if($type == "D")
+        {
+            $page = "didactitiel";
+        }
+        else
+        {
+            $page = "schema";
+        }
+        return redirect('/' . $page);
+    }
 
+    public function supprimer(Request $request)
+    {
+        $fichierASupprimer = $request->input('');
+    }
 
-        //return redirect()->route('/&type=d');  
+    public function ajouterDidactitiels(Request $request)
+    {
+        include "../../include/connexion.php";
+        $pdf = $request->file('pdf');
+        $nomPdf =  $pdf->getClientOriginalName();
+        $extension = $pdf>getClientOriginalExtension();
+        $pdf->move($dossier, $nomPdf);
+        return [
+            "ca" => "c'est bien pass"
+        ];
     }
 }
