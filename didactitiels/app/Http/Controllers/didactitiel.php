@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
 use App\didactp1;
+use Storage;
 
 class didactitiel extends Controller
 {
@@ -16,7 +17,7 @@ class didactitiel extends Controller
         return view('didactitiel');//->with('didactitiels', $didactitiels);
     }
 
-    public function recupererDidactitiels(Request $request)
+    public function recuperer(Request $request)
     {
         include "../../include/connexion.php";
         $type = $request->input('type');
@@ -192,7 +193,26 @@ class didactitiel extends Controller
 
     public function supprimer(Request $request)
     {
-        $fichierASupprimer = $request->input('');
+        include "../../include/connexion.php";
+        $id = $request->input('id');
+        $pdf = $request->input('pdf');
+        $fichier1 = $request->input('fichier1');
+        $fichier2 = $request->input('fichier2');
+        
+        $sql = "DELETE FROM FILWEBSOD.DIDACTP1 WHERE DI_ID = '$id'";
+        odbc_Exec($conn, $sql);
+        
+        Storage::delete("files/" . $pdf);
+        Storage::delete("files/" . $fichier1);
+        Storage::delete("files/" . $fichier2);
+
+        return [
+            "Tous les fichiers" => "ont étés supprimés",
+            "id" => $id,
+            "pdf" => $pdf,
+            "fichier1" => $fichier1,
+            "fichier2" => $fichier2
+        ];
     }
 
     // public function ajouterDidactitiels(Request $request)

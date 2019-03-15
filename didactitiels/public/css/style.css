@@ -34,3 +34,8 @@ h1
 {
     text-align:center;
 }
+
+#tableauSchemas, #tableauDidactitiels
+{
+    max-width:100%;
+}

@@ -7,7 +7,7 @@ $(document).ready(function()
         page = "didactitiels";
         $("#titreDeLaPage").append("Didactitiel");
         $("body").append(
-        "<table class='table' id='tableauDidactitiels'>" + 
+        "<table class='table dataTables' id='tableauDidactitiels'>" + 
             "<thead>" + 
                 "<tr>" +
                     "<th class='invisible'>Id</th>" +
@@ -64,6 +64,11 @@ $(document).ready(function()
         verificationValeursSaisies();
     })
 
+    $("#fermerPage").on('click', function()
+    {
+        window.close();
+    });
+
     $("body").delegate('.fas.fa-pen', 'click', function()
     {
         var id = 0;
@@ -116,20 +121,57 @@ $(document).ready(function()
         }
         remplirFormulaireModification(informations);
     });
+
+    $("body").delegate('.fas.fa-trash-alt', 'click', function()
+    {
+        if(confirm("Êtes vous sur de vouloir supprimer cette ligne ?"))
+        {
+            var id = 0;
+            var intitule = "";
+            var pdf = "";
+            var fichier1 = "";
+            var fichier2 = "";
+            var commentaire = "";
+            var numeroDevis = 0;
+            $(this).parents('tr').find('td').each(function()
+            {
+                if($(this).hasClass('intitule'))
+                {
+                    intitule = $(this).text();
+                }
+                if($(this).hasClass('pdf'))
+                {
+                    pdf = $(this).text();
+                }
+                if($(this).hasClass('fichier'))
+                {
+                    fichier1 = $(this).text();
+                }
+                if($(this).hasClass('fichier2'))
+                {
+                    fichier2 = $(this).text();
+                }
+                if($(this).hasClass('numeroDevis'))
+                {
+                    numeroDevis = $(this).text();
+                }
+                if($(this).hasClass('commentaire'))
+                {
+                    commentaire = $(this).text();
+                }
+                if($(this).hasClass('id'))
+                {
+                    id = $(this).text();
+                }
+            });
+            supprimer(id, pdf, fichier1, fichier2);
+        }
+    });
     recupererSchemaOuDidactitels(page);
 });
 
-
-$(".supprimer").on('click', function()
-{
-    console.log("tu as cliqué sur la corbeille")
-    $(this).parents('tr').find("td").each(function()
-    {
-        console.log($(this))
-    });
-});
-
 var page = "";
+var initialisationTableau = false;
 
 function recupererSchemaOuDidactitels(type)
 {
@@ -149,7 +191,16 @@ function recupererSchemaOuDidactitels(type)
     }).done(function(rep)
     {
         console.log(rep)
-        genererTableau(rep, type)
+        if(initialisationTableau === false)
+        {
+            genererTableau(rep, type);
+            initialisationTableau = true;
+        }
+        else
+        {
+            $(".table.dataTables").DataTable().destroy();
+            genererTableau(rep, type);
+        }
     }).fail(function(err)
     {
         console.log(err)
@@ -292,6 +343,30 @@ function remplirFormulaireModification(informations)
     $("#formulaireAjoutOuModification").attr('action', 'api/modifier');
 }
 
+function supprimer(id, pdf, fichier1, fichier2)
+{
+    $.ajax({
+        url: "api/supprimer",
+        dataType: "json",
+        data:{
+            id: id,
+            pdf: pdf,
+            fichier1: fichier1,
+            fichier2: fichier2
+        },
+        type: "post",
+        headers: { 
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    }).done(function(rep)
+    {
+        console.log(rep)
+        recupererSchemaOuDidactitels(page);
+    }).fail(function(err)
+    {
+        console.log(err)
+    })
+}
 // function ajouter(type)
 // {
 //     console.log(type)

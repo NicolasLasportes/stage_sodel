@@ -13,9 +13,7 @@
 
 Route::get('/{page}', "didactitiel@accueil");
 
-Route::post("/api/schemas", "schema@recupererSchemas");
-
-Route::post("/api/didactitiels", "didactitiel@recupererDidactitiels");
+Route::post("/api/didactitiels", "didactitiel@recuperer");
 
 Route::post("/api/ajouter/didactitiel", "didactitiel@ajouter");
 
