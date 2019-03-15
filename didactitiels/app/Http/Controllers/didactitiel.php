@@ -23,12 +23,12 @@ class didactitiel extends Controller
         if($type === "didactitiels")
         {
             $listeDidactitiels = [];
-            $sql = "SELECT * FROM FILWEBSOD.DIDACTP1 WHERE DICODE = 'D'";
+            $sql = "SELECT * FROM FILWEBSOD.DIDACTP1 WHERE DICODE = 'D' ORDER BY DI_ID DESC";
         }
         else
         {
             $listeDidactitiels = [];
-            $sql = "SELECT * FROM FILWEBSOD.DIDACTP1 WHERE DICODE = 'S'";
+            $sql = "SELECT * FROM FILWEBSOD.DIDACTP1 WHERE DICODE = 'S' ORDER BY DI_ID DESC";
         }
 
         $resultat = odbc_Exec($conn, $sql);
@@ -77,10 +77,8 @@ class didactitiel extends Controller
 
         if($pdf != null)
         {
-            $nomPdf =  $pdf->getClientOriginalName();
-            $extension = $pdf->getClientOriginalExtension();
-            $nomDuPdf =  $nomPdf;
-            $pdf->move($dossier, $nomDuPdf);
+            $nomPdf = $pdf->getClientOriginalName();
+            $pdf->move($dossier, $nomPdf);
         }
         else
         {
@@ -89,10 +87,8 @@ class didactitiel extends Controller
 
         if($fichier1 != null)
         {
-            $nomFichier1 =  $fichier1->getClientOriginalName();
-            $extension = $fichier1->getClientOriginalExtension();
-            $nomDuFichier1 =  $nomFichier1;
-            $fichier1->move($dossier, $nomDuFichier1);
+            $nomFichier1 = $fichier1->getClientOriginalName();
+            $fichier1->move($dossier, $nomFichier1);
         }
         else
         {
@@ -101,20 +97,89 @@ class didactitiel extends Controller
 
         if($fichier2 != null)
         {
-            $nomFichier2 =  $fichier2->getClientOriginalName();
-            $extension = $fichier2->getClientOriginalExtension();
-            $nomDuFichier2 =  $nomFichier2;
-            $fichier2->move($dossier, $nomDuFichier2);
+            $nomFichier2 = $fichier2->getClientOriginalName();
+            $fichier2->move($dossier, $nomFichier2);
         }
         else
         {
             $nomFichier2 = "";
         }
-        $intitule = str_replace("'", "''", $intitule);
-        $commentaire = str_replace("'", "''", $commentaire);
+        if($numero == "")
+        {
+            $numero = 0;
+        }
+        $intitule = mb_convert_encoding(str_replace("'", "''", $intitule), "iso-8859-1", "UTF-8");
+        $commentaire = mb_convert_encoding(str_replace("'", "''", $commentaire), "iso-8859-1", "UTF-8");
         $sql = "INSERT INTO FILWEBSOD.DIDACTP1 VALUES ('$type', '$intitule', '$nomPdf', '$nomFichier1', '$nomFichier2', '$commentaire', DEFAULT, '$numero')";
         odbc_Exec($conn, $sql);
         if($type == "D")
+        {
+            $page = "didactitiel";
+        }
+        else
+        {
+            $page = "schema";
+        }
+        return redirect('/' . $page);
+    }
+
+    public function modifier(Request $request)
+    {
+        include "../../include/connexion.php";
+        $dossier = 'files';
+        $id = $request->input('id');
+        $intitule = $request->input('intitule');
+        $pdf = $request->file('pdf');
+        $excelOuSchema = $request->file('excelOuSchema');
+        $excelOuSchema2 = $request->file('excelOuSchema2');
+        $commentaire = $request->input('commentaire');
+        $numeroDevis = $request->input('numeroDevis');
+        $page = $request->input('type');
+        
+        if($pdf == null)
+        {
+            $champPdf = "";
+        }
+        else
+        {
+            $nomPdf = $pdf->getClientOriginalName();
+            $pdf->move($dossier, $nomPdf);
+            $champPdf = "DINPDF = '$nomPdf',";
+        }
+        
+        if($excelOuSchema == null)
+        {
+            $champFichier1 = "";
+        }
+        else
+        {
+            $nomFichier1 = $excelOuSchema->getClientOriginalName();
+            $excelOuSchema->move($dossier, $nomFichier1);
+            $champFichier1 = "DINEXL = '$nomFichier1',";
+        }
+
+        if($excelOuSchema2 == null)
+        {
+            $champFichier2 = "";
+        }
+        else
+        {
+            $nomFichier2 = $excelOuSchema2->getClientOriginalName();
+            $excelOuSchema2->move($dossier, $nomFichier2);
+            $champFichier2 = "DINEXL2 = '$nomFichier2',";
+        }
+
+        if($numeroDevis == "")
+        {
+            $numeroDevis = 0;
+        }
+        $intitule = mb_convert_encoding(str_replace("'", "''", $intitule), "iso-8859-1", "UTF-8");
+        $commentaire = mb_convert_encoding(str_replace("'", "''", $commentaire), "iso-8859-1", "UTF-8");
+        $sql = "UPDATE FILWEBSOD.DIDACTP1 SET DILIBEL = '$intitule', $champPdf $champFichier1 $champFichier2 DICOMM = '$commentaire', DINUMP = '$numeroDevis' 
+        WHERE DI_ID = '$id'";
+        odbc_Exec($conn, $sql);
+
+        if($page == "didactitiels")
         {
             $page = "didactitiel";
         }
@@ -130,15 +195,15 @@ class didactitiel extends Controller
         $fichierASupprimer = $request->input('');
     }
 
-    public function ajouterDidactitiels(Request $request)
-    {
-        include "../../include/connexion.php";
-        $pdf = $request->file('pdf');
-        $nomPdf =  $pdf->getClientOriginalName();
-        $extension = $pdf>getClientOriginalExtension();
-        $pdf->move($dossier, $nomPdf);
-        return [
-            "ca" => "c'est bien pass"
-        ];
-    }
+    // public function ajouterDidactitiels(Request $request)
+    // {
+    //     include "../../include/connexion.php";
+    //     $pdf = $request->file('pdf');
+    //     $nomPdf =  $pdf->getClientOriginalName();
+    //     $extension = $pdf>getClientOriginalExtension();
+    //     $pdf->move($dossier, $nomPdf);
+    //     return [
+    //         "ca" => "c'est bien pass"
+    //     ];
+    // }
 }

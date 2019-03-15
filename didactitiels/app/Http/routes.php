@@ -19,6 +19,8 @@ Route::post("/api/didactitiels", "didactitiel@recupererDidactitiels");
 
 Route::post("/api/ajouter/didactitiel", "didactitiel@ajouter");
 
-Route::post("/api/ajouter", "didactitiel@ajouterDidactitiels");
+//Route::post("/api/ajouter", "didactitiel@ajouterDidactitiels");
+
+Route::post("/api/modifier", "didactitiel@modifier");
 
 Route::post("/api/supprimer", "didactitiel@supprimer");

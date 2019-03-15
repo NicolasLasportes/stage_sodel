@@ -29,3 +29,8 @@ h1
 {
     max-height:50px;
 }
+
+.supprimer, .modifier
+{
+    text-align:center;
+}
