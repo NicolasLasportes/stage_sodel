@@ -14,16 +14,16 @@ class tableauCommande extends Controller
         return view("tableauCommande");
     }
 
-    //récupère les informations toutes les commandes d'un client (prend en paramètre le dossier du client fournis dans l'url)
-    //et récupère également le nom du client
-    public function afficher_commande_client($dossier_client)
+    /*récupère les informations de toutes les commandes d'un client 
+    (prend en paramètre le dossier du client fournis dans l'url)
+    et récupère également le nom du client */  
+     public function afficher_commande_client($dossier_client)
     {
         include '../../include/connexion.php';
-        $toutesLesCommandes = [];
-        
+        $toutes_les_commandes = [];
         $total = [];
-
-        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF, SOVALI FROM FILCOMSOD.ENTSODP1 WHERE SODOSS = '$dossier_client' 
+        $sql = "SELECT SONCDE, CECREF, SOTYPO, SODATE, SOCTRA, CENOMF, SOVALI FROM 
+        FILCOMSOD.ENTSODP1 WHERE SODOSS = '" . str_replace("'", "''", $dossier_client) . "' 
         AND SOCTRA <> 'LIVRAISON'";
        
         $commandes = odbc_Exec($conn, $sql);
@@ -38,7 +38,9 @@ class tableauCommande extends Controller
             $nom_client = utf8_encode(trim(odbc_result($commandes, 'CENOMF')));
             $sovali = trim(odbc_result($commandes, 'SOVALI'));
 
-            $recuperer_total_commande = "SELECT LOQTEE, LOPRIX FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = '$numero_commande'";
+            $recuperer_total_commande = "SELECT LOQTEE, LOPRIX 
+            FROM FILCOMSOD.LIGSODP1 WHERE LONCDE = 
+            '" . str_replace("'", "''", $numero_commande) . "'";
 
             $resultat = odbc_exec($conn, $recuperer_total_commande);
 
@@ -49,7 +51,7 @@ class tableauCommande extends Controller
                 array_push($total, $prix_unitaire * $quantite);
             }
 
-            $affichageJson = [
+            $affichage_json = [
                 'numero_commande' => $numero_commande,
                 'reference_commande' => utf8_encode($reference_commande),
                 'type_commande' => $type_commande,
@@ -62,18 +64,19 @@ class tableauCommande extends Controller
             ];
             
             $total = [];
-            array_push($toutesLesCommandes, $affichageJson);
+            array_push($toutes_les_commandes, $affichage_json);
         }
 
-        $recuperer_nom_client = "SELECT TITNOM FROM FILCOMSOD.TIEWEBP1 WHERE DOSSIER = '$dossier_client'";
+        $recuperer_nom_client = "SELECT TITNOM FROM FILCOMSOD.TIEWEBP1 
+        WHERE DOSSIER = '" . str_replace("'", "''", $dossier_client) . "'";
         $resultat = odbc_exec($conn, $recuperer_nom_client);
         $nom_client = [
             'nom_client' => utf8_encode(trim(odbc_result($resultat, 'TITNOM')))
         ];
 
-        array_push($toutesLesCommandes, $nom_client);
+        array_push($toutes_les_commandes, $nom_client);
 
-        return $toutesLesCommandes;
+        return $toutes_les_commandes;
     }
 
     //prend en paramètre le numéro de la commande et la cloture
@@ -84,14 +87,15 @@ class tableauCommande extends Controller
         $commande_a_cloturer = array_values($request->all());
         $numero_commande = $commande_a_cloturer[0];
         
-        $sql = "UPDATE FILCOMSOD.ENTSODP1 SET SOCTRA = 'IPAD' WHERE SONCDE = '$numero_commande'";
+        $sql = "UPDATE FILCOMSOD.ENTSODP1 SET SOCTRA = 'IPAD' 
+        WHERE SONCDE = '" . intval($numero_commande) . "'";
         odbc_Exec($conn, $sql);
 
-        $affichageJson = [
+        $affichage_json = [
             'commande_a_cloturer' => $numero_commande
         ];
 
-        return $affichageJson;
+        return $affichage_json;
     }
 
     //prend en parametre le dossier d'un client (son id) et retourne ses informations de facturation ainsi que la clé et le numéro du commercial qui s'en occupe
@@ -457,7 +461,7 @@ class tableauCommande extends Controller
 
             $commandes = odbc_Exec($conn, $sql);
 
-            $toutesLesCommandes = [];
+            $toutes_les_commandes = [];
 
             while(odbc_fetch_row($commandes)) 
             {
@@ -518,7 +522,7 @@ class tableauCommande extends Controller
                 ];
 
                 $total = [];
-                array_push($toutesLesCommandes, $affichageJson);
+                array_push($toutes_les_commandes, $affichageJson);
             }
         }
 
@@ -529,7 +533,7 @@ class tableauCommande extends Controller
             
             $commandes = odbc_Exec($conn, $sql);
 
-            $toutesLesCommandes = [];
+            $toutes_les_commandes = [];
 
             while(odbc_fetch_row($commandes)) 
             {
@@ -582,10 +586,10 @@ class tableauCommande extends Controller
                 ];
 
                 $total = [];
-                array_push($toutesLesCommandes, $affichageJson);
+                array_push($toutes_les_commandes, $affichageJson);
             }
         }
 
-        return $toutesLesCommandes;
+        return $toutes_les_commandes;
     }
 }

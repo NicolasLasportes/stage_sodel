@@ -316,13 +316,14 @@ function genererTableauCommande(commandes, interface)
 }
 
 //Prend en paramètre le numero d'une commande et la clôture
-function cloturerCommande(numero_commande)
+function cloturer_commande(numero_commande)
 {
     $.ajax({
-        url : '../cloturerCommande',
-        type : 'POST',
+        url : '../cloturer_commande',
+        type : 'post',
         dataType : "json",
-        data: {
+        data: 
+        {
             numero_commande: numero_commande
         },
         statusCode : 
@@ -340,7 +341,7 @@ function cloturerCommande(numero_commande)
         envoyer_email_cloture(numero_commande)
     }).fail(function()
     {
-        alert("Une erreur est survenue" + numero_commande);
+        alert("Une erreur est survenue");
     });
 }
 
@@ -703,10 +704,10 @@ Fonction pour la page de détail d'une commande
 //Prend en paramètre le numéro de commande et le dossier du client et récupère toutes les lignes de la commande, ainsi que le nom du client et le type de la commande
 // (commande ou devis), passes la variable qui contient les lignes de la commande a la fonction verifierCommandeCloturer() (et a envoyer_email qui permet de 
 //générer le lien mailTo)
-function obtenirDetailCommande(id_commande, id_client)
+function obtenir_detail_commande(id_commande, id_client)
 {
     $.ajax({
-        url : '../detailCommandeClient/' + id_commande + "&" + id_client,
+        url : '../detail_commande_client/' + id_commande + "&" + id_client,
         type : 'post',
         contentType : "application/json",
         dataType: 'json',
@@ -720,20 +721,20 @@ function obtenirDetailCommande(id_commande, id_client)
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    }).done(function(detailCommande)
+    }).done(function(detail_commande)
     {
-        if(detailCommande.type_commande == "DEV")
+        if(detail_commande.type_commande == "DEV")
         {
-            $("#titre_commande").empty().append("Devis n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
+            $("#titre_commande").empty().append("Devis n°" + recuperer_num_commande(id_inverse) + " de " + detail_commande.nom_client);
         }
         else
         {
-            $("#titre_commande").empty().append("Commande n°" + recupererNumCommande(id_inverse) + " de " + detailCommande.nom_client);
+            $("#titre_commande").empty().append("Commande n°" + recuperer_num_commande(id_inverse) + " de " + detail_commande.nom_client);
         }
-        delete detailCommande.nom_client;
-        verifierCommandeCloturer(recupererNumCommande(id_inverse), detailCommande);
-        envoyer_email(recupererNumCommande(id_inverse), recupererDossierClient(id_inverse));
-    }).fail(function(err)
+        delete detail_commande.nom_client;
+        verifier_commande_cloturer(recuperer_num_commande(id_inverse), detail_commande);
+        envoyer_email(recuperer_num_commande(id_inverse), recuperer_dossier_client(id_inverse));
+    }).fail(function()
     {
         alert("Une erreur est survenue");
     });
@@ -963,7 +964,7 @@ function obtenirProduits(dossier)
             code_combinaison = "#code_combinaison_produit";
         });
 
-        new Awesomplete(document.getElementById("referenceProduit"), 
+        new Awesomplete(document.getElementById("reference_produit"), 
         {
             list: liste_produits,
             maxItems: liste_produits.length,
@@ -972,18 +973,16 @@ function obtenirProduits(dossier)
 
         $("#awesomplete_list_1").on('click', function()
         {
-            console.log($(this))
-            var produit_choisi = $("#referenceProduit").val();
+            var produit_choisi = $("#reference_produit").val();
             produit_choisi = produit_choisi.slice(0, produit_choisi.indexOf("[") - 1);
-            console.log(produit_choisi)
-            $("#referenceProduit").val(produit_choisi);
+            $("#reference_produit").val(produit_choisi);
 
             for(var i = 0; i < produits_sans_prix_speciaux.length; i++)
             {
                 if(produit_choisi == produits_sans_prix_speciaux[i].numero_produit)
                 {
                     produit_actuel = produits_sans_prix_speciaux[i];
-                    $("#prixProduit").val(produit_actuel.prix_unitaire)
+                    $("#prix_produit").val(produit_actuel.prix_unitaire)
                     if(produit_actuel.code_combinaison == "S")
                     {
                         $(code_combinaison).val("S");
@@ -992,11 +991,9 @@ function obtenirProduits(dossier)
             }
         });
         
-        $("#quantiteProduit, #quantiteProduitLigne").on('input', function() //cette fonction récupere le prix unitaire du produit (s'il a un code_combinaison == "S")
+        $("#quantite_produit, #quantite_produit_ligne").on('input', function() //cette fonction récupere le prix unitaire du produit (s'il a un code_combinaison == "S")
         {                                                                  //quand on sélectionne la quantité                                            
             var quantite_demande = this.value;
-            console.log(quantite_demande)
-            console.log(code_combinaison)
             if($(code_combinaison).val() == "S")
             {
                 for(var i = 0; i < produits.length; i++)

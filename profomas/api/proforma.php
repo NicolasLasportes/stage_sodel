@@ -19,13 +19,13 @@
 
     if($direction == "&code=T")
     {
-        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE, PRNOM FROM FILCOMSOD.ENTPRFP2 
-        WHERE CESOCI <> '35' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
+        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE, PRNOM 
+        FROM FILCOMSOD.ENTPRFP2 WHERE CESOCI <> '35' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
     }
     else
     {
-        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE, PRNOM FROM FILCOMSOD.ENTPRFP2
-        WHERE PRREPR = '$ID' AND PRCLEE = '$cl' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
+        $sql = "SELECT CESOCI, PRREPR, CE\$TYC, CENTIE, PRDCDE, CENCDE, CECREF, PRRAIS, CETHTI, CETTTI, PRLIE1, PRLIE2, PRLIE3, PRCLEE, PRNOM 
+        FROM FILCOMSOD.ENTPRFP2 WHERE PRREPR = '$ID' AND PRCLEE = '$cl' AND PRDCDE >= '$dateLimite' ORDER by PRDCDE desc";
     }
     
     $result = odbc_Exec($conn, $sql);
@@ -66,7 +66,8 @@
         $commentaire = trim(odbc_result($resultatDetailProforma, "SUCOMM"));
         $commentaireCloture = trim(odbc_result($resultatDetailProforma, "SUCOMC"));
 
-        if($direction != "&code=T" && $cloturer == "0001-01-01" || $direction != "&code=T" && $cloturer == "" ||$direction != "&code=T" && $cloturer == "false" || $direction =="&code=T")
+        if($direction != "&code=T" && $cloturer == "0001-01-01" || $direction != "&code=T" && $cloturer == "" || 
+        $direction != "&code=T" && $cloturer == "false" || $direction =="&code=T")
         {
             if($archiver == "0001-01-01" || $archiver == "" || $archiver == false )
             {
